@@ -36,21 +36,21 @@
   <tr>
     <td align="center">
       <a href="https://github.com/junhee1203" target="_blank">
-        정준희
+        J228 정준희
       </a>
     </td>
      <td align="center">
       <a href="https://github.com/qwer0114" target="_blank">
-       정승연
+       J224 정승연
       </a>
     </td> 
      <td align="center">
       <a href="https://github.com/SeongHyeon0409" target="_blank">
-       유성현
+       J163 유성현
       </a>
        <td align="center">
       <a href="https://github.com/SeungGwan123" target="_blank">
-        이승관
+        J186 이승관
       </a>
     </td>
   </tr>
