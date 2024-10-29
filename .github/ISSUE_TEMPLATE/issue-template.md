@@ -3,7 +3,7 @@ name: Issue Template
 about: Create Issue
 title: "[  ] - "
 labels: ''
-assignees: ''
+assignees: junhee1203, qwer0114, SeongHyeon0409, SeungGwan123
 
 ---
 
