@@ -3,5 +3,9 @@
   "packageManager": "yarn@4.5.1",
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "scripts": {
+    "server": "yarn workspace server",
+    "client": "yarn workspace client"
+  }
 }
