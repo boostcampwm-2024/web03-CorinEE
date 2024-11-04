@@ -1,0 +1,45 @@
+services:
+  # db:
+  #   image: mysql:5.7
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: root
+  #     MYSQL_DATABASE: mydb
+  #     MYSQL_USER: user
+  #     MYSQL_PASSWORD: password
+  #   volumes:
+  #     - db-data:/var/lib/mysql
+  #   networks:
+  #     - app-network
+
+  server:
+    build:
+      context: .
+      dockerfile: dockerfile-server
+    image: seunggwan/corinee-server
+    ports:
+      - "3000:3000"
+    # environment:
+    #   # DB_HOST: db
+    #   # DB_USER: user
+    #   # DB_PASSWORD: password
+    #   # DB_DATABASE: mydb
+    networks:
+      - app-network
+
+  client:
+    build:
+      context: .
+      dockerfile: dockerfile-client
+    image: seunggwan/corinee-client
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+    networks:
+      - app-network
+
+volumes:
+  db-data:
+
+networks:
+  app-network:

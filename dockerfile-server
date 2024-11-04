@@ -1,0 +1,15 @@
+FROM node:20
+WORKDIR /app
+
+# 패키지 설치
+COPY packages/server/package.json .
+RUN yarn install
+
+# 소스 파일 복사
+COPY packages/server .
+
+# 포트 노출
+EXPOSE 3000
+
+# 컨테이너 시작 시 애플리케이션 실행
+CMD ["yarn", "start"]

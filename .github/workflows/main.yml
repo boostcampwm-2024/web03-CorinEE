@@ -3,7 +3,11 @@ name: Build and Deploy
 on:
   push:
     branches:
-      - feature-be-10
+      - dev-be
+      - dev-fe
+  pull_request:
+    branches:
+      - main  
 
 jobs:
   build_and_deploy:
