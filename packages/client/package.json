@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@material-tailwind/react": "^2.1.10",
     "@tanstack/react-query": "^5.59.19",
     "axios": "^1.7.7",
     "react": "^18.3.1",
@@ -20,7 +21,7 @@
   "devDependencies": {
     "@eslint/js": "^9.13.0",
     "@tanstack/eslint-plugin-query": "^5.59.7",
-    "@types/react": "^18.3.11",
+    "@types/react": "18.2.42",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.3",
     "autoprefixer": "^10.4.20",
