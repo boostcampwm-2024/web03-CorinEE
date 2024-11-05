@@ -12,11 +12,9 @@ function App() {
 		},
 	});
 	return (
-		<>
-			<QueryClientProvider client={queryClient}>
-				<Router />
-			</QueryClientProvider>
-		</>
+		<QueryClientProvider client={queryClient}>
+			<Router />
+		</QueryClientProvider>
 	);
 }
 
