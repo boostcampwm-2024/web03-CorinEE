@@ -6,13 +6,13 @@ function Sidebar() {
 	const closeDrawerRight = () => setOpenRight(false);
 
 	return (
-		<div className="flex bg-gray-100 ">
+		<div className="flex bg-gray-100">
 			<SideDrawer openRight={openRight} closeDrawerRight={closeDrawerRight} />
-			<div className="w-24 h-screen">
+			<div className="w-24 h-screen border-red-100 border">
 				<div>
 					<button
 						onClick={openDrawerRight}
-						className="bg-blue-500 text-white rounded hover:bg-blue-600"
+						className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
 					>
 						Open Drawer Right
 					</button>

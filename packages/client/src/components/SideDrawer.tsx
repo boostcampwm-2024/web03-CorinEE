@@ -3,11 +3,11 @@ function SideDrawer({ openRight, closeDrawerRight }) {
 		<div className="overflow-hidden">
 			<div
 				className={`
-			  h-screen w-64 
-			  bg-gray-100
-			  transition-all duration-300 ease-in-out
-			  ${openRight ? 'translate-x-0 w-64' : 'translate-x-full w-0'}
-			`}
+            h-screen
+            bg-gray-100
+            transition-all duration-300 ease-in-out
+            ${openRight ? 'translate-x-0 w-64' : 'translate-x-full w-0'}
+          `}
 			>
 				<button
 					onClick={closeDrawerRight}
