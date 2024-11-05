@@ -2,7 +2,7 @@ import { Navbar, Typography } from '@material-tailwind/react';
 
 function Header() {
 	return (
-		<Navbar className="flex justify-end">
+		<Navbar fullWidth={true} className="flex justify-end">
 			<Typography
 				as="a"
 				href="#"
