@@ -14,3 +14,4 @@
 
 #!.yarn/cache
 .pnp.*
+.env
