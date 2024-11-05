@@ -17,7 +17,7 @@ function Sidebar() {
 				<div className="group flex flex-col items-center gap-2 py-2">
 					<button
 						onClick={openDrawerRight}
-						className="text-white rounded p-1 group-hover:bg-gray-500"
+						className="text-white rounded p-1 group-hover:bg-gray-300"
 					>
 						<Invest className="w-6 h-6 fill-blue-gray-200 group-hover:fill-black" />
 					</button>
@@ -29,7 +29,7 @@ function Sidebar() {
 				<div className="group flex flex-col items-center gap-2 py-2">
 					<button
 						onClick={openDrawerRight}
-						className="text-white rounded p-1 group-hover:bg-gray-500"
+						className="text-white rounded p-1 group-hover:bg-gray-300"
 					>
 						<Heart className="w-6 h-6 fill-blue-gray-200 group-hover:fill-black" />
 					</button>
@@ -41,7 +41,7 @@ function Sidebar() {
 				<div className="group flex flex-col items-center gap-2 py-2">
 					<button
 						onClick={openDrawerRight}
-						className="text-white rounded p-1 group-hover:bg-gray-500"
+						className="text-white rounded p-1 group-hover:bg-gray-300"
 					>
 						<Calendar className="w-6 h-6 fill-blue-gray-200 group-hover:fill-black" />
 					</button>
@@ -53,7 +53,7 @@ function Sidebar() {
 				<div className="group flex flex-col items-center gap-2 py-2">
 					<button
 						onClick={openDrawerRight}
-						className="text-white rounded p-1 group-hover:bg-gray-500"
+						className="text-white rounded p-1 group-hover:bg-gray-300"
 					>
 						<Fire className="w-6 h-6 fill-blue-gray-200 group-hover:fill-black" />
 					</button>
