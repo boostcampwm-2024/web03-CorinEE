@@ -1,57 +1,22 @@
-import React from 'react';
-import {
-	Drawer,
-	Button,
-	Typography,
-	IconButton,
-} from '@material-tailwind/react';
-
 function SideDrawer({ openRight, closeDrawerRight }) {
 	return (
-		<React.Fragment>
-			<Drawer
-				placement="right"
-				open={openRight}
-				className="p-4"
-				overlay={false}
+		<div className="overflow-hidden">
+			<div
+				className={`
+			  h-screen w-64 
+			  bg-gray-100
+			  transition-all duration-300 ease-in-out
+			  ${openRight ? 'translate-x-0 w-64' : 'translate-x-full w-0'}
+			`}
 			>
-				<div className="mb-6 flex items-center justify-between">
-					<Typography variant="h5" color="blue-gray">
-						Material Tailwind
-					</Typography>
-					<IconButton
-						variant="text"
-						color="blue-gray"
-						onClick={closeDrawerRight}
-					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							strokeWidth={2}
-							stroke="currentColor"
-							className="h-5 w-5"
-						>
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								d="M6 18L18 6M6 6l12 12"
-							/>
-						</svg>
-					</IconButton>
-				</div>
-				<Typography color="gray" className="mb-8 pr-4 font-normal">
-					Material Tailwind features multiple React and HTML components, all
-					written with Tailwind CSS classes and Material Design guidelines.
-				</Typography>
-				<div className="flex gap-2">
-					<Button size="sm" variant="outlined">
-						Documentation
-					</Button>
-					<Button size="sm">Get Started</Button>
-				</div>
-			</Drawer>
-		</React.Fragment>
+				<button
+					onClick={closeDrawerRight}
+					className="m-4 px-4 py-2 bg-white rounded hover:bg-gray-100"
+				>
+					닫기
+				</button>
+			</div>
+		</div>
 	);
 }
 
