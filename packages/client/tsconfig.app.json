@@ -14,8 +14,10 @@
 			"@hooks/*": ["src/hooks/*"],
 			"@types/*": ["src/types/*"],
 			"@utility/*": ["src/utility/*"],
-			"@pages/*": ["src/pages/*"]
+			"@pages/*": ["src/pages/*"],
+			"@asset/*": ["src/asset/*"]
 		},
+		"types": ["vite-plugin-svgr/client"],
 
 		/* Bundler mode */
 		"moduleResolution": "Bundler",
