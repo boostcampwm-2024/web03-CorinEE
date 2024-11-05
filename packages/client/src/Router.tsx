@@ -1,9 +1,9 @@
 import { Route, Routes } from 'react-router-dom';
-import Home from './pages/home';
-import Account from './pages/account';
-import Layout from './pages/layout';
-import NotFound from './pages/not-found';
-import Trade from './pages/trade';
+import Layout from '@/pages/layout/Layout';
+import Home from '@/pages/home/Home';
+import Account from '@/pages/account/Account';
+import Trade from '@/pages/trade/Trade';
+import NotFound from '@/pages/not-found/NotFound';
 
 function Router() {
 	return (
