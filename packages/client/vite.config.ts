@@ -15,7 +15,7 @@ export default defineConfig({
 			{ find: '@api', replacement: path.resolve(__dirname, 'src/api') },
 			{
 				find: '@constants',
-				replacement: path.resolve(__dirname, './src/constants'),
+				replacement: path.resolve(__dirname, 'src/constants'),
 			},
 			{ find: '@hooks', replacement: path.resolve(__dirname, 'src/hooks') },
 			{ find: '@types', replacement: path.resolve(__dirname, 'src/types') },
