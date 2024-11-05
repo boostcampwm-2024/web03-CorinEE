@@ -12,4 +12,4 @@ COPY packages/server .
 EXPOSE 3000
 
 # 컨테이너 시작 시 애플리케이션 실행
-CMD ["yarn", "start"]
+CMD ["yarn", "start:prod"]
