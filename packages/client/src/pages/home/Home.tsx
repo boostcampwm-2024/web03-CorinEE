@@ -1,4 +1,6 @@
 import { useMarketAll } from '@/hooks/useMarketAll';
+import CoinView from '@/pages/home/components/CoinView';
+import { filterCoin } from '@/utility/marketDataUtil';
 
 function Home() {
 	const { isPending, error, data } = useMarketAll();
@@ -7,9 +9,9 @@ function Home() {
 
 	if (error) return 'An error has occurred: ' + error.message;
 
-	console.log(data)
+	if (data) console.log(filterCoin(data, 'USDT'));
 
-	return <div>Home Page</div>;
+	return <CoinView />;
 }
 
 export default Home;
