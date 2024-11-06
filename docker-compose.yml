@@ -4,6 +4,8 @@ services:
       context: .
       dockerfile: dockerfile-server
     image: seunggwan/corinee-server
+    env_file:
+      - .env
     ports:
       - "3000:3000"
     # environment:
@@ -25,9 +27,6 @@ services:
       - server
     networks:
       - app-network
-
-volumes:
-  db-data:
 
 networks:
   app-network:
