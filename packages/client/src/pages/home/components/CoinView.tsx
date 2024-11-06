@@ -12,7 +12,7 @@ function CoinView() {
 		<div>
 			<h3 className="text-2xl font-bold text-gray-800">코인 리스트</h3>
 			<div className="text-sm text-gray-700">실시간 코인 가격 확인</div>
-			{/* <CoinCategories activeCategory={activeCategory} handleCategory={handleCategory} /> */}
+			<CoinCategories activeCategory={activeCategory} handleCategory={handleCategory} />
 		</div>
 	);
 }
