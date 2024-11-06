@@ -8,6 +8,9 @@ RUN yarn install
 # 소스 파일 복사
 COPY packages/server .
 
+# 애플리케이션 빌드
+RUN yarn build
+
 # 포트 노출
 EXPOSE 3000
 
