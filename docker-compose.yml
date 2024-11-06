@@ -8,11 +8,6 @@ services:
       - .env
     ports:
       - "3000:3000"
-    # environment:
-    #   # DB_HOST: db
-    #   # DB_USER: user
-    #   # DB_PASSWORD: password
-    #   # DB_DATABASE: mydb
     networks:
       - app-network
 
