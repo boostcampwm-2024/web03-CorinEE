@@ -29,6 +29,9 @@ jobs:
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/corinee-client -f ./dockerfile-client .
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/corinee-client
 
+      - name: make deploy environment
+        run: |
+          echo "${{secrets.DEPLOY_ENV}}" > .env
 
       - name: Send files & deploy script
         uses: appleboy/scp-action@master
@@ -37,11 +40,11 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
-          source: ${{ secrets.DOCKER_IMAGE }}
+          source: ${{ secrets.DEPLOY_FILES }}
           target: /corinee
           overwrite: true
 
-      - name: Docker run
+      - name: Docker Container run
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -54,8 +57,8 @@ jobs:
             cd /corinee
             docker-compose down
             docker-compose up -d
+            rm -rf .env docker-compose.yml
             
-
       - name: Generate Error Report
         if: failure()  
         run: |

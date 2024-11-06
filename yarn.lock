@@ -7526,7 +7526,6 @@ __metadata:
     tunnel-ssh: "npm:^5.1.2"
     typeorm: "npm:0.3.7"
     typescript: "npm:^5.1.3"
-    win-node-env: "npm:^0.6.1"
   languageName: unknown
   linkType: soft
 
@@ -8755,22 +8754,6 @@ __metadata:
   bin:
     node-which: bin/which.js
   checksum: 10c0/449fa5c44ed120ccecfe18c433296a4978a7583bf2391c50abce13f76878d2476defde04d0f79db8165bdf432853c1f8389d0485ca6e8ebce3bbcded513d5e6a
-  languageName: node
-  linkType: hard
-
-"win-node-env@npm:^0.6.1":
-  version: 0.6.1
-  resolution: "win-node-env@npm:0.6.1"
-  bin:
-    CHAI_JEST_SNAPSHOT_UPDATE_ALL: bin/CHAI_JEST_SNAPSHOT_UPDATE_ALL.js
-    DEBUG: bin/DEBUG.js
-    ENV: bin/ENV.js
-    NODE_DEBUG: bin/NODE_DEBUG.js
-    NODE_ENV: bin/NODE_ENV.js
-    NODE_OPTIONS: bin/NODE_OPTIONS.js
-    PORT: bin/PORT.js
-  checksum: 10c0/95ac662805f5cf57a30afdd768d51f164115e39aae8bfad6a77793ae389854a00a001a0d864f02f568379a4e7ba1d667e4d82ec4924a8487d3caae644d24a106
-  conditions: os=win32
   languageName: node
   linkType: hard
 
