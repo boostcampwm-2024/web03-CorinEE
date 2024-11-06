@@ -6,8 +6,6 @@ module.exports = withMT({
 		'./src/**/*.{js,ts,jsx,tsx}',
 		'./node_modules/.vite/deps/@material-tailwind_react.js',
 	],
-	theme: {
-		extend: {},
-	},
+	theme: {},
 	plugins: [],
 });
