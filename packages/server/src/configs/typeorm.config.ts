@@ -1,11 +1,11 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { config } from 'dotenv';
-import * as path from 'path';
+import { resolve } from 'path';
 import { createTunnel } from 'tunnel-ssh'; 
 
 const env = process.env.NODE_ENV || 'development';
 const envFileName = `.env.${env}`;
-const envPath = path.resolve(process.cwd(), envFileName);
+const envPath = resolve(process.cwd(), envFileName);
 
 config({ path: envPath });
 
