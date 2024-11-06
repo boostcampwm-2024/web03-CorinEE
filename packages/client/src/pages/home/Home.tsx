@@ -7,6 +7,8 @@ function Home() {
 
 	if (error) return 'An error has occurred: ' + error.message;
 
+	console.log(data)
+
 	return <div>Home Page</div>;
 }
 
