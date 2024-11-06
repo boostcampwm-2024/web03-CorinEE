@@ -1,16 +1,4 @@
 services:
-  # db:
-  #   image: mysql:5.7
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: root
-  #     MYSQL_DATABASE: mydb
-  #     MYSQL_USER: user
-  #     MYSQL_PASSWORD: password
-  #   volumes:
-  #     - db-data:/var/lib/mysql
-  #   networks:
-  #     - app-network
-
   server:
     build:
       context: .
