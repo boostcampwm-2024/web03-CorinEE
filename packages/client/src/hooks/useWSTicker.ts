@@ -1,12 +1,12 @@
 import { MarketData } from '@/types/market';
-import { CoinTicker } from '@/types/ticker';
+import { SocketDataType } from '@/types/ticker';
 import { useEffect, useRef, useState } from 'react';
 
 export function useWSTicker(targetMarketCodes: MarketData[]) {
 	const SOCKET_URL = 'wss://api.upbit.com/websocket/v1';
 	const socket = useRef<WebSocket | null>(null);
 	const [isConnected, setIsConnected] = useState<boolean>(false);
-	const [socketData, setSocketData] = useState<CoinTicker[] | null>();
+	const [socketData, setSocketData] = useState<SocketDataType | null>();
 
 	useEffect(() => {
 		if (!socket.current) {
@@ -31,7 +31,7 @@ export function useWSTicker(targetMarketCodes: MarketData[]) {
 				setSocketData(null);
 			};
 
-			const socketMessageHandler = async (event) => {
+			const socketMessageHandler = async (event: MessageEvent) => {
 				try {
 					const buffer = await event.data.arrayBuffer();
 					const decoder = new TextDecoder();

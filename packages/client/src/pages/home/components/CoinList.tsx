@@ -1,53 +1,60 @@
 import { useWSTicker } from '@/hooks/useWSTicker';
 import { MarketData } from '@/types/market';
+import { MarketCategory } from '@/types/menu';
 import Heart from '@asset/heart.svg?react';
 
+type Formatters = {
+	formatTradePrice: (price: number) => string;
+	formatSignedChangePrice: (price: number) => string;
+	formatChangeRate: (price: number) => string;
+	formatAccTradePrice: (price: number) => string;
+};
+
 const formatData = (category: string) => {
-	const formatters = {
-		formatTradePrice: (price: string) => {},
-		formatSignedChangePrice: (price: string) => {},
-		formatChangeRate: (price: string) => {},
-		formatAccTradePrice: (price: string) => {},
+	const formatters: Formatters = {
+		formatTradePrice: () => '',
+		formatSignedChangePrice: () => '',
+		formatChangeRate: () => '',
+		formatAccTradePrice: () => '',
 	};
 
-	// category별로 다른 로직이 필요한 경우 여기서 처리
 	switch (category) {
 		case 'KRW':
-			formatters.formatTradePrice = (price: string) =>
+			formatters.formatTradePrice = (price: number) =>
 				`${Number(price).toLocaleString()}원`;
 
-			formatters.formatSignedChangePrice = (price: string) =>
+			formatters.formatSignedChangePrice = (price: number) =>
 				`${Number(price).toLocaleString()}원`;
 
-			formatters.formatChangeRate = (price: string) =>
+			formatters.formatChangeRate = (price: number) =>
 				`(${(Number(price) * 100).toFixed(2)}%)`;
 
-			formatters.formatAccTradePrice = (price: string) =>
+			formatters.formatAccTradePrice = (price: number) =>
 				`${Math.floor(Number(price) / 1000000).toLocaleString()}백만`;
 			break;
 
 		case 'BTC':
-			formatters.formatTradePrice = (price: string) =>
+			formatters.formatTradePrice = (price: number) =>
 				`${Number(price).toFixed(8)} BTC`;
 
-			formatters.formatSignedChangePrice = (price: string) => ``;
+			formatters.formatSignedChangePrice = () => ``;
 
-			formatters.formatChangeRate = (price: string) =>
+			formatters.formatChangeRate = (price: number) =>
 				`${(Number(price) * 100).toFixed(2)}%`;
 
-			formatters.formatAccTradePrice = (price: string) =>
+			formatters.formatAccTradePrice = (price: number) =>
 				`${Number(price).toFixed(3)}`;
 			break;
 		case 'USDT':
-			formatters.formatTradePrice = (price: string) =>
+			formatters.formatTradePrice = (price: number) =>
 				`${Number(price).toLocaleString()} USDT`;
 
-			formatters.formatSignedChangePrice = (price: string) => ``;
+			formatters.formatSignedChangePrice = () => ``;
 
-			formatters.formatChangeRate = (price: string) =>
+			formatters.formatChangeRate = (price: number) =>
 				`${(Number(price) * 100).toFixed(2)}%`;
 
-			formatters.formatAccTradePrice = (price: string) =>
+			formatters.formatAccTradePrice = (price: number) =>
 				`${Math.floor(Number(price)).toLocaleString()}`;
 			break;
 	}
@@ -55,18 +62,17 @@ const formatData = (category: string) => {
 	return formatters;
 };
 
-function CoinList({ markets, activeCategory }: { markets: MarketData[] }) {
-	const { socketData, isConnected } = useWSTicker(markets);
+type CoinListProps = {
+	markets: MarketData[];
+	activeCategory: MarketCategory;
+};
+
+function CoinList({ markets, activeCategory }: CoinListProps) {
+	const { socketData } = useWSTicker(markets);
 	const formatters = formatData(activeCategory);
 
 	// console.log(socketData)
 
-	// const categoryTodata = {
-	// 	"KRW" : {
-	// 		currentPrice : socketData[market.market]?.trade_price?.toLocaleString() + '원',
-
-	// 	}
-	// }
 
 	if (!socketData) return;
 

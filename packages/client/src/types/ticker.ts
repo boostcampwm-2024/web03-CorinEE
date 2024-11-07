@@ -1,4 +1,4 @@
-export type CoinTicker = {
+ type CoinTicker = {
 	type: string;
 	code: string;
 	opening_price: number;
@@ -33,3 +33,8 @@ export type CoinTicker = {
 	acc_trade_volume_24h: number;
 	stream_type: 'REALTIME' | 'SNAPSHOT';
 };
+
+export type SocketDataType = {
+	[key: string]: CoinTicker;  // 또는
+	// [market: string]: CoinTicker;
+ }
