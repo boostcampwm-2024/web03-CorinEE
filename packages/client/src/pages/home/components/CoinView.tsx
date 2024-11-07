@@ -32,7 +32,7 @@ function CoinView() {
 				activeCategory={activeCategory}
 				handleCategory={handleCategory}
 			/>
-			<CoinList markets={filterData} />
+			<CoinList markets={filterData} activeCategory={activeCategory} />
 		</div>
 	);
 }
