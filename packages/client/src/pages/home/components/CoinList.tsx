@@ -69,7 +69,6 @@ function CoinList({ markets, activeCategory }: { markets: MarketData[] }) {
 	// }
 
 	if (!socketData) return;
-	if (!isConnected) return;
 
 	return (
 		<div className="w-[90%]">
