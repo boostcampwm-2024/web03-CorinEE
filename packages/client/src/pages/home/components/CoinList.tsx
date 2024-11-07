@@ -2,23 +2,74 @@ import { useWSTicker } from '@/hooks/useWSTicker';
 import { MarketData } from '@/types/market';
 import Heart from '@asset/heart.svg?react';
 
-const formatTradePrice = (price: number) => {
-	if (!price) return '-';
+const formatData = (category: string) => {
+	const formatters = {
+		formatTradePrice: (price: string) => {},
+		formatSignedChangePrice: (price: string) => {},
+		formatChangeRate: (price: string) => {},
+		formatAccTradePrice: (price: string) => {},
+	};
 
-	if (price >= 100000000) {
-		// 1억 이상
-		return (price / 100000000).toFixed(0) + '억';
-	} else {
-		return (price / 10000000).toFixed(0) + '천만';
+	// category별로 다른 로직이 필요한 경우 여기서 처리
+	switch (category) {
+		case 'KRW':
+			formatters.formatTradePrice = (price: string) =>
+				`${Number(price).toLocaleString()}원`;
+
+			formatters.formatSignedChangePrice = (price: string) =>
+				`${Number(price).toLocaleString()}원`;
+
+			formatters.formatChangeRate = (price: string) =>
+				`(${(Number(price) * 100).toFixed(2)}%)`;
+
+			formatters.formatAccTradePrice = (price: string) =>
+				`${Math.floor(Number(price) / 1000000).toLocaleString()}백만`;
+			break;
+
+		case 'BTC':
+			formatters.formatTradePrice = (price: string) =>
+				`${Number(price).toFixed(8)} BTC`;
+
+			formatters.formatSignedChangePrice = (price: string) => ``;
+
+			formatters.formatChangeRate = (price: string) =>
+				`${(Number(price) * 100).toFixed(2)}%`;
+
+			formatters.formatAccTradePrice = (price: string) =>
+				`${Number(price).toFixed(3)}`;
+			break;
+		case 'USDT':
+			formatters.formatTradePrice = (price: string) =>
+				`${Number(price).toLocaleString()} USDT`;
+
+			formatters.formatSignedChangePrice = (price: string) => ``;
+
+			formatters.formatChangeRate = (price: string) =>
+				`${(Number(price) * 100).toFixed(2)}%`;
+
+			formatters.formatAccTradePrice = (price: string) =>
+				`${Math.floor(Number(price)).toLocaleString()}`;
+			break;
 	}
+
+	return formatters;
 };
 
-function CoinList({ markets }: { markest: MarketData[] }) {
-	const { socketData } = useWSTicker(markets);
+function CoinList({ markets, activeCategory }: { markets: MarketData[] }) {
+	const { socketData, isConnected } = useWSTicker(markets);
+	const formatters = formatData(activeCategory);
 
 	// console.log(socketData)
 
+	// const categoryTodata = {
+	// 	"KRW" : {
+	// 		currentPrice : socketData[market.market]?.trade_price?.toLocaleString() + '원',
+
+	// 	}
+	// }
+
 	if (!socketData) return;
+	if (!isConnected) return;
 
 	return (
 		<div className="w-[90%]">
@@ -52,14 +103,18 @@ function CoinList({ markets }: { markest: MarketData[] }) {
 					</div>
 
 					<div className="flex-[6]">
-						{socketData[market.market]?.trade_price?.toLocaleString() + '원'}
+						{formatters.formatTradePrice(
+							socketData[market.market]?.trade_price,
+						)}
 					</div>
 					<div className="flex-[6]">
-						{`${socketData[market.market]?.signed_change_price.toLocaleString()}원 (${(socketData[market.market]?.signed_change_rate * 100).toFixed(2)}%) 
+						{`${formatters.formatSignedChangePrice(socketData[market.market]?.signed_change_price)}${formatters.formatChangeRate(socketData[market.market]?.signed_change_rate)}
 							`}
 					</div>
 					<div className="flex-[6]">
-						{formatTradePrice(socketData[market.market]?.acc_trade_price_24h)}
+						{formatters.formatAccTradePrice(
+							socketData[market.market]?.acc_trade_price_24h,
+						)}
 					</div>
 				</div>
 			))}
