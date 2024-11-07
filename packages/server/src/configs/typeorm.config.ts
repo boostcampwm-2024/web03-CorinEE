@@ -29,9 +29,7 @@ async function setupSshTunnel(): Promise<void> {
 			password: process.env.SSH_PASSWORD,
 		};
 
-		const port = process.env.DB_PORT; // 로컬에서 사용할 포트
-
-		tunnel(sshOptions, port)
+		tunnel(sshOptions, process.env.DB_PORT)
 			.then(() => {
 				resolve();
 			})
@@ -48,7 +46,7 @@ function tunnel(sshOptions, port, autoClose = true): Promise<void> {
 			srcAddr: process.env.DB_HOST,
 			srcPort: port,
 			dstAddr: process.env.SSH_DB_HOST, // 원격 DB 서버 IP
-			dstPort: Number(process.env.SSH_DB_TUNNUL_PORT), // 원격 DB 포트
+			dstPort: Number(process.env.SSH_DB_TUNNEL_PORT), // 원격 DB 포트
 		};
 
 		const tunnelOptions = {
