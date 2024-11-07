@@ -8,7 +8,9 @@ function Layout() {
 			<div className="flex">
 				<div className="w-screen flex flex-col flex-1">
 					<Header />
-					<Outlet />
+					<div className="pt-10 px-20">
+						<Outlet />
+					</div>
 				</div>
 				<Sidebar />
 			</div>
