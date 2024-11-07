@@ -1,4 +1,6 @@
-import { SideBarMenu } from '@/types/menu';
+import { Market } from '@/types/market';
+import { MarketCategory, SideBarMenu } from '@/types/menu';
+
 export function isSideBarMenu(value: string | null): value is SideBarMenu {
 	return (
 		value === '실시간' ||
@@ -7,4 +9,8 @@ export function isSideBarMenu(value: string | null): value is SideBarMenu {
 		value === '최근 본' ||
 		value === null
 	);
+}
+
+export function isMarket(value: MarketCategory): value is Market {
+	return value === 'KRW' || value === 'BTC' || value === 'USDT';
 }
