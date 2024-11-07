@@ -1,5 +1,6 @@
 import { useMarketAll } from '@/hooks/useMarketAll';
 import CoinCategories from '@/pages/home/components/CoinCategories';
+import CoinList from '@/pages/home/components/CoinList';
 import { MarketData } from '@/types/market';
 import { MarketCategory } from '@/types/menu';
 import { filterCoin } from '@/utility/marketDataUtil';
@@ -7,7 +8,7 @@ import { isMarket } from '@/utility/typeGuard';
 import { useState } from 'react';
 
 function CoinView() {
-	const { data, isPending, error } = useMarketAll();
+	const { data, isPending } = useMarketAll();
 	const [activeCategory, setActiveCategory] = useState<MarketCategory>('KRW');
 	let filterData: MarketData[] = [];
 
@@ -31,6 +32,7 @@ function CoinView() {
 				activeCategory={activeCategory}
 				handleCategory={handleCategory}
 			/>
+			<CoinList markets={filterData} />
 		</div>
 	);
 }
