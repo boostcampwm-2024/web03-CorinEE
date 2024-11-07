@@ -1,3 +1,5 @@
+export type Market = 'KRW' | 'BTC' | 'USDT';
+
 type MarketEvent = {
 	CONCENTRATION_OF_SMALL_ACCOUNTS: boolean;
 	DEPOSIT_AMOUNT_SOARING: boolean;
