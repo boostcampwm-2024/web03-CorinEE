@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4  
-          
+        uses: actions/checkout@v4
+
       - name: Docker Hub login
         uses: docker/login-action@v1
         with:
@@ -54,9 +54,9 @@ jobs:
             docker-compose down
             docker-compose up -d
             rm -rf .env docker-compose.yml
-            
+
       - name: Generate Error Report
-        if: failure()  
+        if: failure()
         run: |
           echo "Deployment Report" > report.txt
           echo "===================" >> report.txt
@@ -68,8 +68,16 @@ jobs:
           cat report.txt
 
       - name: Upload Error Report
-        if: failure()  
+        if: failure()
         uses: actions/upload-artifact@v3
         with:
           name: deployment-error-report
+<<<<<<< HEAD
           path: report.txt
+=======
+<<<<<<< HEAD
+          path: report.txt
+=======
+          path: report.txt
+>>>>>>> 1f2b3f46087d4b95bb8401706d2482a5da67ba3d
+>>>>>>> 60d3665 (feat: confilt)
