@@ -24,6 +24,9 @@
     "@nestjs/core": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/typeorm": "9.0.0",
+    "axios": "^1.7.7",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
     "config": "^3.3.12",
     "dotenv": "^16.4.5",
     "i": "^0.3.7",
@@ -31,9 +34,9 @@
     "mysql2": "^3.11.3",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
-    "ssh2": "^1.16.0",
     "tunnel-ssh": "^5.1.2",
-    "typeorm": "0.3.7"
+    "typeorm": "0.3.7",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
@@ -45,8 +48,8 @@
     "@types/jest": "^29.5.2",
     "@types/js-yaml": "^4",
     "@types/node": "^20.3.1",
-    "@types/ssh2": "^1",
     "@types/supertest": "^6.0.0",
+    "@types/ws": "^8.5.13",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
     "@yarnpkg/pnpify": "^4.1.3",
