@@ -5,6 +5,7 @@ import { createTunnel } from 'tunnel-ssh';
 config();
 
 const env = process.env.NODE_ENV || 'development';
+console.log(process.env.SSH_DB_PORT)
 
 export default async function getTypeOrmConfig(): Promise<TypeOrmModuleOptions> {
 	if(env === 'development') await setupSshTunnel();
