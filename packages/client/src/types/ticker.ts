@@ -1,4 +1,6 @@
- type CoinTicker = {
+export type Change = 'RISE' | 'FALL' | 'EVEN';
+
+type CoinTicker = {
 	type: string;
 	code: string;
 	opening_price: number;
@@ -7,7 +9,7 @@
 	trade_price: number;
 	prev_closing_price: number;
 	acc_trade_price: number;
-	change: 'RISE' | 'FALL' | 'EVEN';
+	change: Change;
 	change_price: number;
 	signed_change_price: number;
 	change_rate: number;
@@ -35,6 +37,6 @@
 };
 
 export type SocketDataType = {
-	[key: string]: CoinTicker;  // 또는
+	[key: string]: CoinTicker; // 또는
 	// [market: string]: CoinTicker;
- }
+};
