@@ -1,9 +1,10 @@
-import { MarketCategory } from "@/types/menu";
+import { MarketCategory } from '@/types/menu';
+import { Change } from '@/types/ticker';
 
-type Formatters = {
+export type Formatters = {
 	formatTradePrice: (price: number) => string;
-	formatSignedChangePrice: (price: number) => string;
-	formatChangeRate: (price: number) => string;
+	formatSignedChangePrice: (price: number, change: Change) => string;
+	formatChangeRate: (price: number, change: Change) => string;
 	formatAccTradePrice: (price: number) => string;
 };
 
@@ -20,11 +21,12 @@ export const formatData = (category: MarketCategory) => {
 			formatters.formatTradePrice = (price: number) =>
 				`${Number(price).toLocaleString()}원`;
 
-			formatters.formatSignedChangePrice = (price: number) =>
-				`${Number(price).toLocaleString()}원`;
+			formatters.formatSignedChangePrice = (price: number, change: Change) => {
+				return `${decideSign(change) + Number(price).toLocaleString()}원`;
+			};
 
-			formatters.formatChangeRate = (price: number) =>
-				`(${(Number(price) * 100).toFixed(2)}%)`;
+			formatters.formatChangeRate = (price: number, change: Change) =>
+				`${decideSign(change) + (Number(price) * 100).toFixed(2)}%`;
 
 			formatters.formatAccTradePrice = (price: number) =>
 				`${Math.floor(Number(price) / 1000000).toLocaleString()}백만`;
@@ -36,8 +38,8 @@ export const formatData = (category: MarketCategory) => {
 
 			formatters.formatSignedChangePrice = () => ``;
 
-			formatters.formatChangeRate = (price: number) =>
-				`${(Number(price) * 100).toFixed(2)}%`;
+			formatters.formatChangeRate = (price: number, change: Change) =>
+				`${decideSign(change) + (Number(price) * 100).toFixed(2)}%`;
 
 			formatters.formatAccTradePrice = (price: number) =>
 				`${Number(price).toFixed(3)}`;
@@ -48,8 +50,8 @@ export const formatData = (category: MarketCategory) => {
 
 			formatters.formatSignedChangePrice = () => ``;
 
-			formatters.formatChangeRate = (price: number) =>
-				`${(Number(price) * 100).toFixed(2)}%`;
+			formatters.formatChangeRate = (price: number, change: Change) =>
+				`${decideSign(change) + (Number(price) * 100).toFixed(2)}%`;
 
 			formatters.formatAccTradePrice = (price: number) =>
 				`${Math.floor(Number(price)).toLocaleString()}`;
@@ -58,3 +60,9 @@ export const formatData = (category: MarketCategory) => {
 
 	return formatters;
 };
+
+function decideSign(change: Change) {
+	if (change === 'FALL') return '';
+	else if (change === 'RISE') return '+';
+	else if (change === 'EVEN') return '';
+}
