@@ -3,7 +3,10 @@ import { Link } from 'react-router-dom';
 
 function Header() {
 	return (
-		<Navbar fullWidth={true} className="flex justify-between items-center">
+		<Navbar
+			fullWidth={true}
+			className=" flex justify-between items-center sticky top-0"
+		>
 			<div>
 				<Link to={'/'} className="text-black">
 					코린이
