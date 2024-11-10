@@ -40,7 +40,7 @@ function Sidebar() {
 	];
 
 	return (
-		<div className="flex bg-gray-100 h-screen ">
+		<div className="flex bg-gray-100 h-screen sticky top-0">
 			<SideDrawer isOpen={isOpen} />
 			<div className="w-20 flex flex-col gap-3 items-center border-l border-gray-400 border-solid">
 				{SIDEBAR_BUTTONS.map((button) => (
