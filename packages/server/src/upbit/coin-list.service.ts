@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { UPBIT_IMAGE_URL, UPBIT_RESTAPI_URL } from 'common/upbit';
@@ -12,7 +12,7 @@ import { plainToInstance } from 'class-transformer';
 >>>>>>> 6f58c58 (chore: 배포용 commit)
 
 @Injectable()
-export class CoinListService {
+export class CoinListService{
 	private coinCodeList: string[];
 	private coinNameList: Map<string, string>;
 	constructor(private readonly httpService: HttpService) {}
@@ -26,16 +26,14 @@ export class CoinListService {
 			response.data.map((coin) => [coin.market, coin.korean_name]),
 		);
 	}
-	getCoinList(coins) {
-		return this.coinCodeList.filter((coin) => coins.includes(coin));
-	}
-  
-  tempCoinAddNameAndUrl(message: string) {
-    const data = JSON.parse(message);
-    data.name = this.coinNameList.get(data.code);
-    data.coin_img_url = this.getCoinImageURL(data.code);
+  getAllCoinList(){
+    return this.coinCodeList
+  }
+  tempCoinAddNameAndUrl(message) {
+    message.name = this.coinNameList.get(message.code);
+    message.coin_img_url = this.getCoinImageURL(message.code);
 
-    return data;
+    return message;
   }
 	convertToTickerDTO = (message: string) => {
 		const data = JSON.parse(message);
