@@ -4,7 +4,7 @@ import ScrollPageButton from '@/pages/home/components/ScrollPageButton';
 import { MarketData } from '@/types/market';
 import { MarketCategory } from '@/types/menu';
 import { formatData } from '@/utility/formatData';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type CoinListProps = {
 	markets: MarketData[];
@@ -13,15 +13,19 @@ type CoinListProps = {
 
 function CoinList({ markets, activeCategory }: CoinListProps) {
 	const { socketData } = useWSTicker(markets);
-	const [scrollPage, setScrollPage] = useState(1);
+	const [currentScrollPage, setCurrentScrollPage] = useState(1);
 	const COINS_PER_PAGE = 10;
 	const maxScrollPage = Math.ceil(markets.length / COINS_PER_PAGE);
+
+	useEffect(() => {
+		setCurrentScrollPage(1);
+	}, [activeCategory]);
 
 	const formatters = formatData(activeCategory);
 	if (!socketData) return;
 
 	const onChangeScrollPage = (pageNumber: number) => {
-		setScrollPage(pageNumber);
+		setCurrentScrollPage(pageNumber);
 	};
 
 	return (
@@ -35,7 +39,10 @@ function CoinList({ markets, activeCategory }: CoinListProps) {
 			</ul>
 
 			{markets
-				.slice(COINS_PER_PAGE * (scrollPage - 1), COINS_PER_PAGE * scrollPage)
+				.slice(
+					COINS_PER_PAGE * (currentScrollPage - 1),
+					COINS_PER_PAGE * currentScrollPage,
+				)
 				.map((market) => (
 					<Coin
 						key={market.market}
@@ -50,6 +57,7 @@ function CoinList({ markets, activeCategory }: CoinListProps) {
 					<ScrollPageButton
 						key={index}
 						pageNumber={index + 1}
+						currentScrollPage={currentScrollPage}
 						onChangeScrollPage={onChangeScrollPage}
 					/>
 				))}
