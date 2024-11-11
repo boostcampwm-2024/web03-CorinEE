@@ -9720,10 +9720,6 @@ __metadata:
   resolution: "web03-CorinEE@workspace:."
   dependencies:
     "@floating-ui/dom": "npm:^1.6.12"
-    "@nestjs/platform-socket.io": "npm:^10.4.7"
-    "@nestjs/websockets": "npm:^10.4.7"
-    class-transformer: "npm:^0.5.1"
-    class-validator: "npm:^0.14.1"
     eslint: "npm:^8.0.0"
     eslint-config-prettier: "npm:^9.1.0"
     prettier: "npm:^3.3.3"
