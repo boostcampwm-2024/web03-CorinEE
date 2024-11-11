@@ -3,6 +3,10 @@ import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { UPBIT_IMAGE_URL, UPBIT_RESTAPI_URL } from 'common/upbit';
 import { CoinTickerDto } from './dtos/coin-ticker.dto';
+<<<<<<< HEAD
+=======
+import { plainToInstance } from 'class-transformer';
+>>>>>>> 78d154c (feat: coinTickerDTO)
 
 @Injectable()
 export class CoinListService {
@@ -41,10 +45,18 @@ export class CoinListService {
       signed_change_rate: data.signed_change_rate,
       trade_price: data.trade_price,
     }
+<<<<<<< HEAD
+=======
+    return coinTicker
+>>>>>>> 78d154c (feat: coinTickerDTO)
 	}
 
 	private getCoinImageURL(code: string) {
 		const logoName = code.split('-')[1];
+<<<<<<< HEAD
 		return `${UPBIT_IMAGE_URL}${logoName}.png`;
+=======
+		return UPBIT_IMAGE_URL + `${logoName}.png`;
+>>>>>>> 78d154c (feat: coinTickerDTO)
 	}
 }
