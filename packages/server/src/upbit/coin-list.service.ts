@@ -19,11 +19,18 @@ export class CoinListService {
 			response.data.map((coin) => [coin.market, coin.korean_name]),
 		);
 	}
-	getCoinList() {
-		return this.coinCodeList;
+	getCoinList(coins) {
+		return this.coinCodeList.filter((coin) => coins.includes(coin));
 	}
   
-	convertToTickerDTO(message: string) {
+  tempCoinAddNameAndUrl(message: string) {
+    const data = JSON.parse(message);
+    data.name = this.coinNameList.get(data.code);
+    data.coin_img_url = this.getCoinImageURL(data.code);
+
+    return data;
+  }
+	convertToTickerDTO = (message: string) => {
 		const data = JSON.parse(message);
     return {
       name: this.coinNameList.get(data.code),
