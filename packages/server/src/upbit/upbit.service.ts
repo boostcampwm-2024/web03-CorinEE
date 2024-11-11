@@ -1,14 +1,17 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Subject } from 'rxjs';
 import * as WebSocket from 'ws';
+import { SseService } from './sse.service';
 import { CoinListService } from './coin-list.service';
 
 @Injectable()
 export class UpbitService implements OnModuleInit {
 	private ws: WebSocket;
-	private priceUpdates$: Subject<any> = new Subject(); // SSE로 전달할 스트림 생성
 
-	constructor(private readonly coinListService: CoinListService) {};
+	constructor(
+		private readonly coinListService: CoinListService,
+		private readonly sseService: SseService
+	) {};
 
 	onModuleInit() {
 		this.connectWebSocket();
@@ -23,7 +26,7 @@ export class UpbitService implements OnModuleInit {
 			// 구독할 마켓 설정
 			const subscribeMessage = JSON.stringify([
 				{ ticket: 'test' },
-				{ type: 'ticker', codes: coin_list.map(coin=>coin.market) }, // 원하는 코인 추가
+				{ type: 'ticker', codes: coin_list.map((coin)=>coin.market) }, // 원하는 코인 추가
 			]);
 			this.ws.send(subscribeMessage);
 		});
@@ -31,7 +34,7 @@ export class UpbitService implements OnModuleInit {
 		this.ws.on('message', (data) => {
       //TODO: upbitTickerDto 타입으로 변경
 			const message = JSON.parse(data.toString());
-      this.priceUpdates$.next(message); // SSE로 전달하기 위해 데이터 방출
+      this.sseService.sendEvent(message);
 		});
 
 		this.ws.on('close', () => {
@@ -43,8 +46,4 @@ export class UpbitService implements OnModuleInit {
 			console.error('WebSocket 오류:', error);
 		});
 	}
-  // SSE 컨트롤러가 사용할 데이터 스트림을 반환
-  getPriceUpdatesStream() {
-    return this.priceUpdates$.asObservable();
-  }
 }
