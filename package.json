@@ -15,6 +15,9 @@
     "typescript": "5.4.3"
   },
   "dependencies": {
-    "@floating-ui/dom": "^1.6.12"
+    "@floating-ui/dom": "^1.6.12",
+    "@nestjs/platform-socket.io": "^10.4.7",
+    "@nestjs/websockets": "^10.4.7",
+    "ws": "^8.18.0"
   }
 }
