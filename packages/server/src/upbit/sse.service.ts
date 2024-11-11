@@ -1,14 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { Subject, Observable } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 
 @Injectable()
-export class SseService {
+export class SseService implements OnModuleDestroy{
 	private eventStream$ = new Subject<any>();
 	private destroy$ = new Subject<void>();
 
 	sendEvent(data: any) {
-		this.eventStream$.next(data);
+		if(data!==null) this.eventStream$.next(data);
 	}
 
 	getPriceUpdatesStream(): Observable<MessageEvent> {
@@ -20,5 +20,9 @@ export class SseService {
 				}) as MessageEvent;
 			}),
 		);
+	}
+	
+	onModuleDestroy() {
+		this.destroy$.next();
 	}
 }

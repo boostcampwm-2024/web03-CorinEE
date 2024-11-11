@@ -30,21 +30,21 @@ export class UpbitService implements OnModuleInit {
 
 		this.websocket.on('close', () => {
 			console.log('WebSocket 연결이 닫혔습니다. 재연결 시도 중...');
-			setTimeout(() => this.connectWebSocket(coins), UPBIT_WEBSOCKET_CONNECTION_TIME);
+			setTimeout(() => this.connectWebSocket(), UPBIT_WEBSOCKET_CONNECTION_TIME);
 		});
 
 		this.websocket.on('error', (error) => {
 			console.error('WebSocket 오류:', error);
 		});
 	}
-	sendWebSocket(dtoMethod: Function){
+	sendWebSocket(dtoMethod: Function, coins: string[]){
+		let message;
 		this.websocket.on('message', (data) => {
-			const message : string = data.toString();
-			const temp = this.coinListService.tempCoinAddNameAndUrl(message);
+			message = JSON.parse(data.toString());
+			const temp = coins.includes(message.code) ? this.coinListService.tempCoinAddNameAndUrl(message) : null;
 			this.sseService.sendEvent(temp);
 			//현재는 전부 보냅니다.
 			// const coinTick: CoinTickerDto = dtoMethod(message);
-			
 			// this.sseService.sendEvent(coinTick);
 		});
 	}
