@@ -11,7 +11,7 @@ function Router() {
 			<Route element={<Layout />}>
 				<Route path="/" element={<Home />} />
 				<Route path="/account" element={<Account />} />
-				<Route path="/trade/*" element={<Trade />} />
+				<Route path="/trade/:market" element={<Trade />} />
 			</Route>
 			<Route path="*" element={<NotFound />} />
 		</Routes>
