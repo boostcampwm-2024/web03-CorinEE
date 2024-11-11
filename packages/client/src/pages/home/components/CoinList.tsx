@@ -1,8 +1,10 @@
 import { useWSTicker } from '@/hooks/useWSTicker';
 import Coin from '@/pages/home/components/Coin';
+import ScrollPageButton from '@/pages/home/components/ScrollPageButton';
 import { MarketData } from '@/types/market';
 import { MarketCategory } from '@/types/menu';
 import { formatData } from '@/utility/formatData';
+import { useState } from 'react';
 
 type CoinListProps = {
 	markets: MarketData[];
@@ -11,8 +13,16 @@ type CoinListProps = {
 
 function CoinList({ markets, activeCategory }: CoinListProps) {
 	const { socketData } = useWSTicker(markets);
+	const [scrollPage, setScrollPage] = useState(1);
+	const COINS_PER_PAGE = 10;
+	const maxScrollPage = Math.ceil(markets.length / COINS_PER_PAGE);
+
 	const formatters = formatData(activeCategory);
 	if (!socketData) return;
+
+	const onChangeScrollPage = (pageNumber: number) => {
+		setScrollPage(pageNumber);
+	};
 
 	return (
 		<div className="w-[90%]">
@@ -24,14 +34,26 @@ function CoinList({ markets, activeCategory }: CoinListProps) {
 				<li className="flex-[6]">거래대금</li>
 			</ul>
 
-			{markets.map((market) => (
-				<Coin
-					key={market.market}
-					formatters={formatters}
-					market={market}
-					socketData={socketData}
-				/>
-			))}
+			{markets
+				.slice(COINS_PER_PAGE * (scrollPage - 1), COINS_PER_PAGE * scrollPage)
+				.map((market) => (
+					<Coin
+						key={market.market}
+						formatters={formatters}
+						market={market}
+						socketData={socketData}
+					/>
+				))}
+
+			<ol className="flex py-4 gap-4 justify-center">
+				{Array.from({ length: maxScrollPage }).map((_, index) => (
+					<ScrollPageButton
+						key={index}
+						pageNumber={index + 1}
+						onChangeScrollPage={onChangeScrollPage}
+					/>
+				))}
+			</ol>
 		</div>
 	);
 }
