@@ -25,7 +25,7 @@ export class UpbitService implements OnModuleInit {
 		this.ws.on('message', (data) => {
       //TODO: upbitTicker 타입으로 변경
 			const message = JSON.parse(data.toString());
-      this.priceUpdates$.next(message); // SSE로 전달하기 위해 데이터 방출
+      this.sseService.sendEvent(message);
 		});
 
 		this.ws.on('close', () => {
