@@ -1,12 +1,12 @@
 type ScrollPageButtonProps = {
 	pageNumber: number;
 	currentScrollPage: number;
-	onChangeScrollPage: (pageNumber: number) => void;
+	handleScrollPage: (pageNumber: number) => void;
 };
 
 function ScrollPageButton({
 	pageNumber,
-	onChangeScrollPage,
+	handleScrollPage,
 	currentScrollPage,
 }: ScrollPageButtonProps) {
 	const isActive = pageNumber === currentScrollPage;
@@ -14,7 +14,7 @@ function ScrollPageButton({
 	return (
 		<ol
 			onClick={() => {
-				onChangeScrollPage(pageNumber);
+				handleScrollPage(pageNumber);
 			}}
 		>
 			<button className={`w-7 hover:bg-blue-gray-100 rounded-full 
