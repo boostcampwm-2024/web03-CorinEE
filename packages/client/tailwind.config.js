@@ -6,6 +6,12 @@ module.exports = withMT({
 		'./src/**/*.{js,ts,jsx,tsx}',
 		'./node_modules/.vite/deps/@material-tailwind_react.js',
 	],
-	theme: {},
+	theme: {
+		extend: {
+			fontFamily: {
+				sans: ['Pretendard', 'sans-serif'],
+			},
+		},
+	},
 	plugins: [],
 });
