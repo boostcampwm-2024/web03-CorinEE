@@ -58,8 +58,9 @@ function Coin({ formatters, market, socketData }: CoinProps) {
 			<div className={`flex-[6] ${colorClasses[change]}`}>{trade_price}</div>
 			<div className="flex-[6]">
 				<div className={colorClasses[change]}>
-					<span className="block">{change_rate}</span>
-					<span className="block text-sm">{change_price}</span>
+					<span className="block">
+						{change_rate} ({change_price})
+					</span>
 				</div>
 			</div>
 			<div className="flex-[6]">{acc_trade_price_24h}</div>
