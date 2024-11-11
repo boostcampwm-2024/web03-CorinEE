@@ -1,17 +1,21 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Subject } from 'rxjs';
 import * as WebSocket from 'ws';
+import { CoinListService } from './coin-list.service';
 
 @Injectable()
 export class UpbitService implements OnModuleInit {
 	private ws: WebSocket;
-  private priceUpdates$: Subject<any> = new Subject(); // SSE로 전달할 스트림 생성
+	private priceUpdates$: Subject<any> = new Subject(); // SSE로 전달할 스트림 생성
+
+	constructor(private readonly coinListService: CoinListService) {};
 
 	onModuleInit() {
 		this.connectWebSocket();
 	}
 
-	private connectWebSocket() {
+	private async connectWebSocket() {
+		const coin_list = await this.coinListService.getCoinList()
 		this.ws = new WebSocket('wss://api.upbit.com/websocket/v1');
 
 		this.ws.on('open', () => {
@@ -19,13 +23,13 @@ export class UpbitService implements OnModuleInit {
 			// 구독할 마켓 설정
 			const subscribeMessage = JSON.stringify([
 				{ ticket: 'test' },
-				{ type: 'ticker', codes: ['KRW-BTC', 'KRW-ETH'] }, // 원하는 코인 추가
+				{ type: 'ticker', codes: coin_list.map(coin=>coin.market) }, // 원하는 코인 추가
 			]);
 			this.ws.send(subscribeMessage);
 		});
 
 		this.ws.on('message', (data) => {
-      //TODO: upbitTicker 타입으로 변경
+      //TODO: upbitTickerDto 타입으로 변경
 			const message = JSON.parse(data.toString());
       this.priceUpdates$.next(message); // SSE로 전달하기 위해 데이터 방출
 		});
