@@ -3,6 +3,7 @@ import { Change, SocketDataType } from '@/types/ticker';
 import { Formatters } from '@/utility/formatData';
 import Heart from '@asset/heart.svg?react';
 import { Link } from 'react-router-dom';
+import colorClasses from '@/constants/priceColor';
 
 type CoinProps = {
 	formatters: Formatters;
@@ -27,12 +28,6 @@ function Coin({ formatters, market, socketData }: CoinProps) {
 	const acc_trade_price_24h = formatters.formatAccTradePrice(
 		socketData[market.market]?.acc_trade_price_24h,
 	);
-
-	const colorClasses = {
-		FALL: 'text-blue-600',
-		RISE: 'text-red-500',
-		EVEN: 'text-gray-800',
-	} as const;
 
 	return (
 		<Link
