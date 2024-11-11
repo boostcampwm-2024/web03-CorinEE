@@ -4,9 +4,12 @@ import { firstValueFrom } from 'rxjs';
 import { UPBIT_IMAGE_URL, UPBIT_RESTAPI_URL } from 'common/upbit';
 import { CoinTickerDto } from './dtos/coin-ticker.dto';
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 import { plainToInstance } from 'class-transformer';
 >>>>>>> 78d154c (feat: coinTickerDTO)
+=======
+>>>>>>> 6f58c58 (chore: 배포용 commit)
 
 @Injectable()
 export class CoinListService {
@@ -46,17 +49,24 @@ export class CoinListService {
       trade_price: data.trade_price,
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     return coinTicker
 >>>>>>> 78d154c (feat: coinTickerDTO)
+=======
+>>>>>>> 6f58c58 (chore: 배포용 commit)
 	}
 
 	private getCoinImageURL(code: string) {
 		const logoName = code.split('-')[1];
 <<<<<<< HEAD
+<<<<<<< HEAD
 		return `${UPBIT_IMAGE_URL}${logoName}.png`;
 =======
 		return UPBIT_IMAGE_URL + `${logoName}.png`;
 >>>>>>> 78d154c (feat: coinTickerDTO)
+=======
+		return `${UPBIT_IMAGE_URL}${logoName}.png`;
+>>>>>>> 6f58c58 (chore: 배포용 commit)
 	}
 }
