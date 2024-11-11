@@ -1,14 +1,28 @@
-import { Controller, Sse } from '@nestjs/common';
+import { Controller, Sse, Query } from '@nestjs/common';
 import { Observable, Subject } from 'rxjs';
 import { SseService } from './sse.service';
+import { UpbitService } from './upbit.service';
+import { CoinListService } from './coin-list.service';
 
 @Controller('upbit')
 export class UpbitController {
 
-  constructor(private readonly sseService: SseService) {}
+  constructor(
+    private readonly sseService: SseService,
+    private readonly upbitService: UpbitService,
+    private readonly coinListService: CoinListService
+  ) {}
 
   @Sse('price-updates')
-  priceUpdates(): Observable<MessageEvent> {
-    return this.sseService.getPriceUpdatesStream()
+  priceUpdates(@Query('coins') coins:string[]): Observable<MessageEvent> {
+    this.upbitService.connectWebSocket(coins);
+    this.upbitService.sendWebSocket(this.coinListService.convertToTickerDTO)
+    return this.sseService.getPriceUpdatesStream();
   }
+  // 상세페이지용
+  // @Sse('price-updates-detail')
+  // priceUpdatesDetail(@Query('coins') coins:string[]): Observable<MessageEvent> {
+  //   this.upbitService.connectWebSocket(coins);
+  //   return this.sseService.getPriceUpdatesStream();
+  // }
 }
