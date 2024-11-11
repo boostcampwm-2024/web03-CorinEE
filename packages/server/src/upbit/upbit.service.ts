@@ -28,7 +28,7 @@ export class UpbitService implements OnModuleInit {
       this.sseService.sendEvent(message);
 		});
 
-		this.ws.on('close', () => {
+		this.websocket.on('close', () => {
 			console.log('WebSocket 연결이 닫혔습니다. 재연결 시도 중...');
 			setTimeout(() => this.connectWebSocket(coins), UPBIT_WEBSOCKET_CONNECTION_TIME);
 		});
