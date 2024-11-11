@@ -24,7 +24,7 @@ function CoinList({ markets, activeCategory }: CoinListProps) {
 	const formatters = formatData(activeCategory);
 	if (!socketData) return;
 
-	const onChangeScrollPage = (pageNumber: number) => {
+	const handleScrollPage = (pageNumber: number) => {
 		setCurrentScrollPage(pageNumber);
 	};
 
@@ -58,7 +58,7 @@ function CoinList({ markets, activeCategory }: CoinListProps) {
 						key={index}
 						pageNumber={index + 1}
 						currentScrollPage={currentScrollPage}
-						onChangeScrollPage={onChangeScrollPage}
+						handleScrollPage={handleScrollPage}
 					/>
 				))}
 			</ol>
