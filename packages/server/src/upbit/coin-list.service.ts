@@ -2,25 +2,51 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { UPBIT_IMAGE_URL, UPBIT_RESTAPI_URL } from 'common/upbit';
-import { CoinTickerDto } from './dtos/coin-ticker.dto';
+import { UPBIT_UPDATED_COIN_INFO_TIME } from 'common/upbit';
 
 @Injectable()
 export class CoinListService{
-	private coinCodeList: string[];
+	private coinRawList: any;
+	private coinCodeList: string[] = ["KRW-BTC"];
 	private coinNameList: Map<string, string>;
-	constructor(private readonly httpService: HttpService) {}
+	private timeoutId: NodeJS.Timeout | null = null;
+	
+	constructor(private readonly httpService: HttpService) {
+		this.getCoinListFromUpbit();
+	}
 
 	async getCoinListFromUpbit() {
-		const response = await firstValueFrom(
-			this.httpService.get(UPBIT_RESTAPI_URL),
-		);
-		this.coinCodeList = response.data.map((coin) => coin.market);
-		this.coinNameList = new Map(
-			response.data.map((coin) => [coin.market, coin.korean_name]),
-		);
+		try{
+			const response = await firstValueFrom(
+				this.httpService.get(UPBIT_RESTAPI_URL),
+			);
+			this.coinRawList = response.data;
+			this.coinCodeList = response.data.map((coin) => coin.market);
+			this.coinNameList = new Map(
+				response.data.map((coin) => [coin.market, coin.korean_name]),
+			);
+
+		}catch(error){
+		}finally{
+			console.log(`코인 정보 최신화: ${Date()}`);
+			if (this.timeoutId) clearTimeout(this.timeoutId);
+			this.timeoutId = setTimeout(()=>this.getCoinListFromUpbit(),UPBIT_UPDATED_COIN_INFO_TIME)
+		}
+	}
+	getCoinNameList(){
+		return this.coinCodeList;
 	}
 	getAllCoinList(){
-		return this.coinCodeList
+		return this.coinRawList;
+	}
+	getKRWCoinList(){
+		return this.coinRawList.filter((coin) => coin.market.startsWith("KRW"))
+	}
+	getBTCCoinList(){
+		return this.coinRawList.filter((coin)=>coin.market.startsWith("BTC"))
+	}
+	getUSDTCoinList(){
+		return this.coinRawList.filter((coin) => coin.market.startsWith("USDT"))
 	}
 	tempCoinAddNameAndUrl(message) {
 		message.name = this.coinNameList.get(message.code);
