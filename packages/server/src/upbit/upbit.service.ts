@@ -30,7 +30,14 @@ export class UpbitService implements OnModuleInit{
 			]);
 			this.websocket.send(subscribeMessage);
 		});
-
+		this.websocket.on('message', (data) => {
+			const message = JSON.parse(data.toString());
+			const temp = this.coinListService.tempCoinAddNameAndUrl(message);
+			this.sseService.sendEvent(temp);
+			//현재는 전부 보냅니다.
+			// const coinTick: CoinTickerDto = dtoMethod(message);
+			// this.sseService.sendEvent(coinTick);
+		});
 		this.websocket.on('close', () => {
 			console.log('WebSocket 연결이 닫혔습니다. 재연결 시도 중...');
 			setTimeout(() => this.connectWebSocket(), UPBIT_WEBSOCKET_CONNECTION_TIME);
@@ -40,15 +47,14 @@ export class UpbitService implements OnModuleInit{
 			console.error('WebSocket 오류:', error);
 		});
 	}
-	sendWebSocket(dtoMethod: Function, coins: string[]){
-		let message;
-		this.websocket.on('message', (data) => {
-			message = JSON.parse(data.toString());
-			const temp = coins.includes(message.code) ? this.coinListService.tempCoinAddNameAndUrl(message) : null;
-			this.sseService.sendEvent(temp);
-			//현재는 전부 보냅니다.
-			// const coinTick: CoinTickerDto = dtoMethod(message);
-			// this.sseService.sendEvent(coinTick);
-		});
+	async sendWebSocket(){
+		await this.coinListService.getCoinListFromUpbit();
+		const coin_list = this.coinListService.getAllCoinList();
+		console.log('WebSocket 연결 성공');
+		const subscribeMessage = JSON.stringify([
+			{ ticket: 'test' },
+			{ type: 'ticker', codes: coin_list }, 
+		]);
+		this.websocket.send(subscribeMessage);
 	}
 }

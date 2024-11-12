@@ -19,28 +19,27 @@ export class CoinListService{
 			response.data.map((coin) => [coin.market, coin.korean_name]),
 		);
 	}
-  getAllCoinList(){
-    return this.coinCodeList
-  }
-  tempCoinAddNameAndUrl(message) {
-    message.name = this.coinNameList.get(message.code);
-    message.coin_img_url = this.getCoinImageURL(message.code);
+	getAllCoinList(){
+		return this.coinCodeList
+	}
+	tempCoinAddNameAndUrl(message) {
+		message.name = this.coinNameList.get(message.code);
+		message.coin_img_url = this.getCoinImageURL(message.code);
 
-    return message;
-  }
+		return message;
+	}
 	convertToTickerDTO = (message: string) => {
 		const data = JSON.parse(message);
-    return {
-      name: this.coinNameList.get(data.code),
-      code: data.code,
-      coin_img_url: this.getCoinImageURL(data.code),
-      signed_change_price: data.signed_change_price,
-      opening_price: data.opening_price,
-      signed_change_rate: data.signed_change_rate,
-      trade_price: data.trade_price,
-    }
+		return {
+		name: this.coinNameList.get(data.code),
+		code: data.code,
+		coin_img_url: this.getCoinImageURL(data.code),
+		signed_change_price: data.signed_change_price,
+		opening_price: data.opening_price,
+		signed_change_rate: data.signed_change_rate,
+		trade_price: data.trade_price,
+		}
 	}
-
 	private getCoinImageURL(code: string) {
 		const logoName = code.split('-')[1];
 		return `${UPBIT_IMAGE_URL}${logoName}.png`;
