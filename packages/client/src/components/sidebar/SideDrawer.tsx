@@ -10,7 +10,6 @@ type SideDrawerProps = {
 };
 
 function SideDrawer({ isOpen, activeMenu }: SideDrawerProps) {
-	if (!activeMenu) return;
 
 	const activeMenuComponent = {
 		MY_INVESTMENT: <MyInvestment />,
@@ -30,7 +29,7 @@ function SideDrawer({ isOpen, activeMenu }: SideDrawerProps) {
             ${isOpen ? 'translate-x-0 w-64' : 'translate-x-full w-0'}
           `}
 			>
-				{activeMenuComponent[activeMenu]}
+				{activeMenu && activeMenuComponent[activeMenu]}
 			</div>
 		</div>
 	);
