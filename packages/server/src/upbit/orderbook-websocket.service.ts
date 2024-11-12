@@ -1,13 +1,15 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import * as WebSocket from 'ws';
 import { SseService } from './sse.service';
-import { UPBIT_WEBSOCKET_CONNECTION_TIME, UPBIT_WEBSOCKET_URL } from 'common/upbit';
-import { CoinTickerDto } from './dtos/coin-ticker.dto';
 import { CoinListService } from './coin-list.service';
+import { UPBIT_WEBSOCKET_CONNECTION_TIME, UPBIT_WEBSOCKET_URL, UPBIT_UPDATED_COIN_INFO_TIME, UPBIT_UPDATED_ORDER_INFO_TIME } from 'common/upbit';
+import { CoinTickerDto } from './dtos/coin-ticker.dto';
 
 @Injectable()
 export class OrderbookService implements OnModuleInit{
 	private websocket: WebSocket;
+	private sending: Boolean = false;
+	private timeoutId: NodeJS.Timeout | null = null;
 
 	constructor(
 		private readonly coinListService: CoinListService,
@@ -20,35 +22,51 @@ export class OrderbookService implements OnModuleInit{
 	}
 
 	connectWebSocket() {
-		this.websocket.on('open', async () => {
-			await this.coinListService.getCoinListFromUpbit();
-			const coin_list = this.coinListService.getAllCoinList();
-			console.log('WebSocket 연결 성공');
-			const subscribeMessage = JSON.stringify([
-				{ ticket: 'test' },
-				{ type: 'ticker', codes: coin_list }, 
-			]);
-			this.websocket.send(subscribeMessage);
+		this.websocket.on('open', () => {
+			try {
+				console.log('OrderbookWebSocket 연결이 열렸습니다.');
+				this.sendWebSocket();
+			} catch (error) {
+				console.error('sendWebSocket 실행 중 오류 발생:', error);
+			}
 		});
-
+		this.websocket.on('message', (data) => {
+			try {
+				const message = JSON.parse(data.toString());
+				this.sseService.orderbookData(message);
+			} catch (error) {
+				console.error('OrderbookWebSocket 메시지 처리 중 오류 발생:', error);
+			}
+		});
 		this.websocket.on('close', () => {
-			console.log('WebSocket 연결이 닫혔습니다. 재연결 시도 중...');
-			setTimeout(() => this.connectWebSocket(), UPBIT_WEBSOCKET_CONNECTION_TIME);
+			try {
+				console.log('OrderbookWebSocket 연결이 닫혔습니다. 재연결 시도 중...');
+				setTimeout(() => this.connectWebSocket(), UPBIT_WEBSOCKET_CONNECTION_TIME);
+			} catch (error) {
+				console.error('OrderbookWebSocket 재연결 설정 중 오류 발생:', error);
+			}
 		});
 
 		this.websocket.on('error', (error) => {
-			console.error('WebSocket 오류:', error);
+			console.error('OrderbookWebSocket 오류:', error);
 		});
 	}
-	sendWebSocket(dtoMethod: Function, coins: string[]){
-		let message;
-		this.websocket.on('message', (data) => {
-			message = JSON.parse(data.toString());
-			const temp = coins.includes(message.code) ? this.coinListService.tempCoinAddNameAndUrl(message) : null;
-			this.sseService.sendEvent(temp);
-			//현재는 전부 보냅니다.
-			// const coinTick: CoinTickerDto = dtoMethod(message);
-			// this.sseService.sendEvent(coinTick);
-		});
+	async sendWebSocket() {
+		if (this.sending) return;
+		this.sending = true;
+		try{
+			const coin_list = this.coinListService.getCoinNameList();
+			const subscribeMessage = JSON.stringify([
+				{ ticket: 'test' },
+				{ type: 'ticker', codes: coin_list },
+			]);
+			this.websocket.send(subscribeMessage);
+		}catch(error){
+			console.error('OrderbookWebSocket 오류:', error);
+		}finally{
+			this.sending = false;
+			if (this.timeoutId) clearTimeout(this.timeoutId);
+			this.timeoutId = setTimeout(() => this.sendWebSocket(), UPBIT_UPDATED_ORDER_INFO_TIME);
+		}
 	}
 }
