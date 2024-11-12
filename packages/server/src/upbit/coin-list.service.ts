@@ -16,28 +16,30 @@ import { UPBIT_UPDATED_COIN_INFO_TIME } from 'common/upbit';
 >>>>>>> 5dfd209 (feat: 코인 종목 api, 호가창 websocket 연결)
 
 @Injectable()
-export class CoinListService{
+export class CoinListService implements OnModuleInit {
 	private coinRawList: any;
 	private coinCodeList: string[] = ["KRW-BTC"];
 	private coinNameList: Map<string, string>;
 	private timeoutId: NodeJS.Timeout | null = null;
 	
-	constructor(private readonly httpService: HttpService) {
+	onModuleInit() {
 		this.getCoinListFromUpbit();
 	}
+	
+	constructor(private readonly httpService: HttpService) {}
 
 	async getCoinListFromUpbit() {
 		try{
 			const response = await firstValueFrom(
 				this.httpService.get(UPBIT_RESTAPI_URL),
 			);
-			this.coinRawList = response.data;
 			this.coinCodeList = response.data.map((coin) => coin.market);
 			this.coinNameList = new Map(
 				response.data.map((coin) => [coin.market, coin.korean_name]),
 			);
-
+			this.coinRawList = response.data
 		}catch(error){
+			console.error('getCoinListFromUpbit error:', error);
 		}finally{
 			console.log(`코인 정보 최신화: ${Date()}`);
 			if (this.timeoutId) clearTimeout(this.timeoutId);
@@ -48,7 +50,7 @@ export class CoinListService{
 		return this.coinCodeList;
 	}
 	getAllCoinList(){
-		return this.coinRawList;
+		return this.coinRawList.map((coin) => this.coinAddNameAndUrl(coin));
 	}
 	getKRWCoinList(){
 		return this.coinRawList.filter((coin) => coin.market.startsWith("KRW"))
@@ -59,7 +61,7 @@ export class CoinListService{
 	getUSDTCoinList(){
 		return this.coinRawList.filter((coin) => coin.market.startsWith("USDT"))
 	}
-	tempCoinAddNameAndUrl(message) {
+	coinAddNameAndUrl = (message) => {
 		message.name = this.coinNameList.get(message.code);
 		message.coin_img_url = this.getCoinImageURL(message.code);
 
