@@ -1,42 +1,45 @@
 import { formatData } from '@/utility/formatData';
 import CoinInfo from '@/pages/trade/components/trade_header/CoinInfo';
 import CoinStats from '@/pages/trade/components/trade_header/CoinStats';
-import { SocketDataType } from '@/types/ticker';
+import { SSEDataType } from '@/types/ticker';
 
 type TradeHeaderProps = {
 	market: string;
-	socketData: SocketDataType;
+	sseData: SSEDataType;
 };
 
-function TradeHeader({ market, socketData }: TradeHeaderProps) {
+function TradeHeader({ market, sseData }: TradeHeaderProps) {
 	const formatter = formatData('KRW');
-	const code = socketData[market].code;
-	const trade_price = socketData[market].trade_price.toLocaleString();
-	const change = socketData[market].change;
+	const code = sseData[market].code;
+	const trade_price = sseData[market].trade_price.toLocaleString();
+	const change = sseData[market].change;
 	const change_rate = formatter.formatChangeRate(
-		socketData[market].signed_change_rate,
+		sseData[market].signed_change_rate,
 		change,
 	);
 	const change_price = formatter.formatSignedChangePrice(
-		socketData[market].signed_change_price,
+		sseData[market].signed_change_price,
 		change,
 	);
 	const acc_trade_price_24h = Math.ceil(
-		socketData[market].acc_trade_price_24h,
+		sseData[market].acc_trade_price_24h,
 	).toLocaleString();
 
-	const high_price = socketData[market].high_price.toLocaleString();
-	const low_price = socketData[market].low_price.toLocaleString();
+	const high_price = sseData[market].high_price.toLocaleString();
+	const low_price = sseData[market].low_price.toLocaleString();
+	const korean_name = sseData[market].name;
+	const coin_img_url = sseData[market].coin_img_url;
 
 	return (
 		<div className="w-full flex justify-between mb-3">
 			<CoinInfo
-				korean_name="비트코인"
+				korean_name={korean_name}
 				code={code}
 				change={change}
 				trade_price={trade_price}
 				change_price={change_price}
 				change_rate={change_rate}
+				coin_img_url={coin_img_url}
 			/>
 			<CoinStats
 				acc_trade_price_24h={acc_trade_price_24h}
