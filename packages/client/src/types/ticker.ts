@@ -1,6 +1,8 @@
 export type Change = 'RISE' | 'FALL' | 'EVEN';
 
 type CoinTicker = {
+	name: string;
+	coin_img_url: string;
 	type: string;
 	code: string;
 	opening_price: number;
@@ -36,7 +38,7 @@ type CoinTicker = {
 	stream_type: 'REALTIME' | 'SNAPSHOT';
 };
 
-export type SocketDataType = {
+export type SSEDataType = {
 	[key: string]: CoinTicker; // 또는
 	// [market: string]: CoinTicker;
 };
