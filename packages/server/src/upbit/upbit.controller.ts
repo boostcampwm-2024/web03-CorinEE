@@ -1,5 +1,5 @@
 import { Controller, Sse, Query, Get } from '@nestjs/common';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, concat } from 'rxjs';
 import { SseService } from './sse.service';
 import { CoinTickerService } from './coin-ticker-websocket.service';
 import { CoinListService } from './coin-list.service';
@@ -15,11 +15,12 @@ export class UpbitController {
 
   @Sse('price-updates')
   priceUpdates(@Query('coins') coins:string[]): Observable<MessageEvent> {
-    return this.sseService.getPriceUpdatesStream(coins,this.coinListService.tempCoinAddNameAndUrl);
+    const initData = this.sseService.initPriceStream(coins, this.coinListService.coinAddNameAndUrl);
+    return concat(initData,this.sseService.getPriceUpdatesStream(coins,this.coinListService.coinAddNameAndUrl));
   }
   @Sse('orderbook')
   orderbookUpdates(@Query('coins') coins:string[]): Observable<MessageEvent> {
-    return this.sseService.getOrderbookUpdatesStream(coins,this.coinListService.convertToTickerDTO);
+    return this.sseService.getOrderbookUpdatesStream(coins, this.coinListService.coinAddNameAndUrl);
   }
   // 상세페이지용
   // @Sse('price-updates-detail')

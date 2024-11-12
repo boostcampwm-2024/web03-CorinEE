@@ -14,7 +14,7 @@ export class CoinTickerService implements OnModuleInit {
 	private websocket: WebSocket;
 	private sending: Boolean = false;
 	private timeoutId: NodeJS.Timeout | null = null;
-
+	private coinLatestInfo = new Map();
 	constructor(
 		private readonly coinListService: CoinListService,
 		private readonly sseService: SseService,
@@ -38,6 +38,7 @@ export class CoinTickerService implements OnModuleInit {
 			try{
 				const message = JSON.parse(data.toString());
 				this.sseService.coinTickerData(message);
+				this.sseService.setCoinLastestInfo(message);
 			}catch(error){
 				console.error('CoinTickerWebSocket 오류:', error);
 			}
