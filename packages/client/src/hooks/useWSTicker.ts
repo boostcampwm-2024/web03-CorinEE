@@ -1,11 +1,11 @@
-import { SocketDataType } from '@/types/ticker';
+import { SSEDataType } from '@/types/ticker';
 import { useEffect, useRef, useState } from 'react';
 
 export function useWSTicker(targetMarketCodes: { market: string }[]) {
 	const SOCKET_URL = 'wss://api.upbit.com/websocket/v1';
 	const socket = useRef<WebSocket | null>(null);
 	const [isConnected, setIsConnected] = useState<boolean>(false);
-	const [socketData, setSocketData] = useState<SocketDataType | null>();
+	const [socketData, setSocketData] = useState<SSEDataType | null>();
 
 	useEffect(() => {
 		if (!socket.current) {
