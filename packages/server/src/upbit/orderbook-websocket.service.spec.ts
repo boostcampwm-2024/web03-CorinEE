@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UpbitService } from './upbit.service';
+import { OrderbookService } from './orderbook-websocket.service';
 
-describe('UpbitService', () => {
-  let service: UpbitService;
+describe('OrderbookService', () => {
+  let service: OrderbookService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UpbitService],
+      providers: [OrderbookService],
     }).compile();
 
-    service = module.get<UpbitService>(UpbitService);
+    service = module.get<OrderbookService>(OrderbookService);
   });
 
   it('should be defined', () => {
