@@ -16,6 +16,11 @@ function CoinList({ markets, activeCategory }: CoinListProps) {
 	const [currentScrollPage, setCurrentScrollPage] = useState(1);
 	const COINS_PER_PAGE = 10;
 	const maxScrollPage = Math.ceil(markets.length / COINS_PER_PAGE);
+	
+	const currentPageMarkets = markets.slice(
+		COINS_PER_PAGE * (currentScrollPage - 1),
+		COINS_PER_PAGE * currentScrollPage,
+	);
 
 	useEffect(() => {
 		setCurrentScrollPage(1);
@@ -38,19 +43,14 @@ function CoinList({ markets, activeCategory }: CoinListProps) {
 				<li className="flex-[6]">거래대금</li>
 			</ul>
 
-			{markets
-				.slice(
-					COINS_PER_PAGE * (currentScrollPage - 1),
-					COINS_PER_PAGE * currentScrollPage,
-				)
-				.map((market) => (
-					<Coin
-						key={market.market}
-						formatters={formatters}
-						market={market}
-						socketData={socketData}
-					/>
-				))}
+			{currentPageMarkets.map((market) => (
+				<Coin
+					key={market.market}
+					formatters={formatters}
+					market={market}
+					socketData={socketData}
+				/>
+			))}
 
 			<ol className="flex py-4 gap-4 justify-center">
 				{Array.from({ length: maxScrollPage }).map((_, index) => (
