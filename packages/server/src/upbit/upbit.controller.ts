@@ -15,10 +15,8 @@ export class UpbitController {
 
   @Sse('price-updates')
   priceUpdates(@Query('coins') coins:string[]): Observable<MessageEvent> {
-    this.upbitService.connectWebSocket();
-    this.upbitService.sendWebSocket(this.coinListService.convertToTickerDTO, coins)
-    
-    return this.sseService.getPriceUpdatesStream();
+    this.upbitService.sendWebSocket();
+    return this.sseService.getPriceUpdatesStream(coins,this.coinListService.convertToTickerDTO);
   }
   
   // 상세페이지용
