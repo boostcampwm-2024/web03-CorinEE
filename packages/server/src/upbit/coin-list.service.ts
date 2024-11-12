@@ -35,6 +35,7 @@ export class CoinListService{
 
 		return message;
 	}
+<<<<<<< HEAD
 	convertToTickerDTO = (message: string) => {
 		const data = JSON.parse(message);
 <<<<<<< HEAD
@@ -55,14 +56,18 @@ export class CoinListService{
 =======
 >>>>>>> 6f58c58 (chore: 배포용 commit)
 =======
+=======
+	convertToTickerDTO = (message) => {
+		const data = message;
+>>>>>>> ec14ae2 (fix: 배포용 hotfix)
 		return {
-		name: this.coinNameList.get(data.code),
-		code: data.code,
-		coin_img_url: this.getCoinImageURL(data.code),
-		signed_change_price: data.signed_change_price,
-		opening_price: data.opening_price,
-		signed_change_rate: data.signed_change_rate,
-		trade_price: data.trade_price,
+			name: this.coinNameList.get(data.code),
+			code: data.code,
+			coin_img_url: this.getCoinImageURL(data.code),
+			signed_change_price: data.signed_change_price,
+			opening_price: data.opening_price,
+			signed_change_rate: data.signed_change_rate,
+			trade_price: data.trade_price,
 		}
 >>>>>>> e8c220f (refactor: sse 구조 리팩토링)
 	}

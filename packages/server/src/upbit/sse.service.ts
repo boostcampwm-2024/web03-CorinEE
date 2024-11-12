@@ -16,9 +16,10 @@ export class SseService implements OnModuleDestroy{
 			takeUntil(this.destroy$),
 			filter((data)=>coins.includes(data.code)),
 			map((data) => {
-				const setDto = dto(data);
+				//const setDto = dto(data);
 				return new MessageEvent('price-update', {
-					data: JSON.stringify(setDto),
+					//data: JSON.stringify(setDto),
+					data: JSON.stringify(data),
 				}) as MessageEvent;
 			}),
 		);
