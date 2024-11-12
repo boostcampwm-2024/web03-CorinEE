@@ -23,19 +23,20 @@ export class SseService implements OnModuleDestroy{
 	}
 	initPriceStream(coins, dto: Function) {
 		const events: MessageEvent[] = []; 
+		if (coins && typeof coins === 'string') {
+			coins = [coins];
+		}
 		coins.forEach(async (coin) => {
 			while (this.coinLatestInfo.get(coin) === undefined) {
 				await new Promise(resolve => setTimeout(resolve, 100));
 			}
 			const initData = this.coinLatestInfo.get(coin); 
-			if (initData) {
-				const setDto = dto(initData);
-				const msgEvent = new MessageEvent('price-update', {
+			const setDto = dto(initData);
+			const msgEvent = new MessageEvent('price-update', {
 				data: JSON.stringify(setDto),
-				}) as MessageEvent;
+			}) as MessageEvent;
 				
-				events.push(msgEvent); 
-		  }
+			events.push(msgEvent); 
 		});
 	  
 		return events;

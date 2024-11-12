@@ -4,6 +4,7 @@ services:
       context: .
       dockerfile: dockerfile-server
     image: seunggwan/corinee-server
+    restart: always
     env_file:
       - .env
     ports:
