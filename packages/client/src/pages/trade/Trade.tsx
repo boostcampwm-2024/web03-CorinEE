@@ -7,7 +7,7 @@ import { useWSTicker } from '@/hooks/useWSTicker';
 
 function Trade() {
 	const { market } = useParams();
-	const { socketData } = useWSTicker([{ market: market }]);
+	const { socketData } = useWSTicker([{ market: market! }]);
 	if (!market) return;
 	if (!socketData) return;
 	const currentPrice = socketData[market]?.trade_price;
