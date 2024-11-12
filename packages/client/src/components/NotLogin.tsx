@@ -20,7 +20,7 @@ function NotLogin({ size }: NotLoginProps) {
 	const sizeTable: SizeTable = {
 		sm: {
 			animationCss: 'w-40 h-40 md:w-52 md:h-52',
-			mainText: 'font-semibold text-lg text-gray-800 leading-relaxed',
+			mainText: 'font-semibold text-sm text-gray-800 leading-relaxed',
 			subText: 'text-xs text-gray-500',
 		},
 		md: {

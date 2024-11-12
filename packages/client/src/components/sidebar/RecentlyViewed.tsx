@@ -1,5 +1,7 @@
+import NotLogin from "@/components/NotLogin";
+
 function RecentlyViewed() {
-	return <div>RecentlyViewed</div>;
+	return <div><NotLogin size="sm"/></div>;
 }
 
 export default RecentlyViewed;
