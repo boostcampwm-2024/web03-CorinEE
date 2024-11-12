@@ -1,5 +1,7 @@
+import NotLogin from "@/components/NotLogin";
+
 function MyInvestment() {
-	return <div>MyInvestment</div>;
+	return <div><NotLogin size="sm"/></div>;
 }
 
 export default MyInvestment;
