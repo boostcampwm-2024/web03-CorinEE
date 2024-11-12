@@ -50,7 +50,7 @@ export class CoinListService implements OnModuleInit {
 		return this.coinCodeList;
 	}
 	getAllCoinList(){
-		return this.coinRawList.map((coin) => this.coinAddNameAndUrl(coin));
+		return this.coinRawList;
 	}
 	getKRWCoinList(){
 		return this.coinRawList.filter((coin) => coin.market.startsWith("KRW"))
