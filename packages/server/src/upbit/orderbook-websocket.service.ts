@@ -33,7 +33,7 @@ export class OrderbookService implements OnModuleInit{
 		this.websocket.on('message', (data) => {
 			try {
 				const message = JSON.parse(data.toString());
-				this.sseService.orderbookData(message);
+				this.sseService.orderbookSendEvent(message);
 			} catch (error) {
 				console.error('OrderbookWebSocket 메시지 처리 중 오류 발생:', error);
 			}

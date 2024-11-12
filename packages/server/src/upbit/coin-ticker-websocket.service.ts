@@ -7,7 +7,6 @@ import {
 	UPBIT_WEBSOCKET_CONNECTION_TIME,
 	UPBIT_WEBSOCKET_URL,
 } from 'common/upbit';
-import { CoinTickerDto } from './dtos/coin-ticker.dto';
 
 @Injectable()
 export class CoinTickerService implements OnModuleInit {
@@ -37,7 +36,7 @@ export class CoinTickerService implements OnModuleInit {
 		this.websocket.on('message', (data) => {
 			try{
 				const message = JSON.parse(data.toString());
-				this.sseService.coinTickerData(message);
+				this.sseService.coinTickerSendEvent(message);
 				this.sseService.setCoinLastestInfo(message);
 			}catch(error){
 				console.error('CoinTickerWebSocket 오류:', error);

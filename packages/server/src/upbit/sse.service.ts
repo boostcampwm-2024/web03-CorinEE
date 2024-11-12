@@ -1,21 +1,20 @@
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { Subject, Observable } from 'rxjs';
 import { map, takeUntil, filter } from 'rxjs/operators';
-import { CoinTickerService } from './coin-ticker-websocket.service';
 
 @Injectable()
 export class SseService implements OnModuleDestroy{
 	private coinTickerStream$ = new Subject<any>();
 	private orderbookStream$ = new Subject<any>();
-	private coinTickerdestroy$ = new Subject<void>();
-	private orderbookdestroy$ = new Subject<void>();
+	private coinTickerDestroy$ = new Subject<void>();
+	private orderBookDestroy$ = new Subject<void>();
 	private coinLatestInfo = new Map();
 	constructor(
 	){}
-	coinTickerData(data: any) {
+	coinTickerSendEvent(data: any) {
 		this.coinTickerStream$.next(data);
 	}
-	orderbookData(data:any){
+	orderbookSendEvent(data:any){
 		this.orderbookStream$.next(data);
 	}
 	setCoinLastestInfo(coin){
@@ -43,7 +42,7 @@ export class SseService implements OnModuleDestroy{
 	  }
 	getPriceUpdatesStream(coins, dto:Function): Observable<MessageEvent> {
 		return this.coinTickerStream$.asObservable().pipe(
-			takeUntil(this.coinTickerdestroy$),
+			takeUntil(this.coinTickerDestroy$),
 			filter((data)=>coins.includes(data.code)),
 			map((data) => {
 				const setDto = dto(data);
@@ -56,7 +55,7 @@ export class SseService implements OnModuleDestroy{
 	
 	getOrderbookUpdatesStream(coins, dto:Function): Observable<MessageEvent> {
 		return this.orderbookStream$.asObservable().pipe(
-			takeUntil(this.orderbookdestroy$),
+			takeUntil(this.orderBookDestroy$),
 			filter((data)=> coins.includes(data.code)),
 			map((data) => {
 				const setDto = dto(data);
@@ -67,7 +66,7 @@ export class SseService implements OnModuleDestroy{
 		);
 	}
 	onModuleDestroy() {
-		this.coinTickerdestroy$.next();
-		this.orderbookdestroy$.next();
+		this.coinTickerDestroy$.next();
+		this.orderBookDestroy$.next();
 	}
 }

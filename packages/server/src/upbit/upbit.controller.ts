@@ -14,12 +14,12 @@ export class UpbitController {
   ) {}
 
   @Sse('price-updates')
-  priceUpdates(@Query('coins') coins:string[]): Observable<MessageEvent> {
+  priceUpdates(@Query('coins') coins: string[]): Observable<MessageEvent> {
     const initData = this.sseService.initPriceStream(coins, this.coinListService.coinAddNameAndUrl);
-    return concat(initData,this.sseService.getPriceUpdatesStream(coins,this.coinListService.coinAddNameAndUrl));
+    return concat(initData, this.sseService.getPriceUpdatesStream(coins, this.coinListService.coinAddNameAndUrl));
   }
   @Sse('orderbook')
-  orderbookUpdates(@Query('coins') coins:string[]): Observable<MessageEvent> {
+  orderbookUpdates(@Query('coins') coins: string[]): Observable<MessageEvent> {
     return this.sseService.getOrderbookUpdatesStream(coins, this.coinListService.coinAddNameAndUrl);
   }
   // 상세페이지용
