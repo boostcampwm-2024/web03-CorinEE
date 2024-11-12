@@ -1,5 +1,5 @@
 import { MarketData } from '@/types/market';
-import { Change, SocketDataType } from '@/types/ticker';
+import { Change, SSEDataType } from '@/types/ticker';
 import { Formatters } from '@/utility/formatData';
 import Heart from '@asset/heart.svg?react';
 import { Link } from 'react-router-dom';
@@ -8,25 +8,25 @@ import colorClasses from '@/constants/priceColor';
 type CoinProps = {
 	formatters: Formatters;
 	market: MarketData;
-	socketData: SocketDataType;
+	sseData: SSEDataType;
 };
 
-function Coin({ formatters, market, socketData }: CoinProps) {
-	const change: Change = socketData[market.market]?.change;
+function Coin({ formatters, market, sseData }: CoinProps) {
+	const change: Change = sseData[market.market]?.change;
 
 	const trade_price = formatters.formatTradePrice(
-		socketData[market.market]?.trade_price,
+		sseData[market.market]?.trade_price,
 	);
 	const change_rate = formatters.formatChangeRate(
-		socketData[market.market]?.signed_change_rate,
+		sseData[market.market]?.signed_change_rate,
 		change,
 	);
 	const change_price = formatters.formatSignedChangePrice(
-		socketData[market.market]?.signed_change_price,
+		sseData[market.market]?.signed_change_price,
 		change,
 	);
 	const acc_trade_price_24h = formatters.formatAccTradePrice(
-		socketData[market.market]?.acc_trade_price_24h,
+		sseData[market.market]?.acc_trade_price_24h,
 	);
 
 	return (
