@@ -6,7 +6,7 @@ import { UPBIT_WEBSOCKET_CONNECTION_TIME, UPBIT_WEBSOCKET_URL } from 'common/upb
 import { CoinTickerDto } from './dtos/coin-ticker.dto';
 
 @Injectable()
-export class UpbitService implements OnModuleInit{
+export class CoinTickerService implements OnModuleInit{
 	private websocket: WebSocket;
 
 	constructor(
