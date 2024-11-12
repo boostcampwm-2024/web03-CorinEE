@@ -28,16 +28,16 @@ export class CoinListService{
 
 		return message;
 	}
-	convertToTickerDTO = (message: string) => {
-		const data = JSON.parse(message);
+	convertToTickerDTO = (message) => {
+		const data = message;
 		return {
-		name: this.coinNameList.get(data.code),
-		code: data.code,
-		coin_img_url: this.getCoinImageURL(data.code),
-		signed_change_price: data.signed_change_price,
-		opening_price: data.opening_price,
-		signed_change_rate: data.signed_change_rate,
-		trade_price: data.trade_price,
+			name: this.coinNameList.get(data.code),
+			code: data.code,
+			coin_img_url: this.getCoinImageURL(data.code),
+			signed_change_price: data.signed_change_price,
+			opening_price: data.opening_price,
+			signed_change_rate: data.signed_change_rate,
+			trade_price: data.trade_price,
 		}
 	}
 	private getCoinImageURL(code: string) {
