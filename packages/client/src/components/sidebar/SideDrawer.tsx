@@ -1,4 +1,24 @@
-function SideDrawer({ isOpen }: { isOpen: boolean }) {
+import Interest from '@/components/sidebar/Interest';
+import MyInvestment from '@/components/sidebar/MyInvestment';
+import Realtime from '@/components/sidebar/Realtime';
+import RecentlyViewed from '@/components/sidebar/RecentlyViewed';
+import { SideBarMenu } from '@/types/menu';
+
+type SideDrawerProps = {
+	isOpen: boolean;
+	activeMenu: SideBarMenu;
+};
+
+function SideDrawer({ isOpen, activeMenu }: SideDrawerProps) {
+	if (!activeMenu) return;
+
+	const activeMenuComponent = {
+		MY_INVESTMENT: <MyInvestment />,
+		INTEREST: <Interest />,
+		RECENTLY_VIEWED: <RecentlyViewed />,
+		REALTIME: <Realtime />,
+	};
+	
 	return (
 		<div className="overflow-hidden ">
 			<div
@@ -9,7 +29,9 @@ function SideDrawer({ isOpen }: { isOpen: boolean }) {
 			border-l border-gray-400 border-solid
             ${isOpen ? 'translate-x-0 w-64' : 'translate-x-full w-0'}
           `}
-			></div>
+			>
+				{activeMenuComponent[activeMenu]}
+			</div>
 		</div>
 	);
 }
