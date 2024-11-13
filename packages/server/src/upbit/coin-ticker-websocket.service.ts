@@ -19,11 +19,12 @@ export class CoinTickerService implements OnModuleInit {
 	) {}
 
 	onModuleInit() {
-		this.websocket = new WebSocket(UPBIT_WEBSOCKET_URL);
 		this.connectWebSocket();
 	}
 
 	connectWebSocket() {
+		this.websocket = new WebSocket(UPBIT_WEBSOCKET_URL);
+		
 		this.websocket.on('open', () => {
 			try {
 				console.log('CoinTickerWebSocket 연결이 열렸습니다.');
@@ -35,6 +36,7 @@ export class CoinTickerService implements OnModuleInit {
 		this.websocket.on('message', (data) => {
 			try{
 				const message = JSON.parse(data.toString());
+				if(message.error) throw new Error(JSON.stringify(message))
 				this.sseService.coinTickerSendEvent(message);
 				this.sseService.setCoinLastestInfo(message);
 			}catch(error){
@@ -61,6 +63,9 @@ export class CoinTickerService implements OnModuleInit {
 		if (this.sending) return;
 		this.sending = true;
 		try{
+			if (this.websocket.readyState !== WebSocket.OPEN){
+				await new Promise((resolve) => setTimeout(resolve, 100));
+			}
 			const coin_list = this.coinListService.getCoinNameList();
 			const subscribeMessage = JSON.stringify([
 				{ ticket: 'test' },

@@ -6,7 +6,7 @@ on:
       - main
       - dev
       - dev-be
-      - feature-be-#52
+      - feature-be-#57
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
