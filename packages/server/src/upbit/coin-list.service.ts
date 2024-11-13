@@ -80,7 +80,10 @@ export class CoinListService implements OnModuleInit {
   marketCoinDto = (coin) => {
     coin.korean_name = this.coinDataUpdaterService.getCoinNameList().get(coin.market);
     coin.image_url = this.getCoinImageURL(coin.market);
-    return coin;
+	coin.type = "ticker";
+	coin.code = coin.market;
+	
+	return coin
   }
 	
 	orderbookDto = (message) => {

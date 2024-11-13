@@ -12,16 +12,10 @@ export class UpbitController {
 
 	@Sse('price-updates')
 	priceUpdates(@Query('coins') coins: string[]): Observable<MessageEvent> {
-		const initData = this.sseService.initPriceStream(
-			coins,
-			this.coinListService.marketCoinDto
-		);
+		const initData = this.sseService.initPriceStream(coins,this.coinListService.marketCoinDto);
 		return concat(
 			initData,
-			this.sseService.getPriceUpdatesStream(
-				coins,
-				this.coinListService.codeCoinDto
-			),
+			this.sseService.getPriceUpdatesStream(coins,this.coinListService.codeCoinDto),
 		);
 	}
 	@Sse('orderbook')
