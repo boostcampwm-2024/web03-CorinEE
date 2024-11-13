@@ -1,6 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
+<<<<<<< HEAD
 import { UPBIT_IMAGE_URL, UPBIT_RESTAPI_URL } from 'common/upbit';
 <<<<<<< HEAD
 import { CoinTickerDto } from './dtos/coin-ticker.dto';
@@ -12,6 +13,9 @@ import { plainToInstance } from 'class-transformer';
 =======
 >>>>>>> 6f58c58 (chore: 배포용 commit)
 =======
+=======
+import { UPBIT_CURRENT_PRICE_URL, UPBIT_IMAGE_URL, UPBIT_RESTAPI_URL } from 'common/upbit';
+>>>>>>> e7b2eae (feat: 실시간 거래량 top20 코인 종목 api)
 import { UPBIT_UPDATED_COIN_INFO_TIME } from 'common/upbit';
 >>>>>>> 5dfd209 (feat: 코인 종목 api, 호가창 websocket 연결)
 
@@ -21,14 +25,17 @@ export class CoinListService implements OnModuleInit {
 	private coinCodeList: string[] = ["KRW-BTC"];
 	private coinNameList: Map<string, string>;
 	private timeoutId: NodeJS.Timeout | null = null;
-	
+	private coinLatestInfo = new Map();
+	private krwCoinInfo;
+
 	onModuleInit() {
-		this.getCoinListFromUpbit();
+		this.updateCoinList();
+		this.updateCoinCurrentPrice();
 	}
 	
 	constructor(private readonly httpService: HttpService) {}
 
-	async getCoinListFromUpbit() {
+	async updateCoinList() {
 		try{
 			const response = await firstValueFrom(
 				this.httpService.get(UPBIT_RESTAPI_URL),
@@ -41,10 +48,41 @@ export class CoinListService implements OnModuleInit {
 		}catch(error){
 			console.error('getCoinListFromUpbit error:', error);
 		}finally{
+			console.log(`코인 목록 최신화: ${Date()}`);
+			if (this.timeoutId) clearTimeout(this.timeoutId);
+			this.timeoutId = setTimeout(()=>this.updateCoinList(),UPBIT_UPDATED_COIN_INFO_TIME)
+		}
+	}
+	
+	async updateCoinCurrentPrice(){
+		try{
+			while(this.coinCodeList.length === 1) await new Promise(resolve => setTimeout(resolve, 100));
+			const response = await firstValueFrom(
+				this.httpService.get(`${UPBIT_CURRENT_PRICE_URL}markets=${this.coinCodeList.join(',')}`),
+			);
+			this.coinLatestInfo = response.data.map((coin) => [coin.market, coin])
+			this.krwCoinInfo = response.data.filter((coin) => coin.market.startsWith("KRW"))
+		}catch(error){
+			console.error('getCoinListFromUpbit error:', error);
+		}finally{
 			console.log(`코인 정보 최신화: ${Date()}`);
 			if (this.timeoutId) clearTimeout(this.timeoutId);
-			this.timeoutId = setTimeout(()=>this.getCoinListFromUpbit(),UPBIT_UPDATED_COIN_INFO_TIME)
+			this.timeoutId = setTimeout(()=>this.updateCoinCurrentPrice(),UPBIT_UPDATED_COIN_INFO_TIME)
 		}
+	}
+	async getMostTradeCoin(){
+		while(this.krwCoinInfo === undefined) await new Promise(resolve => setTimeout(resolve, 100));
+		return this.krwCoinInfo.sort((a, b) => b.acc_trade_price_24h - a.acc_trade_price_24h)
+					.slice(0, 20)
+					.map((coin)=>{
+						coin.code = coin.market
+						this.coinAddNameAndUrl(coin)
+						return{
+							code: coin.code,
+							image_url: coin.image_url,
+							korean_name: coin.korean_name,
+						};
+					})
 	}
 	getCoinNameList(){
 		return this.coinCodeList;
@@ -62,8 +100,8 @@ export class CoinListService implements OnModuleInit {
 		return this.coinRawList.filter((coin) => coin.market.startsWith("USDT"))
 	}
 	coinAddNameAndUrl = (message) => {
-		message.name = this.coinNameList.get(message.code);
-		message.coin_img_url = this.getCoinImageURL(message.code);
+		message.korean_name = this.coinNameList.get(message.code);
+		message.image_url = this.getCoinImageURL(message.code);
 
 		return message;
 	}
@@ -93,7 +131,7 @@ export class CoinListService implements OnModuleInit {
 		const data = message;
 >>>>>>> ec14ae2 (fix: 배포용 hotfix)
 		return {
-			name: this.coinNameList.get(data.code),
+			korean_name: this.coinNameList.get(data.code),
 			code: data.code,
 			coin_img_url: this.getCoinImageURL(data.code),
 			signed_change_price: data.signed_change_price,

@@ -1,5 +1,6 @@
 export const UPBIT_WEBSOCKET_URL = 'wss://api.upbit.com/websocket/v1';
 export const UPBIT_RESTAPI_URL = 'https://api.upbit.com/v1/market/all?is_details=true'
+export const UPBIT_CURRENT_PRICE_URL = 'https://api.upbit.com/v1/ticker?'
 export const UPBIT_IMAGE_URL = "https://static.upbit.com/logos/"
 
 export const UPBIT_WEBSOCKET_CONNECTION_TIME = 3000
