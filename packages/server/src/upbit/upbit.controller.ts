@@ -31,12 +31,7 @@ export class UpbitController {
 			this.coinListService.orderbookDto.bind(this.coinListService),
 		);
 	}
-	// 상세페이지용
-	// @Sse('price-updates-detail')
-	// priceUpdatesDetail(@Query('coins') coins:string[]): Observable<MessageEvent> {
-	//   this.upbitService.connectWebSocket(coins);
-	//   return this.sseService.getPriceUpdatesStream();
-	// }
+
 	@Get('market/all')
 	getAllMarkets() {
 		return this.coinListService.getAllCoinList();
