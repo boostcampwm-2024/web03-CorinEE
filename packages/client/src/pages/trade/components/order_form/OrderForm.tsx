@@ -41,8 +41,8 @@ function OrderForm({ currentPrice }: { currentPrice: number }) {
 	return (
 		<div className="bg-gray-50 flex-1 rounded-lg p-2 min-w-80">
 			<div className="text-sm font-semibold">주문하기</div>
-			<Tabs value={TABS[0].value}>
-				<TabsHeader className="w-full flex bg-gray-200 rounded-lg mt-3">
+			<Tabs value={TABS[0].value} classname="z-0">
+				<TabsHeader className="w-full flex bg-gray-200 rounded-lg mt-3 z-0">
 					{TABS.map((tab) => (
 						<Tab
 							key={tab.id}
@@ -60,6 +60,7 @@ function OrderForm({ currentPrice }: { currentPrice: number }) {
 						mount: { y: 0 },
 						unmount: { y: 250 },
 					}}
+					className="z-0"
 				>
 					{TABS.map((tab) => (
 						<TabPanel key={tab.id} value={tab.value}>
