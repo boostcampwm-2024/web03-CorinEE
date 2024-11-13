@@ -58,7 +58,7 @@ export class OrderbookService implements OnModuleInit{
 			const coin_list = this.coinListService.getCoinNameList();
 			const subscribeMessage = JSON.stringify([
 				{ ticket: 'test' },
-				{ type: 'ticker', codes: coin_list },
+				{ type: 'orderbook', codes: coin_list },
 			]);
 			this.websocket.send(subscribeMessage);
 		}catch(error){
