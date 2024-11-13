@@ -50,6 +50,7 @@ export class CoinDataUpdaterService {
 			this.coinCurrentPriceTimeoutId = setTimeout(()=>this.updateCoinCurrentPrice(),UPBIT_UPDATED_COIN_INFO_TIME)
 		}
 	}
+	
 	checkUpbitDoor(upbitRequest: Function){
 		
 	}
@@ -73,5 +74,4 @@ export class CoinDataUpdaterService {
   getCoinLatestInfo() {
     return this.coinLatestInfo;
   }
-
 }

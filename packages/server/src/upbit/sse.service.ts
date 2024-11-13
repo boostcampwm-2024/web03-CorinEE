@@ -1,6 +1,7 @@
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { Subject, Observable } from 'rxjs';
 import { map, takeUntil, filter } from 'rxjs/operators';
+import { CoinDataUpdaterService } from './coin-data-updater.service';
 
 @Injectable()
 export class SseService implements OnModuleDestroy {
@@ -8,18 +9,16 @@ export class SseService implements OnModuleDestroy {
 	private orderbookStream$ = new Subject<any>();
 	private coinTickerDestroy$ = new Subject<void>();
 	private orderBookDestroy$ = new Subject<void>();
-	private coinLatestInfo = new Map();
 
-	constructor() {}
+	constructor(
+		private readonly coinDataUpdaterService: CoinDataUpdaterService,
+	) {}
 
 	coinTickerSendEvent(data: any) {
 		this.coinTickerStream$.next(data);
 	}
 	orderbookSendEvent(data: any) {
 		this.orderbookStream$.next(data);
-	}
-	setCoinLastestInfo(coin) {
-		this.coinLatestInfo.set(coin.code, coin);
 	}
 
 	initPriceStream(coins, dto: Function) {
@@ -28,10 +27,13 @@ export class SseService implements OnModuleDestroy {
 			coins = [coins];
 		}
 		coins.forEach(async (coin) => {
-			while (this.coinLatestInfo.get(coin) === undefined) {
+			let coinLatestInfo = this.coinDataUpdaterService.getCoinLatestInfo()
+			while (coinLatestInfo.size === 0 || coinLatestInfo.get(coin) === undefined) {
 				await new Promise((resolve) => setTimeout(resolve, 100));
+				coinLatestInfo = this.coinDataUpdaterService.getCoinLatestInfo();
 			}
-			const initData = this.coinLatestInfo.get(coin);
+
+			const initData = coinLatestInfo.get(coin);
 			const setDto = dto(initData);
 			const msgEvent = new MessageEvent('price-update', {
 				data: JSON.stringify(setDto),
