@@ -1,6 +1,7 @@
 import colorClasses from '@/constants/priceColor';
 import { Change, SSEDataType } from '@/types/ticker';
 import { Formatters } from '@/utility/formatData';
+import { Link } from 'react-router-dom';
 
 type SidebarCoinProps = {
 	image_url: string;
@@ -31,19 +32,23 @@ function SidebarCoin({
 		change,
 	);
 	return (
-		<div className="flex items-center py-2 px-1 gap-2">
-			<span className="text-base font-medium text-blue-700">{listNumber}</span>
-			<img className="w-8 -h-8" src={image_url}></img>
-			<span className="text-sm flex-[1] text-gray-800 font-semibold">
-				{korean_name}
-			</span>
-			<div className="flex flex-col items-end">
-				<span className="text-base font-semibold">{`${trade_price}`}</span>
-				<span className={`text-xs font-medium ${colorClasses[change]}`}>
-					{change_price} {change_rate}
+		<Link to={`/trade/${market}`}> 
+			<div className="flex items-center py-2 px-1 gap-2 hover:bg-gray-200 border rounded-lg cursor-pointer">
+				<span className="text-base font-medium text-blue-700">
+					{listNumber}
 				</span>
+				<img className="w-8 -h-8" src={image_url}></img>
+				<span className="text-sm flex-[1] text-gray-800 font-semibold">
+					{korean_name}
+				</span>
+				<div className="flex flex-col items-end">
+					<span className="text-base font-semibold">{`${trade_price}`}</span>
+					<span className={`text-xs font-medium ${colorClasses[change]}`}>
+						{change_price} {change_rate}
+					</span>
+				</div>
 			</div>
-		</div>
+		</Link>
 	);
 }
 
