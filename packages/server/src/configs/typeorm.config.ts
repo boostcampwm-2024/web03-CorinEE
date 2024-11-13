@@ -17,6 +17,7 @@ export default async function getTypeOrmConfig(): Promise<TypeOrmModuleOptions> 
 		database: process.env.DB_DATABASE,
 		entities: [__dirname + '/../**/*.entity.{js,ts}'],
 		synchronize: Boolean(process.env.DB_SYNCHRONIZE), 
+		dropSchema: Boolean(process.env.DB_DROPSCHEMA),
 	};
 }
 
