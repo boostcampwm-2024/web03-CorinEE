@@ -1,5 +1,6 @@
 import { SSEDataType } from '@/types/ticker';
 import { useEffect, useRef, useState } from 'react';
+
 export function useSSETicker(targetMarketCodes: { market: string }[]) {
 	const BASE_URL = 'http://175.106.98.147:3000/upbit/price-updates';
 	const eventSource = useRef<EventSource | null>(null);

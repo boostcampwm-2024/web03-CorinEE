@@ -7,10 +7,9 @@ import { formatData } from '@/utility/formatData';
 function Realtime() {
 	const { data: top20List } = useMarketTop20();
 	const currentTime = useCurrentTime();
-	const { sseData } = useSSETicker(top20List);
-	if(!sseData || !top20List) return 
+	const { sseData } = useSSETicker(top20List || []);
+	if (!sseData || !top20List) return;
 	const formatters = formatData('KRW');
-
 
 	return (
 		<div className="flex flex-col h-full overflow-y-auto [&::-webkit-scrollbar]:hidden p-4">
@@ -25,7 +24,7 @@ function Realtime() {
 				<SidebarCoin
 					key={coin.market}
 					listNumber={index + 1}
-					formatters= {formatters}
+					formatters={formatters}
 					sseData={sseData}
 					{...coin}
 				/>
