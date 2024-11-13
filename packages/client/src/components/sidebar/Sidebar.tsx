@@ -47,7 +47,7 @@ function Sidebar() {
 	return (
 		<div className="flex bg-gray-100 h-screen sticky top-0">
 			<SideDrawer isOpen={isOpen} activeMenu={activeMenu} />
-			<div className="w-20 flex flex-col gap-3 items-center border-l border-gray-400 border-solid">
+			<div className="w-14 flex flex-col gap-3 items-center border-l border-gray-400 border-solid">
 				{SIDEBAR_BUTTONS.map((button) => (
 					<SideBarButton
 						key={button.id}
