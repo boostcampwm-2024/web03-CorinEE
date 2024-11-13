@@ -8,7 +8,7 @@ type CoinInfoProps = {
 	trade_price: string;
 	change_price: string;
 	change_rate: string;
-	coin_img_url: string;
+	image_url: string;
 };
 
 function CoinInfo({
@@ -18,11 +18,11 @@ function CoinInfo({
 	trade_price,
 	change_price,
 	change_rate,
-	coin_img_url,
+	image_url,
 }: CoinInfoProps) {
 	return (
 		<div className="flex gap-2">
-			<img className="w-10 h-10" src={coin_img_url} />
+			<img className="w-10 h-10" src={image_url} />
 			<div>
 				<div>
 					<span className="pr-1">{korean_name}</span>
