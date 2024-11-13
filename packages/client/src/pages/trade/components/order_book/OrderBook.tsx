@@ -9,6 +9,7 @@ type OrderBookProps = {
 };
 
 function OrderBook({ orderBook, currentPrice }: OrderBookProps) {
+	if (!orderBook) return; // 임시 방편 처리
 	const asks = formatAsks(orderBook);
 	const bids = formatBids(orderBook);
 
