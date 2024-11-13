@@ -1,16 +1,20 @@
 import { Asset } from 'src/asset/asset.entity';
 import { User } from 'src/auth/user.entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn,OneToOne, OneToMany } from 'typeorm';
 
 @Entity()
 export class Account {
   @PrimaryGeneratedColumn()
-  accountId: number;
+  accountId: string;
 
   @Column()
-  balance: number;
+  KRW: number;
 
-  @ManyToOne(() => User, user => user.account)
+  @Column()
+  USDT: number;
+
+  @OneToOne(() => User, user => user.account)
+  @JoinColumn()
   user: User;
 
   @OneToMany(() => Asset, asset => asset.account)

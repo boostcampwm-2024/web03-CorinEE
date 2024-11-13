@@ -1,5 +1,5 @@
 import { Account } from 'src/account/account.entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne } from 'typeorm';
 
 @Entity()
 export class Asset {
@@ -19,5 +19,6 @@ export class Asset {
   created: Date;
 
   @ManyToOne(() => Account, account => account.assets)
+  @JoinColumn()
   account: Account;
 }

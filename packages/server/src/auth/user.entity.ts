@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique, OneToOne } from "typeorm";
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique, OneToOne, JoinColumn } from "typeorm";
 import { Account } from "src/account/account.entity";
 import { Trade } from "src/trade/trade.entity";
 import { TradeHistory } from "src/trade-history/trade-history.entity";
@@ -12,6 +12,9 @@ export class User extends BaseEntity {
 
   @Column()
   username: string;
+
+  @Column({ nullable: true })
+  token: string;
 
   @OneToOne(() => Account, account => account.user)
   account: Account;
