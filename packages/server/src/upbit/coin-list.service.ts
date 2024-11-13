@@ -45,7 +45,7 @@ export class CoinListService implements OnModuleInit {
 			const response = await firstValueFrom(
 				this.httpService.get(`${UPBIT_CURRENT_PRICE_URL}markets=${this.coinCodeList.join(',')}`),
 			);
-			this.coinLatestInfo = response.data.map((coin) => [coin.market, coin])
+			this.coinLatestInfo = new Map(response.data.map((coin) => [coin.market, coin]));
 			this.krwCoinInfo = response.data.filter((coin) => coin.market.startsWith("KRW"))
 		}catch(error){
 			console.error('getCoinListFromUpbit error:', error);
@@ -55,6 +55,7 @@ export class CoinListService implements OnModuleInit {
 			this.timeoutId = setTimeout(()=>this.updateCoinCurrentPrice(),UPBIT_UPDATED_COIN_INFO_TIME)
 		}
 	}
+	
 	async getMostTradeCoin(){
 		while(this.krwCoinInfo === undefined) await new Promise(resolve => setTimeout(resolve, 100));
 		return this.krwCoinInfo.sort((a, b) => b.acc_trade_price_24h - a.acc_trade_price_24h)
@@ -88,6 +89,23 @@ export class CoinListService implements OnModuleInit {
 		message.korean_name = this.coinNameList.get(message.code);
 		message.image_url = this.getCoinImageURL(message.code);
 
+		return message;
+	}
+	orderbookDto = (message)=>{
+		const beforeTopPrice = this.coinLatestInfo.get(message.code).prev_closing_price
+		
+		message.korean_name = this.coinNameList.get(message.code);
+		message.image_url = this.getCoinImageURL(message.code);
+		
+		// 비율에 + 또는 - 기호 추가
+		message.orderbook_units.map((unit)=>{
+			const askRateChange = ((unit.ask_price - beforeTopPrice) / beforeTopPrice) * 100;
+			const bidRateChange = ((unit.bid_price - beforeTopPrice) / beforeTopPrice) * 100;
+
+			unit.ask_rate = (askRateChange >= 0 ? `+${askRateChange.toFixed(2)}` : `${askRateChange.toFixed(2)}`) + '%';
+			unit.bid_rate = (bidRateChange >= 0 ? `+${bidRateChange.toFixed(2)}` : `${bidRateChange.toFixed(2)}`) + '%';
+		})
+		
 		return message;
 	}
 	convertToTickerDTO = (message) => {

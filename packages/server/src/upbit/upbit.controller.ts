@@ -20,7 +20,7 @@ export class UpbitController {
   }
   @Sse('orderbook')
   orderbookUpdates(@Query('coins') coins: string[]): Observable<MessageEvent> {
-    return this.sseService.getOrderbookUpdatesStream(coins, this.coinListService.coinAddNameAndUrl);
+    return this.sseService.getOrderbookUpdatesStream(coins, this.coinListService.orderbookDto);
   }
   // 상세페이지용
   // @Sse('price-updates-detail')
