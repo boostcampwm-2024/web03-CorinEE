@@ -21,6 +21,7 @@ export class SseService implements OnModuleDestroy {
 	setCoinLastestInfo(coin) {
 		this.coinLatestInfo.set(coin.code, coin);
 	}
+
 	initPriceStream(coins, dto: Function) {
 		const events: MessageEvent[] = [];
 		if (coins && typeof coins === 'string') {
