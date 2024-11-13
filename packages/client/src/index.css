@@ -23,3 +23,13 @@
 			sans-serif;
 	}
 }
+
+::-webkit-scrollbar {
+	width: 5px;
+}
+
+/* 스크롤바 손잡이 꾸미기 */
+::-webkit-scrollbar-thumb {
+	background: #d4d3d3;
+	border-radius: 5px;
+}
