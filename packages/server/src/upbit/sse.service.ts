@@ -9,8 +9,10 @@ export class SseService implements OnModuleDestroy{
 	private coinTickerDestroy$ = new Subject<void>();
 	private orderBookDestroy$ = new Subject<void>();
 	private coinLatestInfo = new Map();
+
 	constructor(
 	){}
+	
 	coinTickerSendEvent(data: any) {
 		this.coinTickerStream$.next(data);
 	}
