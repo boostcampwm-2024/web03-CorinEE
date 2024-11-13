@@ -1,4 +1,4 @@
-import { instance } from '@/api/instance';
+import { instance,upbitInstance } from '@/api/instance';
 import { Candle, CandlePeriod } from '@/types/chart';
 import { MarketData, MarketTop20Data } from '@/types/market';
 
@@ -16,7 +16,7 @@ export async function getCandleByPeriod(
 	market: string,
 	params: CandlePeriod,
 ): Promise<Candle[]> {
-	const response = await instance.get(`/candles/${params}`, {
+	const response = await upbitInstance.get(`/candles/${params}`, {
 		params: {
 			market,
 			count: 200,
