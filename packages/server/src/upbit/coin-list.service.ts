@@ -46,7 +46,7 @@ export class CoinListService implements OnModuleInit {
         coin.code = coin.market;
         this.coinAddNameAndUrl(coin);
         return {
-          code: coin.code,
+          market: coin.code,
           image_url: coin.image_url,
           korean_name: coin.korean_name,
         };

@@ -13,7 +13,6 @@ export class CoinTickerService implements OnModuleInit {
 	private websocket: WebSocket;
 	private sending: Boolean = false;
 	private timeoutId: NodeJS.Timeout | null = null;
-	private coinLatestInfo = new Map();
 	constructor(
 		private readonly coinListService: CoinListService,
 		private readonly sseService: SseService,
