@@ -54,7 +54,7 @@ function Coin({ formatters, market, sseData }: CoinProps) {
 			<div className="flex-[6]">
 				<div className={colorClasses[change]}>
 					<span className="block">
-						{change_rate} ({change_price})
+					{change_price}({change_rate})
 					</span>
 				</div>
 			</div>

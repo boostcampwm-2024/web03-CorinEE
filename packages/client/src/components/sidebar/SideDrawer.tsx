@@ -26,7 +26,7 @@ function SideDrawer({ isOpen, activeMenu }: SideDrawerProps) {
             bg-gray-100
             transition-all duration-300 ease-in-out
 			border-l border-gray-400 border-solid
-            ${isOpen ? 'translate-x-0 w-64' : 'translate-x-full w-0'}
+            ${isOpen ? 'translate-x-0 w-80' : 'translate-x-full w-0'}
           `}
 			>
 				{activeMenu && activeMenuComponent[activeMenu]}
