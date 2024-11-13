@@ -14,13 +14,13 @@ export class UpbitController {
 	priceUpdates(@Query('coins') coins: string[]): Observable<MessageEvent> {
 		const initData = this.sseService.initPriceStream(
 			coins,
-			this.coinListService.coinAddNameAndUrl.bind(this.coinListService),
+			this.coinListService.marketCoinDto
 		);
 		return concat(
 			initData,
 			this.sseService.getPriceUpdatesStream(
 				coins,
-				this.coinListService.coinAddNameAndUrl.bind(this.coinListService),
+				this.coinListService.codeCoinDto
 			),
 		);
 	}
@@ -28,7 +28,7 @@ export class UpbitController {
 	orderbookUpdates(@Query('coins') coins: string[]): Observable<MessageEvent> {
 		return this.sseService.getOrderbookUpdatesStream(
 			coins,
-			this.coinListService.orderbookDto.bind(this.coinListService),
+			this.coinListService.orderbookDto
 		);
 	}
 
