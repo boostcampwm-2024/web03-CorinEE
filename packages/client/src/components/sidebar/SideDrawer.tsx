@@ -10,16 +10,15 @@ type SideDrawerProps = {
 };
 
 function SideDrawer({ isOpen, activeMenu }: SideDrawerProps) {
-
 	const activeMenuComponent = {
 		MY_INVESTMENT: <MyInvestment />,
 		INTEREST: <Interest />,
 		RECENTLY_VIEWED: <RecentlyViewed />,
 		REALTIME: <Realtime />,
 	};
-	
+
 	return (
-		<div className="overflow-hidden ">
+		<div className="overflow-hidden bg-gray-100">
 			<div
 				className={`
             h-full
