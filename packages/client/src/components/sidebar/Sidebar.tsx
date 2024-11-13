@@ -14,7 +14,7 @@ function Sidebar() {
 		id: string;
 		icons: JSX.Element;
 		text: string;
-		active: SideBarMenu
+		active: SideBarMenu;
 	};
 
 	const SIDEBAR_BUTTONS: SideBarButtons[] = [
@@ -28,24 +28,24 @@ function Sidebar() {
 			id: 'heart',
 			icons: <Heart />,
 			text: '관심',
-			active: 'INTEREST'
+			active: 'INTEREST',
 		},
 		{
 			id: 'calendar',
 			icons: <Calendar />,
 			text: '최근 본',
-			active: 'RECENTLY_VIEWED'
+			active: 'RECENTLY_VIEWED',
 		},
 		{
 			id: 'fire',
 			icons: <Fire />,
 			text: '실시간',
-			active: 'REALTIME'
+			active: 'REALTIME',
 		},
 	];
 
 	return (
-		<div className="flex bg-gray-100 h-screen sticky top-0">
+		<div className="absolute sm:flex xl:sticky xl:z-0 top-0 right-0 bg-gray-100 h-screen z-50">
 			<SideDrawer isOpen={isOpen} activeMenu={activeMenu} />
 			<div className="w-14 flex flex-col gap-3 items-center border-l border-gray-400 border-solid">
 				{SIDEBAR_BUTTONS.map((button) => (
