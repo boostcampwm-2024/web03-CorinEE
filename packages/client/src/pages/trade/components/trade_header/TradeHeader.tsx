@@ -27,8 +27,8 @@ function TradeHeader({ market, sseData }: TradeHeaderProps) {
 
 	const high_price = sseData[market].high_price.toLocaleString();
 	const low_price = sseData[market].low_price.toLocaleString();
-	const korean_name = sseData[market].name;
-	const coin_img_url = sseData[market].coin_img_url;
+	const korean_name = sseData[market].korean_name;
+	const image_url = sseData[market].image_url;
 
 	return (
 		<div className="w-full flex justify-between mb-3">
@@ -39,7 +39,7 @@ function TradeHeader({ market, sseData }: TradeHeaderProps) {
 				trade_price={trade_price}
 				change_price={change_price}
 				change_rate={change_rate}
-				coin_img_url={coin_img_url}
+				image_url={image_url}
 			/>
 			<CoinStats
 				acc_trade_price_24h={acc_trade_price_24h}

@@ -1,8 +1,8 @@
 export type Change = 'RISE' | 'FALL' | 'EVEN';
 
 type CoinTicker = {
-	name: string;
-	coin_img_url: string;
+	korean_name: string;
+	image_url: string;
 	type: string;
 	code: string;
 	opening_price: number;
