@@ -40,7 +40,7 @@ function SidebarCoin({
 			<div className="flex flex-col items-end">
 				<span className="text-base font-semibold">{`${trade_price}`}</span>
 				<span className={`text-xs font-medium ${colorClasses[change]}`}>
-					{change_price}({change_rate})
+					{change_price} {change_rate}
 				</span>
 			</div>
 		</div>

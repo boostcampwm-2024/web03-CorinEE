@@ -26,7 +26,7 @@ export const formatData = (category: MarketCategory) => {
 			};
 
 			formatters.formatChangeRate = (price: number, change: Change) =>
-				`${decideSign(change) + (Number(price) * 100).toFixed(2)}%`;
+				`(${decideSign(change) + (Number(price) * 100).toFixed(2)}%)`;
 
 			formatters.formatAccTradePrice = (price: number) =>
 				`${Math.floor(Number(price) / 1000000).toLocaleString()}백만`;
