@@ -12,7 +12,7 @@ function Chart({ market }: { market: string }) {
 	};
 
 	return (
-		<div className="bg-gray-50 rounded-lg flex-[2] overflow-hidden">
+		<div className="bg-gray-50 min-w-80 rounded-lg flex-[2] overflow-hidden">
 			<ChartSelector
 				activePeriods={activePeriod}
 				handleActivePeriod={handleActivePeriod}
