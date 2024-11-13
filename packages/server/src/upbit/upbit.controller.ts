@@ -44,4 +44,9 @@ export class UpbitController {
   getUSDTMarkets() {
     return this.coinListService.getUSDTCoinList();
   }
+
+  @Get('market/top20-trade/krw')
+  getTop20TradeKRW() {
+    return this.coinListService.getMostTradeCoin();
+  }
 }
