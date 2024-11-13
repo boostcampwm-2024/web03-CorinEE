@@ -13,9 +13,6 @@ export class User extends BaseEntity {
   @Column()
   username: string;
 
-  @Column({ nullable: true })
-  token: string;
-
   @OneToOne(() => Account, account => account.user)
   account: Account;
 
