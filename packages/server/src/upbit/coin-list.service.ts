@@ -44,7 +44,7 @@ export class CoinListService implements OnModuleInit {
       .slice(0, 20)
       .map((coin) => {
         coin.code = coin.market;
-        this.coinAddNameAndUrl(coin);
+        this.codeCoinDto(coin);
         return {
           market: coin.code,
           image_url: coin.image_url,
@@ -72,9 +72,14 @@ export class CoinListService implements OnModuleInit {
     return this.coinDataUpdaterService.getAllCoinList().filter((coin) => coin.market.startsWith("USDT"));
   }
 
-	coinAddNameAndUrl(coin) {
+	codeCoinDto = (coin) => {
     coin.korean_name = this.coinDataUpdaterService.getCoinNameList().get(coin.code);
     coin.image_url = this.getCoinImageURL(coin.code);
+    return coin;
+  }
+  marketCoinDto = (coin) => {
+    coin.korean_name = this.coinDataUpdaterService.getCoinNameList().get(coin.market);
+    coin.image_url = this.getCoinImageURL(coin.market);
     return coin;
   }
 	
