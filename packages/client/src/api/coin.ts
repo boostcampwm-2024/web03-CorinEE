@@ -1,5 +1,5 @@
 import { instance } from '@/api/instance';
-import { Candle } from '@/types/chart';
+import { Candle, CandlePeriod } from '@/types/chart';
 import { MarketData } from '@/types/market';
 
 export async function getMarketAll(): Promise<MarketData[]> {
@@ -9,7 +9,7 @@ export async function getMarketAll(): Promise<MarketData[]> {
 
 export async function getCandleByPeriod(
 	market: string,
-	params: 'days' | 'weeks' | 'months' | 'years',
+	params: CandlePeriod,
 ): Promise<Candle[]> {
 	const response = await instance.get(`/candles/${params}`, {
 		params: {
