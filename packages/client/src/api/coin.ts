@@ -1,9 +1,14 @@
 import { instance } from '@/api/instance';
 import { Candle, CandlePeriod } from '@/types/chart';
-import { MarketData } from '@/types/market';
+import { MarketData, MarketTop20Data } from '@/types/market';
 
 export async function getMarketAll(): Promise<MarketData[]> {
-	const response = await instance.get('/market/all?is_details=true');
+	const response = await instance.get('/upbit/market/all');
+	return response.data;
+}
+
+export async function getMarketTop20(): Promise<MarketTop20Data[]> {
+	const response = await instance.get('upbit/market/top20-trade/krw');
 	return response.data;
 }
 
