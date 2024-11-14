@@ -1,0 +1,45 @@
+services:
+  server:
+    build:
+      context: .
+      dockerfile: dockerfile-server
+    image: seunggwan/corinee-server
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+
+  client:
+    build:
+      context: .
+      dockerfile: dockerfile-client
+    image: seunggwan/corinee-client
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+    networks:
+      - app-network
+
+  # nginx:
+  #   image: nginx:latest
+  #   container_name: nginx
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf
+  #     - ./corinee/ssl/ca_bundle.crt:/etc/nginx/ssl/ca_bundle.crt
+  #     - ./corinee/ssl/certificate.crt:/etc/nginx/ssl/certificate.crt
+  #     - ./corinee/ssl/private.key:/etc/nginx/ssl/private.key
+  #   depends_on:
+  #     - client
+  #     - certbot
+  #   networks:
+  #     - app-network
+
+networks:
+  app-network:
