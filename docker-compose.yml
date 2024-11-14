@@ -19,12 +19,13 @@ services:
     image: seunggwan/corinee-client
     ports:
       - "80:80"
-    volumes:
-      - ./ssl/ca_bundle.crt:/etc/nginx/ssl/ca_bundle.crt
-      - ./ssl/certificate.crt:/etc/nginx/ssl/certificate.crt
-      - ./ssl/private.key:/etc/nginx/ssl/private.key
+      - "443:443"
     depends_on:
       - server
+    volumes:
+      - ./ssl/certificate.crt:/etc/nginx/ssl/certificate.crt
+      - ./ssl/ca_bundle.crt:/etc/nginx/ssl/ca_bundle.crt
+      - ./ssl/private.key:/etc/nginx/ssl/private.key
     networks:
       - app-network
 
