@@ -31,9 +31,9 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./corinee/ssl/ca_bundle.crt:/etc/nginx/ssl/ca_bundle.crt
-      - ./corinee/ssl/certificate.crt:/etc/nginx/ssl/certificate.crt
-      - ./corinee/ssl/private.key:/etc/nginx/ssl/private.key
+      - ./ssl/ca_bundle.crt:/etc/nginx/ssl/ca_bundle.crt
+      - ./ssl/certificate.crt:/etc/nginx/ssl/certificate.crt
+      - ./ssl/private.key:/etc/nginx/ssl/private.key
     depends_on:
       - client
     networks:
