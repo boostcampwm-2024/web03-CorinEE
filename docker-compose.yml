@@ -24,7 +24,6 @@ services:
       - server
     volumes:
       - ./ssl/certificate.crt:/etc/nginx/ssl/certificate.crt
-      - ./ssl/ca_bundle.crt:/etc/nginx/ssl/ca_bundle.crt
       - ./ssl/private.key:/etc/nginx/ssl/private.key
     networks:
       - app-network
