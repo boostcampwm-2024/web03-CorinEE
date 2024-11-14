@@ -19,6 +19,7 @@ services:
     image: seunggwan/corinee-client
     ports:
       - "80:80"
+      - "443:443"
     depends_on:
       - server
     networks:
