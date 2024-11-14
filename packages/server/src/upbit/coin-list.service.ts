@@ -40,7 +40,7 @@ export class CoinListService implements OnModuleInit {
 			await new Promise(resolve => setTimeout(resolve, 100));
 			krwCoinInfo = this.coinDataUpdaterService.getKrwCoinInfo();
 		}
-		return krwCoinInfo.filter((coin)=>coins.includes(coin))
+		return krwCoinInfo.filter((coin)=>coins.includes(coin.market))
 			.map((coin) => {
 				coin.code = coin.market;
 				this.codeCoinDto(coin);
