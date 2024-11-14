@@ -17,8 +17,11 @@ export class CoinListService implements OnModuleInit {
 	}
 
 	async getMostTradeCoin() {
-		const krwCoinInfo = this.coinDataUpdaterService.getKrwCoinInfo();
-		while (!krwCoinInfo) await new Promise(resolve => setTimeout(resolve, 100));
+		let krwCoinInfo = this.coinDataUpdaterService.getKrwCoinInfo();
+		while (!krwCoinInfo){
+			await new Promise(resolve => setTimeout(resolve, 100));
+			krwCoinInfo = this.coinDataUpdaterService.getKrwCoinInfo();
+		}
 		return krwCoinInfo.sort((a, b) => b.acc_trade_price_24h - a.acc_trade_price_24h)
 			.slice(0, 20)
 			.map((coin) => {
@@ -31,6 +34,23 @@ export class CoinListService implements OnModuleInit {
 				};
 			});
   	}
+	async getSimpleCoin(coins){
+		let krwCoinInfo = this.coinDataUpdaterService.getKrwCoinInfo();
+		while (!krwCoinInfo){
+			await new Promise(resolve => setTimeout(resolve, 100));
+			krwCoinInfo = this.coinDataUpdaterService.getKrwCoinInfo();
+		}
+		return krwCoinInfo.filter((coin)=>coins.includes(coin))
+			.map((coin) => {
+				coin.code = coin.market;
+				this.codeCoinDto(coin);
+				return {
+				market: coin.code,
+				image_url: coin.image_url,
+				korean_name: coin.korean_name,
+				};
+			});
+	}
 	getCoinNameList() {
     	return this.coinDataUpdaterService.getCoinCodeList();
   	}
