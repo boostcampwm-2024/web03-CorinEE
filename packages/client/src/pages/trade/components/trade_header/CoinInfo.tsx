@@ -33,7 +33,8 @@ function CoinInfo({
 				</span>
 				<span className="text-gray-700 text-sm"> 전일대비</span>
 				<span className={`text-sm ${colorClasses[change]} pl-2`}>
-					{change_price}({change_rate})
+					{change_price}
+					{change_rate}
 				</span>
 			</div>
 		</div>
