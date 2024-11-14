@@ -23,9 +23,8 @@ services:
     depends_on:
       - server
     volumes:
-      - ./ssl/certificate.crt:/etc/nginx/ssl/certificate.crt
-      - ./ssl/private.key:/etc/nginx/ssl/private.key
-      - ./ssl/ca_bundle.crt:/etc/nginx/ssl/ca_bundle.crt
+      - /etc/letsencrypt/live/corinee.site/fullchain.pem:/etc/nginx/ssl/certificate.crt
+      - /etc/letsencrypt/live/corinee.site/privkey.pem:/etc/nginx/ssl/private.key
     networks:
       - app-network
 
