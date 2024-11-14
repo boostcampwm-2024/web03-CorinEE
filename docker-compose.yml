@@ -25,10 +25,10 @@ services:
     volumes:
       - ./ssl/certificate.crt:/etc/nginx/ssl/certificate.crt
       - ./ssl/private.key:/etc/nginx/ssl/private.key
+      - ./ssl/ca_bundle.crt:/etc/nginx/ssl/ca_bundle.crt
     networks:
       - app-network
 
 networks:
   app-network:
-    name: corinee_app-network
     driver: bridge
