@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { SwaggerModule, DocumentBuilder, SwaggerCustomOptions } from '@nestjs/swagger';
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 
@@ -15,7 +15,21 @@ async function bootstrap() {
     	.setDescription('CorinEE API description')
     	.setVersion('1.0')
     	.addTag('corinee')
+		.addBearerAuth(
+			{
+			  type: 'http',
+			  scheme: 'bearer',
+			  name: 'Authorization',
+			  in: 'header',
+			},
+			'access-token',
+		)
     	.build();
+	const customOptions: SwaggerCustomOptions = {
+		swaggerOptions: {
+			persistAuthorization: true,
+		},
+	};
   	const documentFactory = () => SwaggerModule.createDocument(app, config);
   	SwaggerModule.setup('api', app, documentFactory);
 
