@@ -56,22 +56,22 @@ export class CoinDataUpdaterService {
 	}
 
 	getCoinCodeList() {
-    return this.coinCodeList;
-  }
+		return this.coinCodeList;
+	}
 
-  getCoinNameList() {
-    return this.coinNameList;
-  }
+	getCoinNameList() {
+		return this.coinNameList;
+	}
 
-  getAllCoinList() {
-    return this.coinRawList;
-  }
+	getAllCoinList() {
+		return this.coinRawList;
+	}
 
-  getKrwCoinInfo() {
-    return this.krwCoinInfo;
-  }
+	getKrwCoinInfo() {
+		return this.krwCoinInfo;
+	}
 
-  getCoinLatestInfo() {
-    return this.coinLatestInfo;
-  }
+	getCoinLatestInfo() {
+		return this.coinLatestInfo;
+	}
 }
