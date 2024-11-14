@@ -29,7 +29,7 @@ services:
     container_name: nginx
     ports:
       - "80:80"
-      - "443:80"
+      - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./corinee/ssl/ca_bundle.crt:/etc/nginx/ssl/ca_bundle.crt
