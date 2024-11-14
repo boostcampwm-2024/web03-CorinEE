@@ -30,4 +30,5 @@ services:
 
 networks:
   app-network:
+    name: corinee_app-network
     driver: bridge
