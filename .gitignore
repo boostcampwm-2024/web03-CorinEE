@@ -16,3 +16,4 @@
 .pnp.*
 .env.*
 .env
+ssl
