@@ -18,12 +18,13 @@ services:
       dockerfile: dockerfile-client
     image: seunggwan/corinee-client
     ports:
+      - "80:80"
       - "443:443"
     depends_on:
       - server
     volumes:
-      - /etc/letsencrypt/live/corinee.site/fullchain.pem:/etc/nginx/ssl/certificate.crt
-      - /etc/letsencrypt/live/corinee.site/privkey.pem:/etc/nginx/ssl/private.key
+      - /etc/letsencrypt/live/corinee.site/fullchain.pem:/etc/letsencrypt/live/corinee.site/fullchain.pem
+      - /etc/letsencrypt/live/corinee.site/privkey.pem:/etc/letsencrypt/live/corinee.site/privkey.pem
     networks:
       - app-network
 
