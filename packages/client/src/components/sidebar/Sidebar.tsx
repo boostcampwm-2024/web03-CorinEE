@@ -10,6 +10,8 @@ import { SideBarMenu } from '@/types/menu';
 function Sidebar() {
 	const { activeMenu, isOpen, handleMenu } = useSideDraw();
 
+	console.log(isOpen)
+
 	type SideBarButtons = {
 		id: string;
 		icons: JSX.Element;
