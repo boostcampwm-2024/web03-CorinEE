@@ -3,7 +3,7 @@ import CoinCategories from '@/pages/home/components/CoinCategories';
 import CoinList from '@/pages/home/components/CoinList';
 import { MarketData } from '@/types/market';
 import { MarketCategory } from '@/types/category';
-import { filterCoin } from '@/utility/marketDataUtil';
+import { filterCoin } from '@/utility/filter';
 import { isMarket } from '@/utility/typeGuard';
 import { useState } from 'react';
 

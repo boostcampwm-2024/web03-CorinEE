@@ -7,7 +7,7 @@ import {
 	setupCandlestickSeries,
 } from '@/pages/trade/components/chart/chartSetup';
 import { chartConfig } from '@/pages/trade/components/chart/config';
-import { formatCandleData } from '@/utility/formatCandleData';
+import { formatCandleData } from '@/utility/format/formatCandleData';
 
 function CandleChart({ data }: { data: Candle[] }) {
 	const chartRef = useRef<HTMLDivElement>(null);

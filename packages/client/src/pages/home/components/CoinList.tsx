@@ -3,7 +3,7 @@ import Coin from '@/pages/home/components/Coin';
 import ScrollPageButton from '@/pages/home/components/ScrollPageButton';
 import { MarketData } from '@/types/market';
 import { MarketCategory } from '@/types/category';
-import { formatData } from '@/utility/formatData';
+import { formatData } from '@/utility/format/formatSSEData';
 import { useEffect, useState } from 'react';
 
 type CoinListProps = {

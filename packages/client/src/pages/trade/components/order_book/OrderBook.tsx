@@ -1,7 +1,7 @@
 import AskList from '@/pages/trade/components/order_book/AskList';
 import BidList from '@/pages/trade/components/order_book/BidList';
 import { OrderBook as OrderBookType } from '@/types/orderbook';
-import { formatAsks, formatBids } from '@/utility/formatOrderBookData';
+import { formatAsks, formatBids } from '@/utility/format/formatOrderBookData';
 
 type OrderBookProps = {
 	orderBook: OrderBookType;
