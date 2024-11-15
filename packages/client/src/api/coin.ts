@@ -12,6 +12,11 @@ export async function getMarketTop20(): Promise<MarketTop20Data[]> {
 	return response.data;
 }
 
+export async function getRecentlyMarketList(queryString: string): Promise<MarketTop20Data[]> {
+	const response = await instance.get(`upbit/market/simplelist/krw?${queryString}`);
+	return response.data;
+}
+
 export async function getCandleByPeriod(
 	market: string,
 	params: CandlePeriod,
