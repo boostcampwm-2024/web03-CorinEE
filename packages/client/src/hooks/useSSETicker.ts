@@ -2,13 +2,13 @@ import { SSEDataType } from '@/types/ticker';
 import { useEffect, useRef, useState } from 'react';
 
 export function useSSETicker(targetMarketCodes: { market: string }[]) {
-	const BASE_URL = 'http://175.106.98.147:3000/upbit/price-updates';
+	const BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/upbit/price-updates`;
 	const eventSource = useRef<EventSource | null>(null);
 	const [isConnected, setIsConnected] = useState<boolean>(false);
 	const [sseData, setSSEData] = useState<SSEDataType | null>();
 
 	useEffect(() => {
-		if (!targetMarketCodes?.length) return; // early return 추가
+		if (!targetMarketCodes?.length) return;
 		const queryString = targetMarketCodes
 			.map((code) => `coins=${encodeURIComponent(code.market)}`)
 			.join('&');
