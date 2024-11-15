@@ -2,11 +2,11 @@ import Interest from '@/components/sidebar/Interest';
 import MyInvestment from '@/components/sidebar/MyInvestment';
 import Realtime from '@/components/sidebar/Realtime';
 import RecentlyViewed from '@/components/sidebar/RecentlyViewed';
-import { SideBarMenu } from '@/types/menu';
+import { SideBarCategory } from '@/types/category';
 
 type SideDrawerProps = {
 	isOpen: boolean;
-	activeMenu: SideBarMenu;
+	activeMenu: SideBarCategory;
 };
 
 function SideDrawer({ isOpen, activeMenu }: SideDrawerProps) {

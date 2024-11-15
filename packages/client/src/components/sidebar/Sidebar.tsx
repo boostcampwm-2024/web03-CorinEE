@@ -5,7 +5,7 @@ import Invest from '@asset/invest.svg?react';
 import Fire from '@asset/fire.svg?react';
 import SideBarButton from '@/components/sidebar/SidebarButton';
 import useSideDraw from '@/hooks/useSideDraw';
-import { SideBarMenu } from '@/types/menu';
+import { SideBarCategory } from '@/types/category';
 
 function Sidebar() {
 	const { activeMenu, isOpen, handleMenu } = useSideDraw();
@@ -14,7 +14,7 @@ function Sidebar() {
 		id: string;
 		icons: JSX.Element;
 		text: string;
-		active: SideBarMenu;
+		active: SideBarCategory;
 	};
 
 	const SIDEBAR_BUTTONS: SideBarButtons[] = [

@@ -1,11 +1,11 @@
-import { SideBarMenu } from '@/types/menu';
+import { SideBarCategory } from '@/types/category';
 import React from 'react';
 
 type SidBarButtonProps = {
 	icons: JSX.Element;
 	text: string;
-	active: SideBarMenu
-	handleMenu: (menu: SideBarMenu) => void;
+	active: SideBarCategory;
+	handleMenu: (menu: SideBarCategory) => void;
 };
 
 function SideBarButton({ icons, text, handleMenu, active }: SidBarButtonProps) {
