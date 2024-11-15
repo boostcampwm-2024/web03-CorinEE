@@ -22,13 +22,12 @@ services:
       - "443:443"
     depends_on:
       - server
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://client:80"]  # 클라이언트 서비스가 응답하는지 확인
-      interval: 30s
-      retries: 3
     volumes:
+      - /etc/letsencrypt/live/corinee.site:/etc/letsencrypt/live/corinee.site
       - /etc/letsencrypt/live/corinee.site/fullchain.pem:/etc/letsencrypt/live/corinee.site/fullchain.pem
       - /etc/letsencrypt/live/corinee.site/privkey.pem:/etc/letsencrypt/live/corinee.site/privkey.pem
+      - /etc/letsencrypt/archive:/etc/letsencrypt/archive
+      - /etc/letsencrypt/live:/etc/letsencrypt/live
     networks:
       - app-network
 
