@@ -41,7 +41,7 @@ function OrderForm({ currentPrice }: { currentPrice: number }) {
 	return (
 		<div className="bg-gray-50 flex-1 rounded-lg p-2 min-w-80">
 			<div className="text-sm font-semibold">주문하기</div>
-			<Tabs value={TABS[0].value} classname="z-0">
+			<Tabs value={TABS[0].value} className="z-0">
 				<TabsHeader className="w-full flex bg-gray-200 rounded-lg mt-3 z-0">
 					{TABS.map((tab) => (
 						<Tab
