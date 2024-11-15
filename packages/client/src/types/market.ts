@@ -10,10 +10,10 @@ type MarketEvent = {
 
 export type MarketData = {
 	market: string;
-	korean_name: string;
-	english_name: string;
+	korean_name?: string;
+	english_name?: string;
 	market_warning?: string;
-	market_event: { warning: boolean; caution: MarketEvent };
+	market_event?: { warning: boolean; caution: MarketEvent };
 };
 
 export type MarketTop20Data = {
