@@ -7,8 +7,10 @@ RUN yarn build
 
 FROM nginx:alpine
 COPY --from=build /app/dist /usr/share/nginx/html
-
 COPY nginx.conf /etc/nginx/nginx.conf
+
+# SSL 인증서 디렉토리 생성
+RUN mkdir -p /etc/letsencrypt/live/corinee.site
 
 EXPOSE 80 443
 CMD ["nginx", "-g", "daemon off;"]
