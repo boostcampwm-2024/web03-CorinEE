@@ -1,5 +1,5 @@
 import CoinCategory from '@/pages/home/components/CoinCategory';
-import { MarketCategory } from '@/types/menu';
+import { MarketCategory } from '@/types/category';
 
 type CoinCategoriesProps = {
 	activeCategory: MarketCategory;

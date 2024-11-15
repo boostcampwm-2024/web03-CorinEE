@@ -1,4 +1,4 @@
-import { MarketCategory } from '@/types/menu';
+import { MarketCategory } from '@/types/category';
 import { Change } from '@/types/ticker';
 
 export type Formatters = {

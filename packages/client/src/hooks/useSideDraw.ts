@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { SideBarMenu } from '@/types/menu';
+import { SideBarCategory } from '@/types/category';
 import { isSideBarMenu } from '@/utility/typeGuard';
 
 function useSideDrawer() {
-	const [activeMenu, setActiveMenu] = useState<SideBarMenu>(null);
+	const [activeMenu, setActiveMenu] = useState<SideBarCategory>(null);
 	const [isOpen, setIsOpen] = useState(false);
 
 	const STORAGE_KEY = 'side-menu';
@@ -13,7 +13,7 @@ function useSideDrawer() {
 			const stored = localStorage.getItem(STORAGE_KEY);
 			if (isSideBarMenu(stored)) return stored ? stored : null;
 		},
-		set: (menu: SideBarMenu) => {
+		set: (menu: SideBarCategory) => {
 			if (menu) {
 				localStorage.setItem(STORAGE_KEY, menu);
 			} else {
@@ -30,7 +30,7 @@ function useSideDrawer() {
 		}
 	}, []);
 
-	const handleMenu = (menu: SideBarMenu) => {
+	const handleMenu = (menu: SideBarCategory) => {
 		if (activeMenu === menu) {
 			setActiveMenu(null);
 			setIsOpen(false);

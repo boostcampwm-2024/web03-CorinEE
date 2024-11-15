@@ -2,7 +2,7 @@ import { useSSETicker } from '@/hooks/useSSETicker';
 import Coin from '@/pages/home/components/Coin';
 import ScrollPageButton from '@/pages/home/components/ScrollPageButton';
 import { MarketData } from '@/types/market';
-import { MarketCategory } from '@/types/menu';
+import { MarketCategory } from '@/types/category';
 import { formatData } from '@/utility/formatData';
 import { useEffect, useState } from 'react';
 
