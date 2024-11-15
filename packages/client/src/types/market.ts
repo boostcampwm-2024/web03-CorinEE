@@ -16,7 +16,7 @@ export type MarketData = {
 	market_event?: { warning: boolean; caution: MarketEvent };
 };
 
-export type MarketTop20Data = {
+export type SidebarMarketData = {
 	market: string;
 	korean_name: string;
 	image_url:string

@@ -1,4 +1,4 @@
-import { getCandleByPeriod } from '@/api/coin';
+import { getCandleByPeriod } from '@/api/market';
 import { CandlePeriod } from '@/types/chart';
 import { useSuspenseQuery } from '@tanstack/react-query';
 

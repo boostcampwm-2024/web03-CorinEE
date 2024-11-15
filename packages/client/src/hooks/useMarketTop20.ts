@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getMarketTop20 } from '@/api/coin';
+import { getMarketTop20 } from '@/api/market';
 
 export function useMarketTop20() {
 	const { isPending, error, data } = useQuery({

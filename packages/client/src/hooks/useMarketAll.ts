@@ -1,4 +1,4 @@
-import { getMarketAll } from '@/api/coin';
+import { getMarketAll } from '@/api/market';
 import { useQuery } from '@tanstack/react-query';
 
 export function useMarketAll() {
