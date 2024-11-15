@@ -2,8 +2,11 @@ import { MarketData } from '@/types/market';
 import { Change, SSEDataType } from '@/types/ticker';
 import { Formatters } from '@/utility/formatData';
 import Heart from '@asset/heart.svg?react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import colorClasses from '@/constants/priceColor';
+import { setRecentlyViewedMarketList } from '@/utility/recentlyMarket';
+import useRecentlyMarketStore from '@/store/recentlyViewed';
+import { QueryClient } from '@tanstack/react-query';
 
 type CoinProps = {
 	formatters: Formatters;
@@ -12,6 +15,15 @@ type CoinProps = {
 };
 
 function Coin({ formatters, market, sseData }: CoinProps) {
+	const navigate = useNavigate();
+	const queryClient = new QueryClient()
+	const { addRecentlyViewedMarket } = useRecentlyMarketStore();
+	const handleClick = () => {
+		addRecentlyViewedMarket(market.market);
+		navigate(`/trade/${market.market}`);
+		queryClient.invalidateQueries({ queryKey: ['recentlyMarketList'] })
+		
+	};
 	const change: Change = sseData[market.market]?.change;
 
 	const trade_price = formatters.formatTradePrice(
@@ -30,36 +42,34 @@ function Coin({ formatters, market, sseData }: CoinProps) {
 	);
 
 	return (
-		<Link
-			to={`/trade/${market.market}`}
-			className="flex items-center py-1 border-b border-solid border-gray-300 cursor-pointer hover:bg-gray-100"
-			key={market.market}
-		>
+		<div className="flex items-center py-1 border-b border-solid border-gray-300 cursor-pointer hover:bg-gray-100">
 			<div className="fill-blue-gray-100 flex-[1] flex w-5 h-5 hover:fill-red-400">
 				<Heart />
 			</div>
 
-			<div className="flex items-center gap-2 flex-[6]">
-				<img
-					className="w-7 h-7"
-					src={`https://static.upbit.com/logos/${market.market.split('-')[1]}.png`}
-				/>
-				<div className="flex flex-col">
-					<p>{market.korean_name}</p>
-					<p className="text-gray-700 text-xs">{market.market}</p>
+			<div className="flex flex-[24] items-center" onClick={handleClick}>
+				<div className="flex items-center gap-2 flex-[6]">
+					<img
+						className="w-7 h-7"
+						src={`https://static.upbit.com/logos/${market.market.split('-')[1]}.png`}
+					/>
+					<div className="flex flex-col">
+						<p>{market.korean_name}</p>
+						<p className="text-gray-700 text-xs">{market.market}</p>
+					</div>
 				</div>
-			</div>
 
-			<div className={`flex-[6] ${colorClasses[change]}`}>{trade_price}</div>
-			<div className="flex-[6]">
-				<div className={colorClasses[change]}>
-					<span className="block">
-					{change_price} {change_rate}
-					</span>
+				<div className={`flex-[6] ${colorClasses[change]}`}>{trade_price}</div>
+				<div className="flex-[6]">
+					<div className={colorClasses[change]}>
+						<span className="block">
+							{change_price} {change_rate}
+						</span>
+					</div>
 				</div>
+				<div className="flex-[6]">{acc_trade_price_24h}</div>
 			</div>
-			<div className="flex-[6]">{acc_trade_price_24h}</div>
-		</Link>
+		</div>
 	);
 }
 
