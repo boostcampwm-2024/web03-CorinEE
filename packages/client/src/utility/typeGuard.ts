@@ -1,7 +1,7 @@
 import { Market } from '@/types/market';
-import { MarketCategory, SideBarMenu } from '@/types/menu';
+import { MarketCategory, SideBarCategory } from '@/types/category';
 
-export function isSideBarMenu(value: string | null): value is SideBarMenu {
+export function isSideBarMenu(value: string | null): value is SideBarCategory {
 	return (
 		value === 'REALTIME' ||
 		value === 'INTEREST' ||

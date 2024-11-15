@@ -1,4 +1,4 @@
-import { MarketCategory } from '@/types/menu';
+import { MarketCategory } from '@/types/category';
 
 type CoinCategoryProps = {
 	id: MarketCategory;
