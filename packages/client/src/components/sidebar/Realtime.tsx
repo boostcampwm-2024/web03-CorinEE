@@ -2,7 +2,7 @@ import SidebarCoin from '@/components/sidebar/SidebarCoin';
 import { useCurrentTime } from '@/hooks/useCurrentTIme';
 import { useMarketTop20 } from '@/hooks/useMarketTop20';
 import { useSSETicker } from '@/hooks/useSSETicker';
-import { formatData } from '@/utility/formatData';
+import { formatData } from '@/utility/format/formatSSEData';
 
 function Realtime() {
 	const { data: top20List } = useMarketTop20();

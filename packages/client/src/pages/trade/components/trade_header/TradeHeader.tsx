@@ -1,4 +1,4 @@
-import { formatData } from '@/utility/formatData';
+import { formatData } from '@/utility/format/formatSSEData';
 import CoinInfo from '@/pages/trade/components/trade_header/CoinInfo';
 import CoinStats from '@/pages/trade/components/trade_header/CoinStats';
 import { SSEDataType } from '@/types/ticker';

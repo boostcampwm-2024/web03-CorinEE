@@ -1,10 +1,9 @@
 import { MarketData } from '@/types/market';
 import { Change, SSEDataType } from '@/types/ticker';
-import { Formatters } from '@/utility/formatData';
+import { Formatters } from '@/utility/format/formatSSEData';
 import Heart from '@asset/heart.svg?react';
 import { useNavigate } from 'react-router-dom';
 import colorClasses from '@/constants/priceColor';
-import { setRecentlyViewedMarketList } from '@/utility/recentlyMarket';
 import useRecentlyMarketStore from '@/store/recentlyViewed';
 import { QueryClient } from '@tanstack/react-query';
 
@@ -16,13 +15,12 @@ type CoinProps = {
 
 function Coin({ formatters, market, sseData }: CoinProps) {
 	const navigate = useNavigate();
-	const queryClient = new QueryClient()
+	const queryClient = new QueryClient();
 	const { addRecentlyViewedMarket } = useRecentlyMarketStore();
 	const handleClick = () => {
 		addRecentlyViewedMarket(market.market);
 		navigate(`/trade/${market.market}`);
-		queryClient.invalidateQueries({ queryKey: ['recentlyMarketList'] })
-		
+		queryClient.invalidateQueries({ queryKey: ['recentlyMarketList'] });
 	};
 	const change: Change = sseData[market.market]?.change;
 

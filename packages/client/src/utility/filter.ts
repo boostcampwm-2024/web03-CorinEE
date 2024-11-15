@@ -6,7 +6,3 @@ export function filterCoin(data: MarketData[], type: Market) {
 
 	return data.filter((data) => regex.test(data.market));
 }
-
-export function convertToQueryString(marketList:string[]){
-	return marketList.map(market=>`market=${market}`).join('&')
-}

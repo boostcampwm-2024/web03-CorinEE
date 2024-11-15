@@ -1,8 +1,8 @@
 import colorClasses from '@/constants/priceColor';
 import useRecentlyMarketStore from '@/store/recentlyViewed';
 import { Change, SSEDataType } from '@/types/ticker';
-import { Formatters } from '@/utility/formatData';
-import {useNavigate } from 'react-router-dom';
+import { Formatters } from '@/utility/format/formatSSEData';
+import { useNavigate } from 'react-router-dom';
 
 type SidebarCoinProps = {
 	image_url: string;
