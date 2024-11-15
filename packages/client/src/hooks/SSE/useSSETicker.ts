@@ -8,7 +8,7 @@ export function useSSETicker(targetMarketCodes: { market: string }[]) {
 	const [sseData, setSSEData] = useState<SSEDataType | null>();
 
 	useEffect(() => {
-		if (!targetMarketCodes?.length) return; // early return 추가
+		if (!targetMarketCodes?.length) return;
 		const queryString = targetMarketCodes
 			.map((code) => `coins=${encodeURIComponent(code.market)}`)
 			.join('&');
