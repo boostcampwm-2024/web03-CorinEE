@@ -1,6 +1,11 @@
 import { getCandleByPeriod } from '@/api/market';
+<<<<<<< HEAD
 import { Candle, CandlePeriod, InfiniteCandle } from '@/types/chart';
 import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
+=======
+import { CandlePeriod } from '@/types/chart';
+import { useSuspenseQuery } from '@tanstack/react-query';
+>>>>>>> 9ed63c1 (refactor: 타입명 명확히 수정)
 
 export function usePeriodChart(
 	market: string,
