@@ -36,6 +36,7 @@
     "config": "^3.3.12",
     "dotenv": "^16.4.5",
     "i": "^0.3.7",
+    "ioredis": "^5.4.1",
     "js-yaml": "^4.1.0",
     "mysql2": "^3.11.3",
     "reflect-metadata": "^0.2.0",
