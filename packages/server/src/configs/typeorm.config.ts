@@ -1,7 +1,4 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { setupSshTunnel } from './ssh-tunnel';
-
-const env = process.env.NODE_ENV || 'development';
 
 export default async function getTypeOrmConfig(): Promise<TypeOrmModuleOptions> {
 
