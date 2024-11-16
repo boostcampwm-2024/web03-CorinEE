@@ -3,8 +3,7 @@ import Redis from 'ioredis';
 import { getRedisConfig } from 'src/configs/redis.config';
 import { RedisRepository } from './redis.repository';
 import { RedisController } from './redis.controller';
-import { config } from 'dotenv';
-config()
+
 @Global()
 @Module({
   providers: [
