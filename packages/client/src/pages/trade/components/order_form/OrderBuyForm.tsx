@@ -2,10 +2,14 @@ import { useState } from 'react';
 import OrderInput from '@/pages/trade/components/order_form/common/OrderInput';
 import OrderSubmitButton from '@/pages/trade/components/order_form/common/OrderSubmitButton';
 import PercentageButtons from '@/pages/trade/components/order_form/common/PercentageButtons';
+import NotLogin from '@/components/NotLogin';
+import { useAuthStore } from '@/store/authStore';
 function OrderBuyForm({ currentPrice }: { currentPrice: number }) {
+	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 	const [price, setPrice] = useState(currentPrice);
 	const [quantity, setQuantity] = useState<number>(0);
 	const totalPrice = (price * quantity).toLocaleString();
+	if (!isAuthenticated) return <NotLogin size="md" />;
 	return (
 		<div className="text-black font-normal text-sm">
 			<form>

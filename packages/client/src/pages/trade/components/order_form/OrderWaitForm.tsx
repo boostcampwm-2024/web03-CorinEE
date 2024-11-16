@@ -1,9 +1,9 @@
-import { useState } from 'react';
 import NotLogin from '@/components/NotLogin';
+import { useAuthStore } from '@/store/authStore';
 
 function OrderWaitForm() {
-	const [isLogin] = useState(false);
-	if (!isLogin) return <NotLogin size="md" />;
+	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+	if (!isAuthenticated) return <NotLogin size="md" />;
 	return <div>order wait</div>;
 }
 
