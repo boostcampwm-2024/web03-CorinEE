@@ -1,7 +1,6 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
-export default async function getTypeOrmConfig(): Promise<TypeOrmModuleOptions> {
-
+export default function getTypeOrmConfig(): TypeOrmModuleOptions {
 	return {
 		type: process.env.DB_TYPE as 'mysql',
 		host: process.env.DB_HOST,
