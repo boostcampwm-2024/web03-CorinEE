@@ -1,5 +1,6 @@
 import Lottie from 'lottie-react';
 import BitcoinLottie from '@asset/lotties/BitcoinLottie.json';
+import { useAuth } from '@/hooks/useAuth';
 
 type Size = 'sm' | 'md' | 'lg';
 
@@ -13,6 +14,7 @@ type SizeTable = Record<
 		animationCss: string;
 		mainText: string;
 		subText: string;
+		highlightText: string;
 	}
 >;
 
@@ -22,18 +24,26 @@ function NotLogin({ size }: NotLoginProps) {
 			animationCss: 'w-40 h-40 md:w-52 md:h-52',
 			mainText: 'font-semibold text-base text-gray-800 leading-relaxed',
 			subText: 'text-sm text-gray-500',
+			highlightText:
+				'text-sm text-blue-500 font-medium cursor-pointer hover:underline',
 		},
 		md: {
 			animationCss: 'w-52 h-52 md:w-64 md:h-64',
 			mainText: 'font-semibold text-xl text-gray-800 leading-relaxed',
 			subText: 'text-sm text-gray-500',
+			highlightText:
+				'text-sm text-blue-500 font-medium cursor-pointer hover:underline',
 		},
 		lg: {
 			animationCss: 'w-64 h-64 md:w-72 md:h-72',
 			mainText: 'font-semibold text-2xl text-gray-800 leading-relaxed',
 			subText: 'text-base text-gray-500',
+			highlightText:
+				'text-base text-blue-500 font-medium cursor-pointer hover:underline',
 		},
 	};
+
+	const { mutate } = useAuth();
 
 	return (
 		<div className="w-full min-h-[50vh] flex flex-col justify-center items-center gap-6 p-6">
@@ -49,6 +59,9 @@ function NotLogin({ size }: NotLoginProps) {
 				</div>
 				<p className={sizeTable[size].subText}>
 					서비스 이용을 위해 로그인해 주세요
+				</p>
+				<p onClick={() => mutate()} className={sizeTable[size].highlightText}>
+					체험 계정으로 1초 만에 시작하기 →
 				</p>
 			</div>
 		</div>
