@@ -16,6 +16,7 @@
     "lightweight-charts": "^4.2.1",
     "lottie-react": "^2.4.0",
     "react": "^18.3.1",
+    "react-cookie": "^7.2.2",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.27.0",
     "zustand": "^5.0.1"
