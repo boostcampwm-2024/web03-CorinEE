@@ -8,6 +8,8 @@ import getTypeOrmConfig from './configs/typeorm.config';
 import { HealthModule } from './health/health.module';
 import { AccountModule } from './account/account.module';
 import { TradeModule } from './trade/trade.module';
+import { setupSshTunnel } from './configs/ssh-tunnel';
+import getRedisClient from './configs/redis.config';
 @Module({
   imports: [
     AuthModule,
@@ -16,7 +18,9 @@ import { TradeModule } from './trade/trade.module';
     TradeModule,
     TypeOrmModule.forRootAsync({
       useFactory: async () => {
-        return await getTypeOrmConfig(); // SSH 터널링이 완료된 후 TypeORM 설정 로드
+        await setupSshTunnel();
+        getRedisClient(); // Redis 연결 초기화
+        return await getTypeOrmConfig(); // TypeORM 설정 가져오기
       },
     }),
     UpbitModule,
