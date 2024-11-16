@@ -9,7 +9,8 @@ import { HealthModule } from './health/health.module';
 import { AccountModule } from './account/account.module';
 import { TradeModule } from './trade/trade.module';
 import { setupSshTunnel } from './configs/ssh-tunnel';
-import getRedisClient from './configs/redis.config';
+import { RedisModule } from './redis/redis.module';
+
 @Module({
   imports: [
     AuthModule,
@@ -19,11 +20,11 @@ import getRedisClient from './configs/redis.config';
     TypeOrmModule.forRootAsync({
       useFactory: async () => {
         await setupSshTunnel();
-        getRedisClient(); // Redis 연결 초기화
-        return await getTypeOrmConfig(); // TypeORM 설정 가져오기
+        return await getTypeOrmConfig();
       },
     }),
     UpbitModule,
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [AppService],
