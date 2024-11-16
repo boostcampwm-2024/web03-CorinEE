@@ -1,7 +1,13 @@
+import { useAuth } from '@/hooks/useAuth';
 import { Button, Navbar } from '@material-tailwind/react';
 import { Link } from 'react-router-dom';
+import { useAuthStore } from '@/store/authStore';
 
 function Header() {
+	const { mutate } = useAuth();
+	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+	const logout = useAuthStore((state) => state.logout);
+
 	return (
 		<Navbar
 			fullWidth={true}
@@ -21,7 +27,14 @@ function Header() {
 				</Link>
 			</div>
 			<div>
-				<Button>로그인</Button>
+				{isAuthenticated ? (
+					<Button onClick={logout}>로그아웃</Button>
+				) : (
+					<>
+						<Button onClick={() => mutate()}>체험하기</Button>
+						<Button className="mx-2">로그인</Button>
+					</>
+				)}
 			</div>
 		</Navbar>
 	);
