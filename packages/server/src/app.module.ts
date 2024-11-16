@@ -8,7 +8,6 @@ import getTypeOrmConfig from './configs/typeorm.config';
 import { HealthModule } from './health/health.module';
 import { AccountModule } from './account/account.module';
 import { TradeModule } from './trade/trade.module';
-import { setupSshTunnel } from './configs/ssh-tunnel';
 import { RedisModule } from './redis/redis.module';
 
 @Module({
@@ -18,9 +17,8 @@ import { RedisModule } from './redis/redis.module';
     AccountModule,
     TradeModule,
     TypeOrmModule.forRootAsync({
-      useFactory: async () => {
-        await setupSshTunnel();
-        return await getTypeOrmConfig();
+      useFactory: () => {
+        return getTypeOrmConfig();
       },
     }),
     UpbitModule,

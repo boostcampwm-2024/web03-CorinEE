@@ -6,12 +6,13 @@ import {
   SwaggerCustomOptions,
 } from '@nestjs/swagger';
 import { config } from 'dotenv';
+import { setupSshTunnel } from './configs/ssh-tunnel';
 
 config();
 
 async function bootstrap() {
+  await setupSshTunnel();
   const app = await NestFactory.create(AppModule);
-
   app.enableCors({
     origin: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
