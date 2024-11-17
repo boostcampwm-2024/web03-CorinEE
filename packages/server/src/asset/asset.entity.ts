@@ -1,5 +1,5 @@
 import { Account } from 'src/account/account.entity';
-import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne, CreateDateColumn } from 'typeorm';
 
 @Entity()
 export class Asset {
@@ -9,13 +9,13 @@ export class Asset {
   @Column()
   assetName: string;
 
-  @Column('decimal', { precision: 10, scale: 2 })
+  @Column('double') 
   price: number;
 
   @Column()
   quantity: number;
 
-  @Column({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamp' })
   created: Date;
 
   @ManyToOne(() => Account, account => account.assets, { onDelete: 'CASCADE' })

@@ -1,5 +1,5 @@
 import { User } from 'src/auth/user.entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity()
 export class TradeHistory {
@@ -12,16 +12,16 @@ export class TradeHistory {
   @Column()
   tradeType: string;
 
-  @Column('decimal', { precision: 10, scale: 2 })
+  @Column('double') 
   price: number;
 
   @Column()
   quantity: number;
 
-  @Column({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
-  @Column({ type: 'timestamp' })
+  @UpdateDateColumn({ type: 'timestamp' })
   tradeDate: Date;
 
   @ManyToOne(() => User, user => user.tradeHistories)
