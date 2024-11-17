@@ -14,15 +14,18 @@ export class Account {
 	@PrimaryGeneratedColumn()
 	accountId: string;
 
-	@Column()
-	KRW: number;
+  @Column('double') 
+  KRW: number;
 
-	@Column()
-	USDT: number;
+  @Column('double') 
+  USDT: number;
 
-	@OneToOne(() => User, (user) => user.account, { onDelete: 'CASCADE' })
-	@JoinColumn()
-	user: User;
+  @Column('double') 
+  BTC: number;
+
+  @OneToOne(() => User, user => user.account)
+  @JoinColumn()
+  user: User;
 
 	@OneToMany(() => Asset, (asset) => asset.account, {
 		cascade: true,

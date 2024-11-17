@@ -42,8 +42,14 @@ async function bootstrap() {
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
 
+<<<<<<< HEAD
   app.setGlobalPrefix('api');
 
   await app.listen(process.env.PORT ?? 3000);
+=======
+	app.setGlobalPrefix('api');
+	
+	await app.listen(process.env.PORT ?? 3000);
+>>>>>>> b83a9db (feat: 매수 로직)
 }
 bootstrap();
