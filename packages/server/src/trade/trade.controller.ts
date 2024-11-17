@@ -27,6 +27,7 @@ export class TradeController {
 		@Body()  buyDto: Record<string, any>,
 	){
 		try {
+			buyDto = await this.tradeService.createBuyTrade(buyDto)
             const response = await this.tradeService.buyTradeService(buyDto);
             return response;
         } catch (error) {

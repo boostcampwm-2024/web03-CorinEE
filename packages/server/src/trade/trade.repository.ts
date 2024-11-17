@@ -1,6 +1,6 @@
 import { DataSource, Repository, QueryRunner } from 'typeorm';
 import { Trade } from './trade.entity';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { UserRepository } from 'src/auth/user.repository';
 
 @Injectable()
@@ -11,12 +11,20 @@ export class TradeRepository extends Repository<Trade> {
   ){
     super(Trade, dataSource.createEntityManager());
   }
-  async createTrade(buyDto: any, queryRunner: QueryRunner): Promise<number> {
+  async createTrade(buyDto: any): Promise<number> {
     try{
     const { userId, typeGiven, typeReceived, receivedPrice, receivedAmount } = buyDto;
 
     const user = await this.userRepository.getUser(userId)
 
+    if (!user) {
+      throw new UnprocessableEntityException({
+          response: {
+              message: "유저가 존재하지 않습니다.",
+              statusCode: 422,
+          },
+      });
+    }
     const trade = new Trade();
     trade.tradeType = "buy"; 
     trade.tradeCurrency = typeGiven;
@@ -25,7 +33,7 @@ export class TradeRepository extends Repository<Trade> {
     trade.quantity = receivedAmount; 
     trade.user = user; 
 
-    const savedTrade = await queryRunner.manager.save(Trade, trade); 
+    const savedTrade = await this.save(trade); 
 
     return savedTrade.tradeId;
     }catch(e){console.log(e)}
@@ -37,7 +45,10 @@ export class TradeRepository extends Repository<Trade> {
     await queryRunner.manager.delete(Trade, tradeId);
   
     return trade;
-    }catch(e){console.log(e)}
+    }catch(e){
+      console.log(e)
+      throw e
+    }
   }  
   async searchTrade(coinPrice){
     try{
