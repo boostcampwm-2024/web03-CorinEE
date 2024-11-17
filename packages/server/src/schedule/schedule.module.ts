@@ -9,7 +9,7 @@ import { AuthModule } from 'src/auth/auth.module';
 @Module({
   imports: [
     AuthModule,
-    TypeOrmModule.forFeature([User, Account]), // User와 Account를 TypeORM으로 등록
+    TypeOrmModule.forFeature([User, Account]),
   ],
   providers: [CleanupService],
 })

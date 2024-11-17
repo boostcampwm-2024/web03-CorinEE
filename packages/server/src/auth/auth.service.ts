@@ -1,7 +1,6 @@
 import {
 	ConflictException,
 	Injectable,
-	UnauthorizedException,
 } from '@nestjs/common';
 import { UserRepository } from './user.repository';
 import { JwtService } from '@nestjs/jwt';
@@ -36,7 +35,6 @@ export class AuthService {
 
 		const guestUser = await this.userRepository.findOneBy({ username });
 
-		// Redis에 유저 ID 저장 (TTL 1시간)
 		await this.redisRepository.setAuthData(
 			`guest:${guestUser.id}`,
 			JSON.stringify({ userId: guestUser.id }),
