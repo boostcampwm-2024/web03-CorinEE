@@ -12,7 +12,8 @@ export class CoinDataUpdaterService {
 	private coinCurrentPriceTimeoutId: NodeJS.Timeout | null = null;
 	private coinLatestInfo = new Map();
 	private krwCoinInfo: any[] = [];
-	
+	private orderbookLatestInfo = new Map();
+
 	constructor(private readonly httpService: HttpService) {}
 
 	async updateCoinList() {
@@ -73,5 +74,23 @@ export class CoinDataUpdaterService {
 
 	getCoinLatestInfo() {
 		return this.coinLatestInfo;
+	}
+	getCoinPrice(buyDto){
+		const {typeGiven,typeReceived} = buyDto
+		const code = [typeGiven,typeReceived].join("-")
+
+		const coinPrice = this.coinLatestInfo.get(code).trade_price
+		return coinPrice
+	}
+	updateOrderbook(message){
+		this.orderbookLatestInfo.set(message.code,message);
+	}
+	getOrderbook(buyDto){
+		const {typeGiven,typeReceived,receivedPrice} = buyDto
+		const code = [typeGiven,typeReceived].join("-")
+
+		const orderbook = this.orderbookLatestInfo.get(code);
+		console.log(orderbook)
+		return orderbook.orderbook_units.filter((unit)=>unit.ask_price===receivedPrice)
 	}
 }
