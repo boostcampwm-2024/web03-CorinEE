@@ -31,19 +31,20 @@ export class TradeService implements OnModuleInit{
         
         return Number(money) * (percent / 100);
     }
-
+    async createBuyTrade(buyDto){
+        const tradeId = await this.tradeRepository.createTrade(buyDto)
+        buyDto.tradeId = tradeId;
+        return buyDto;
+    }
     
-    async buyTradeService(buyDto, matchPending=false){
+    async buyTradeService(buyDto){
         if (this.transactionBuy) await this.waitForTransactionOrder();
         this.transactionBuy=true;
         const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction();
-        let tradeId
         try {
             const [accountBalance,account] = await this.checkCurrency(buyDto)
-            if(!matchPending) tradeId = await this.tradeRepository.createTrade(buyDto, queryRunner)
-            else tradeId = buyDto.tradeId
             // 일단 호가창 체크 안하고 현재가 기준으로만 체결
             const currentCoinPrice = this.coinDataUpdaterService.getCoinPrice(buyDto);
             if(buyDto.receivedPrice < currentCoinPrice) {
@@ -54,7 +55,7 @@ export class TradeService implements OnModuleInit{
                 }
             }
 
-            const tradeData = await this.tradeRepository.deleteTrade(tradeId, queryRunner)
+            const tradeData = await this.tradeRepository.deleteTrade(buyDto.tradeId, queryRunner)
             await this.tradeHistoryRepository.createTradeHistory(buyDto.userId, tradeData, queryRunner)
 
             const afterTradeBalance = accountBalance - currentCoinPrice * buyDto.receivedAmount;
@@ -130,7 +131,7 @@ export class TradeService implements OnModuleInit{
                     receivedPrice: trade.price,
                     receivedAmount: trade.quantity
                 }
-                this.buyTradeService(buyDto, true)
+                this.buyTradeService(buyDto)
             })
         } catch (error) {
             console.error('미체결 거래 처리 오류:', error);
