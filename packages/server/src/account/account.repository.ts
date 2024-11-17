@@ -19,7 +19,7 @@ export class AccountRepository extends Repository<Account> {
 	}
   async getMyMoney(user, moneyType: string) {
     const account = await this.findOne({
-      where: { user: { id: user.sub } },
+      where: { user: { id: user.userId } },
     });
 
     if (!account[moneyType]) return 0;

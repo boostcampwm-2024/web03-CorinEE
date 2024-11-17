@@ -9,6 +9,9 @@ import { HealthModule } from './health/health.module';
 import { AccountModule } from './account/account.module';
 import { TradeModule } from './trade/trade.module';
 import { RedisModule } from './redis/redis.module';
+import { ScheduleModule as NestScheduleModule } from '@nestjs/schedule';
+import { ScheduleModule } from './schedule/schedule.module';
+import { CleanupService } from './schedule/clean-up.service';
 
 @Module({
   imports: [
@@ -23,6 +26,8 @@ import { RedisModule } from './redis/redis.module';
     }),
     UpbitModule,
     RedisModule,
+    NestScheduleModule.forRoot(),
+    ScheduleModule,
   ],
   controllers: [AppController],
   providers: [AppService],

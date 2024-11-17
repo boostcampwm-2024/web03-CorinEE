@@ -18,7 +18,7 @@ export class Asset {
   @Column({ type: 'timestamp' })
   created: Date;
 
-  @ManyToOne(() => Account, account => account.assets)
+  @ManyToOne(() => Account, account => account.assets, { onDelete: 'CASCADE' })
   @JoinColumn()
   account: Account;
 }
