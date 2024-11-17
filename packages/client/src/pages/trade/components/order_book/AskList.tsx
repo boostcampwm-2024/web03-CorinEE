@@ -21,7 +21,7 @@ function AskList({ asks, currentPrice }: AskListProps) {
 							}}
 						/>
 						<span className="relative text-xs text-left pl-2 text-blue-600">
-							{ask.ask_size}
+							{ask.ask_size.toFixed(3)}
 						</span>
 					</div>
 					<OrderBookPrice
