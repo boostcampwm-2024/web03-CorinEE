@@ -6,9 +6,15 @@ import NotLogin from '@/components/NotLogin';
 import { useAuthStore } from '@/store/authStore';
 function OrderBuyForm({ currentPrice }: { currentPrice: number }) {
 	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-	const [price, setPrice] = useState(currentPrice);
-	const [quantity, setQuantity] = useState<number>(0);
-	const totalPrice = (price * quantity).toLocaleString();
+	const [price, setPrice] = useState(String(currentPrice));
+	const [quantity, setQuantity] = useState<string>('');
+
+	const calculateTotalPrice = () => {
+		const numPrice = parseFloat(price) || 0;
+		const numQuantity = parseFloat(quantity) || 0;
+		return Math.round(numPrice * numQuantity);
+	};
+
 	if (!isAuthenticated) return <NotLogin size="md" />;
 	return (
 		<div className="text-black font-normal text-sm">
@@ -25,11 +31,11 @@ function OrderBuyForm({ currentPrice }: { currentPrice: number }) {
 						onChange={setQuantity}
 						placeholder="0"
 					/>
-					<PercentageButtons />
+					<PercentageButtons price={price} setQuantity={setQuantity} />
 				</div>
 				<div className="flex justify-between mt-5">
 					<span>총 주문 금액</span>
-					<span>{totalPrice}</span>
+					<span>{calculateTotalPrice()}</span>
 				</div>
 				<OrderSubmitButton type="buy" />
 			</form>
