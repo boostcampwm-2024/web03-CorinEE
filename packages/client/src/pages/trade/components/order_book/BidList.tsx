@@ -24,11 +24,10 @@ function BidList({ bids, currentPrice }: BidListProps) {
 							className="absolute left-0 top-0 h-full bg-red-100 rounded-sm"
 							style={{
 								width: `${(bid.bid_size / maxSize) * 100}%`,
-								maxWidth: '25%', // span이 차지하는 영역까지만
 							}}
 						/>
 						<span className="relative text-xs text-left pl-2 text-red-500">
-							{bid.bid_size}
+							{bid.bid_size.toFixed(3)}
 						</span>
 					</div>
 				</li>
