@@ -10,15 +10,18 @@ export class UserRepository extends Repository<User>{
       private accountRepository: AccountRepository
     ){
       super(User, dataSource.createEntityManager());
-      this.createAdminUser();
     }
-    private async createAdminUser() {
+    async createAdminUser() {
       const adminUser = new User();
       adminUser.username = 'admin';
-  
       await this.save(adminUser);
       console.log('Admin user created successfully.');
 
       await this.accountRepository.createAccountForAdmin(adminUser);
+    }
+    async getUser(userId){
+      return await this.findOne({
+        where: { id: userId },
+      });
     }
 }

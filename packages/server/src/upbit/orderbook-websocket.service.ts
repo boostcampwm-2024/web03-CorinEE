@@ -7,16 +7,17 @@ import {
 	UPBIT_WEBSOCKET_URL,
 	UPBIT_UPDATED_ORDER_INFO_TIME,
 } from 'common/upbit';
+import { CoinDataUpdaterService } from './coin-data-updater.service';
 
 @Injectable()
 export class OrderbookService implements OnModuleInit {
 	private websocket: WebSocket;
 	private sending: Boolean = false;
 	private timeoutId: NodeJS.Timeout | null = null;
-
 	constructor(
 		private readonly coinListService: CoinListService,
 		private readonly sseService: SseService,
+		private readonly coinDataUpdaterService:CoinDataUpdaterService
 	) {}
 
 	onModuleInit() {
@@ -38,6 +39,7 @@ export class OrderbookService implements OnModuleInit {
 			try {
 				const message = JSON.parse(data.toString());
 				if (message.error) throw new Error(JSON.stringify(message));
+				this.coinDataUpdaterService.updateOrderbook(message);
 				this.sseService.orderbookSendEvent(message);
 			} catch (error) {
 				console.error('OrderbookWebSocket 오류:', error);

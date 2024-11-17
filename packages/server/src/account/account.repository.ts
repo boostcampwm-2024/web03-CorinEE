@@ -12,8 +12,8 @@ export class AccountRepository extends Repository<Account> {
 		const account = new Account();
 		account.KRW = 300000000;
 		account.USDT = 300000;
+		account.BTC = 10;
 		account.user = adminUser;
-
 		await this.save(account);
 		console.log('admin 계정에 Account가 성공적으로 생성되었습니다.');
 	}
@@ -24,5 +24,13 @@ export class AccountRepository extends Repository<Account> {
 
     if (!account[moneyType]) return 0;
     return account[moneyType];
+  }
+  async succesBuy(buyDto,accountBalance,accountId,queryRunner){
+	const updateData = {
+		accountId: accountId,
+		[buyDto.typeGiven]: accountBalance,
+	};
+
+	await queryRunner.manager.save(Account,updateData)
   }
 }
