@@ -4,25 +4,31 @@ import Redis from 'ioredis';
 @Injectable()
 export class RedisRepository {
   constructor(
-    @Inject('REDIS_CLIENT') private readonly redisClient: Redis, // DI로 Redis 클라이언트 주입
+    @Inject('TRADE_REDIS_CLIENT') private readonly tradeRedis: Redis, // 트레이드용 Redis
+    @Inject('AUTH_REDIS_CLIENT') private readonly authRedis: Redis,   // Auth용 Redis
   ) {}
 
-  async get(key: string): Promise<string | null> {
-    return this.redisClient.get(key);
+ // 트레이드용 Redis 작업
+ async setTradeData(key: string, value: string, ttl?: number): Promise<string> {
+  if (ttl) {
+    return this.tradeRedis.set(key, value, 'EX', ttl);
   }
+  return this.tradeRedis.set(key, value);
+}
 
-  async set(key: string, value: string, ttl?: number): Promise<string> {
-    if (ttl) {
-      return this.redisClient.set(key, value, 'EX', ttl); // TTL이 있는 경우
-    }
-    return this.redisClient.set(key, value); // TTL이 없는 경우
-  }
+async getTradeData(key: string): Promise<string | null> {
+  return this.tradeRedis.get(key);
+}
 
-  async delete(key: string): Promise<number> {
-    return this.redisClient.del(key);
+// Auth용 Redis 작업
+async setAuthData(key: string, value: string, ttl?: number): Promise<string> {
+  if (ttl) {
+    return this.authRedis.set(key, value, 'EX', ttl);
   }
+  return this.authRedis.set(key, value);
+}
 
-  async exists(key: string): Promise<number> {
-    return this.redisClient.exists(key);
-  }
+async getAuthData(key: string): Promise<string | null> {
+  return this.authRedis.get(key);
+}
 }
