@@ -36,8 +36,6 @@
     
       private extractTokenFromHeader(request: Request): string | undefined {
         const [type, token] = request.headers.authorization?.split(' ') ?? [];
-        console.log(request.headers)
-        console.log(request)
         return type === 'Bearer' ? token : undefined;
       }
     }
