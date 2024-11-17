@@ -8,6 +8,6 @@ import { User } from 'src/auth/user.entity';
     imports : [
         TypeOrmModule.forFeature([Account, User])
     ],
-    providers : [AccountRepository]
+    providers : [AccountRepository],
 })
 export class AccountModule {}
