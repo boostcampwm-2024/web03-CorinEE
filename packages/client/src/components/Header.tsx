@@ -4,9 +4,8 @@ import { Link } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
 
 function Header() {
-	const { mutate } = useAuth();
+	const { login, logout } = useAuth();
 	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-	const logout = useAuthStore((state) => state.logout);
 
 	return (
 		<Navbar
@@ -28,10 +27,10 @@ function Header() {
 			</div>
 			<div>
 				{isAuthenticated ? (
-					<Button onClick={logout}>로그아웃</Button>
+					<Button onClick={() => logout.mutate()}>로그아웃</Button>
 				) : (
 					<>
-						<Button onClick={() => mutate()}>체험하기</Button>
+						<Button onClick={() => login.mutate()}>체험하기</Button>
 						<Button className="mx-2">로그인</Button>
 					</>
 				)}
