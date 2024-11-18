@@ -43,7 +43,7 @@ function NotLogin({ size }: NotLoginProps) {
 		},
 	};
 
-	const { mutate } = useAuth();
+	const { login } = useAuth();
 
 	return (
 		<div className="w-full min-h-[50vh] flex flex-col justify-center items-center gap-6 p-6">
@@ -60,7 +60,10 @@ function NotLogin({ size }: NotLoginProps) {
 				<p className={sizeTable[size].subText}>
 					서비스 이용을 위해 로그인해 주세요
 				</p>
-				<p onClick={() => mutate()} className={sizeTable[size].highlightText}>
+				<p
+					onClick={() => login.mutate()}
+					className={sizeTable[size].highlightText}
+				>
 					체험 계정으로 1초 만에 시작하기 →
 				</p>
 			</div>
