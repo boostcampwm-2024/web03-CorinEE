@@ -39,7 +39,8 @@ export class CleanupService {
     this.logger.log('Expired guest cleanup finished.');
   }
 
-  @Cron('0 */30 * * * *')
+  //@Cron('*/30 * * * *')
+  @Cron('* * * * *')
   async handleCron(): Promise<void> {
     this.logger.log('Running scheduled guest cleanup...');
     await this.cleanupExpiredGuests();
