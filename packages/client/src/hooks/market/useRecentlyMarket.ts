@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { getRecentlyMarketList } from '@/api/market';
 
-export function useRecentlyMarket(queryString: string) {
+export function useRecentlyMarketList(queryString: string) {
 	const { isPending, error, data } = useQuery({
 		queryKey: ['recentlyMarketList'],
 		queryFn: () => getRecentlyMarketList(queryString),

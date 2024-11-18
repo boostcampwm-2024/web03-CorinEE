@@ -3,10 +3,10 @@ import OrderBook from '@/pages/trade/components/order_book/OrderBook';
 import OrderForm from '@/pages/trade/components/order_form/OrderForm';
 import TradeHeader from '@/pages/trade/components/trade_header/TradeHeader';
 import { useParams } from 'react-router-dom';
-import { useSSETicker } from '@/hooks/useSSETicker';
+import { useSSETicker } from '@/hooks/SSE/useSSETicker';
 import { Suspense, useMemo } from 'react';
 import ChartSkeleton from '@/pages/trade/components/chart/ChartSkeleton';
-import { useSSEOrderbook } from '@/hooks/useSSEOrderbook';
+import { useSSEOrderbook } from '@/hooks/SSE/useSSEOrderbook';
 
 function Trade() {
 	const { market } = useParams();
