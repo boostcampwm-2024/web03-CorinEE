@@ -11,8 +11,8 @@ import { AllExceptionsFilter } from 'common/all-exceptions.filter';
 
 config();
 console.log({
-  synchronize: Boolean(process.env.DB_SYNCHRONIZE),
-  dropSchema: Boolean(process.env.DB_DROPSCHEMA),
+  synchronize: process.env.DB_SYNCHRONIZE === "true", // "true" 문자열인 경우만 true로 변환
+  dropSchema: process.env.DB_DROPSCHEMA === "true",
 });
 async function bootstrap() {
   await setupSshTunnel();

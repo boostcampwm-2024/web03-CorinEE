@@ -9,7 +9,7 @@ export default function getTypeOrmConfig(): TypeOrmModuleOptions {
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
     entities: [__dirname + '/../**/*.entity.{js,ts}'],
-    synchronize: Boolean(process.env.DB_SYNCHRONIZE),
-    dropSchema: Boolean(process.env.DB_DROPSCHEMA),
+    synchronize: process.env.DB_SYNCHRONIZE === 'true',
+    dropSchema: process.env.DB_DROPSCHEMA === 'true',
   };
 }
