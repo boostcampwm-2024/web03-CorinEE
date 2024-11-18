@@ -1,5 +1,12 @@
 import { Account } from 'src/account/account.entity';
-import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne, CreateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  JoinColumn,
+  ManyToOne,
+  CreateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class Asset {
@@ -9,7 +16,7 @@ export class Asset {
   @Column()
   assetName: string;
 
-  @Column('double') 
+  @Column('double')
   price: number;
 
   @Column()
@@ -18,7 +25,9 @@ export class Asset {
   @CreateDateColumn({ type: 'timestamp' })
   created: Date;
 
-  @ManyToOne(() => Account, account => account.assets, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Account, (account) => account.assets, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   account: Account;
 }
