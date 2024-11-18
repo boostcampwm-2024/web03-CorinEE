@@ -22,7 +22,7 @@ export class User extends BaseEntity {
 
   @Column()
   username: string;
-
+	
   @OneToOne(() => Account, (account) => account.user, {
     cascade: true,
     onDelete: 'CASCADE',
