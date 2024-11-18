@@ -12,6 +12,7 @@ export class UpbitController {
 
   @Sse('price-updates')
   priceUpdates(@Query('coins') coins: string[]): Observable<MessageEvent> {
+    coins = coins || [];
     const initData = this.sseService.initPriceStream(
       coins,
       this.coinListService.convertToMarketCoinDto,
@@ -26,6 +27,7 @@ export class UpbitController {
   }
   @Sse('orderbook')
   orderbookUpdates(@Query('coins') coins: string[]): Observable<MessageEvent> {
+    coins = coins || [];
     return this.sseService.getOrderbookUpdatesStream(
       coins,
       this.coinListService.convertToOrderbookDto,
@@ -55,6 +57,7 @@ export class UpbitController {
   }
   @Get('market/simplelist/krw')
   getSomeKRW(@Query('market') market: string[]) {
-    return this.coinListService.getSimpleCoin(market);
+    const marketList = market || [];
+    return this.coinListService.getSimpleCoin(marketList);
   }
 }
