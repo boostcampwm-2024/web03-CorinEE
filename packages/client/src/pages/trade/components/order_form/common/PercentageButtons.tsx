@@ -4,13 +4,19 @@ import { Dispatch, SetStateAction, useState, useEffect } from 'react';
 type PercentageButtonsProps = {
 	price: string;
 	setQuantity: Dispatch<SetStateAction<string>>;
+	type: 'buy' | 'sell';
 };
 
-function PercentageButtons({ price, setQuantity }: PercentageButtonsProps) {
+function PercentageButtons({
+	price,
+	setQuantity,
+	type,
+}: PercentageButtonsProps) {
 	const [percent, setPercent] = useState<number>();
 	const { data, refetch } = usePercentageBuy({
 		moneyType: 'KRW',
 		percent: percent,
+		type,
 	});
 
 	const handlePercentClick = (text: string) => {
