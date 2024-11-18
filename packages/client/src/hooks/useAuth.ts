@@ -15,6 +15,7 @@ export function useAuth() {
 			checkAuth();
 		},
 		onError: (error) => {
+			alert(`로그인을 실패했습니다! ${error.message}`);
 			console.error(error);
 		},
 	});
