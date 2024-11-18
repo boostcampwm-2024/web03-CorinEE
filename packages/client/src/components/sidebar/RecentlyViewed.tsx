@@ -8,12 +8,24 @@ import { SidebarMarketData } from '@/types/market';
 
 function RecentlyViewed() {
 	const { recentlyViewedMarketList } = useRecentlyMarketStore();
+
 	const { data: viewedMarket } = useRecentlyMarketList(
 		convertToQueryString(recentlyViewedMarketList),
 	);
+
 	const { sseData } = useSSETicker(viewedMarket || []);
 
-	if (!sseData || !viewedMarket) return;
+	if (!sseData || !viewedMarket) {
+		return (
+			<div className="flex flex-col h-full overflow-y-auto [&::-webkit-scrollbar]:hidden p-4">
+				<div>
+					<span className="text-lg font-semibold">최근 본 종목</span>
+					<span className="ml-2 text-xs text-gray-700">10개 종목만 표시</span>
+				</div>
+				<div className="border border-solid border-gray-300 my-3"></div>
+			</div>
+		);
+	}
 
 	const sortedViewedMarketData = recentlyViewedMarketList
 		.map((marketName) =>
