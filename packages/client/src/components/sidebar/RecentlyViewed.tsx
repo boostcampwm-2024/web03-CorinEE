@@ -1,13 +1,13 @@
 import SidebarCoin from '@/components/sidebar/SidebarCoin';
-import { useSSETicker } from '@/hooks/useSSETicker';
+import { useSSETicker } from '@/hooks/SSE/useSSETicker';
 import { formatData } from '@/utility/format/formatSSEData';
 import useRecentlyMarketStore from '@/store/recentlyViewed';
-import { useRecentlyMarket } from '@/hooks/useRecentlyMarket';
+import { useRecentlyMarketList } from '@/hooks/market/useRecentlyMarket';
 import { convertToQueryString } from '@/utility/queryString';
 
 function RecentlyViewed() {
 	const { recentlyViewedMarketList } = useRecentlyMarketStore();
-	const { data: viewedMarket } = useRecentlyMarket(
+	const { data: viewedMarket } = useRecentlyMarketList(
 		convertToQueryString(recentlyViewedMarketList),
 	);
 	const { sseData } = useSSETicker(viewedMarket || []);
