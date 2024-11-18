@@ -25,7 +25,7 @@ export class AccountRepository extends Repository<Account> {
     if (!account[moneyType]) return 0;
     return account[moneyType];
   }
-  async succesBuy(buyDto, accountBalance, accountId, queryRunner) {
+  async successBuy(buyDto, accountBalance, accountId, queryRunner) {
     const updateData = {
       accountId: accountId,
       [buyDto.typeGiven]: accountBalance,

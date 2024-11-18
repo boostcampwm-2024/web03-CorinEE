@@ -1,10 +1,16 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { UserRepository } from './user.repository';
 import { JwtService } from '@nestjs/jwt';
-import { DEFAULT_BTC, DEFAULT_KRW, DEFAULT_USDT, jwtConstants } from './constants';
+import {
+	DEFAULT_BTC,
+	DEFAULT_KRW,
+	DEFAULT_USDT,
+	jwtConstants,
+} from './constants';
 import { v4 as uuidv4 } from 'uuid';
 import { AccountRepository } from 'src/account/account.repository';
 import { RedisRepository } from 'src/redis/redis.repository';
+import { User } from './user.entity';
 @Injectable()
 export class AuthService {
 	constructor(
@@ -12,7 +18,9 @@ export class AuthService {
 		private accountRepository: AccountRepository,
 		private jwtService: JwtService,
 		private readonly redisRepository: RedisRepository,
-	) {}
+	) {
+		this.createAdminUser();
+	}
 
 	async signIn(username: string): Promise<{ access_token: string }> {
 		const user = await this.userRepository.findOneBy({ username });
@@ -65,7 +73,7 @@ export class AuthService {
 			user: newUser,
 			KRW: DEFAULT_KRW,
 			USDT: DEFAULT_USDT,
-      BTC: DEFAULT_BTC
+			BTC: DEFAULT_BTC,
 		});
 
 		return {
@@ -85,6 +93,20 @@ export class AuthService {
 		if (user.isGuest) {
 			await this.userRepository.delete({ id: userId });
 			return { message: 'Guest user data successfully deleted' };
+		}
+	}
+
+	async createAdminUser() {
+		const user = await this.userRepository.findOneBy({ username: 'admin' });
+
+		if (!user) {
+			const adminUser = new User();
+			adminUser.username = 'admin';
+			await this.userRepository.save(adminUser);
+			await this.accountRepository.createAccountForAdmin(adminUser);
+			console.log('Admin user created successfully.');
+		} else {
+			console.log('Admin user already exists.');
 		}
 	}
 }
