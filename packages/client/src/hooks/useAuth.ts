@@ -8,7 +8,10 @@ export function useAuth() {
 	const useAdminLogin = useMutation({
 		mutationFn: adminLogin,
 		onSuccess: ({ access_token }: { access_token: string }) => {
-			setCookie('access_token', access_token, { maxAge: 24 * 60 * 60 });
+			setCookie('access_token', access_token, {
+				path: '/',
+				maxAge: 24 * 60 * 60,
+			});
 			checkAuth();
 		},
 		onError: (error) => {
