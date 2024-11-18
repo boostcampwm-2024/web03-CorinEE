@@ -22,7 +22,7 @@ export class TradeHistory {
   @Column('double')
   price: number;
 
-  @Column()
+  @Column('double')
   quantity: number;
 
   @CreateDateColumn({ type: 'timestamp' })

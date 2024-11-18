@@ -12,7 +12,7 @@ import {
 @Entity()
 export class Account {
   @PrimaryGeneratedColumn()
-  accountId: string;
+  id: string;
 
   @Column('double')
   KRW: number;
