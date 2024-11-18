@@ -11,6 +11,7 @@ type CalculateAPI = {
 export function usePercentageBuy({ moneyType, percent, type }: CalculateAPI) {
 	const QUERY_KEY = 'percentage_buy';
 	const token = getCookie('access_token');
+
 	const { data, isLoading, refetch } = useQuery({
 		queryFn: () => {
 			if (percent === undefined) return null;
@@ -20,6 +21,8 @@ export function usePercentageBuy({ moneyType, percent, type }: CalculateAPI) {
 		},
 		queryKey: [QUERY_KEY, percent, type],
 		enabled: percent !== undefined,
+		staleTime: 1000 * 60,
+		gcTime: 1000 * 60 * 5,
 	});
 
 	return { data, isLoading, refetch };
