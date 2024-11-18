@@ -1,4 +1,4 @@
-import { Account } from 'src/account/account.entity';
+import { Account } from '@src/account/account.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,

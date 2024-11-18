@@ -1,5 +1,5 @@
-import { Asset } from 'src/asset/asset.entity';
-import { User } from 'src/auth/user.entity';
+import { Asset } from '@src/asset/asset.entity';
+import { User } from '@src/auth/user.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
