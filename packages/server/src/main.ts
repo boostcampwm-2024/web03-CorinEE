@@ -7,6 +7,7 @@ import {
 } from '@nestjs/swagger';
 import { config } from 'dotenv';
 import { setupSshTunnel } from './configs/ssh-tunnel';
+import { AllExceptionsFilter } from 'common/all-exceptions.filter';
 
 config();
 
@@ -43,6 +44,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, documentFactory);
 
   app.setGlobalPrefix('api');
+  app.useGlobalFilters(new AllExceptionsFilter());
 
   await app.listen(process.env.PORT ?? 3000);
 }
