@@ -7,73 +7,83 @@ import { UserRepository } from 'src/auth/user.repository';
 export class TradeRepository extends Repository<Trade> {
   constructor(
     private dataSource: DataSource,
-    private userRepository: UserRepository
-  ){
+    private userRepository: UserRepository,
+  ) {
     super(Trade, dataSource.createEntityManager());
   }
   async createTrade(buyDto: any): Promise<number> {
-    try{
-    const { userId, typeGiven, typeReceived, receivedPrice, receivedAmount } = buyDto;
+    try {
+      const { userId, typeGiven, typeReceived, receivedPrice, receivedAmount } =
+        buyDto;
 
-    const user = await this.userRepository.getUser(userId)
+      const user = await this.userRepository.getUser(userId);
 
-    if (!user) {
-      throw new UnprocessableEntityException({
+      if (!user) {
+        throw new UnprocessableEntityException({
           response: {
-              message: "유저가 존재하지 않습니다.",
-              statusCode: 422,
+            message: '유저가 존재하지 않습니다.',
+            statusCode: 422,
           },
-      });
+        });
+      }
+      const trade = new Trade();
+      trade.tradeType = 'buy';
+      trade.tradeCurrency = typeGiven;
+      trade.assetName = typeReceived;
+      trade.price = receivedPrice;
+      trade.quantity = receivedAmount;
+      trade.user = user;
+
+      const savedTrade = await this.save(trade);
+
+      return savedTrade.tradeId;
+    } catch (e) {
+      console.log(e);
     }
-    const trade = new Trade();
-    trade.tradeType = "buy"; 
-    trade.tradeCurrency = typeGiven;
-    trade.assetName = typeReceived; 
-    trade.price = receivedPrice; 
-    trade.quantity = receivedAmount; 
-    trade.user = user; 
-
-    const savedTrade = await this.save(trade); 
-
-    return savedTrade.tradeId;
-    }catch(e){console.log(e)}
   }
   async deleteTrade(tradeId: number, queryRunner: QueryRunner): Promise<Trade> {
-    try{
-    const trade = await queryRunner.manager.findOne(Trade, { where: { tradeId } });
-  
-    await queryRunner.manager.delete(Trade, tradeId);
-  
-    return trade;
-    }catch(e){
-      console.log(e)
-      throw e
+    try {
+      const trade = await queryRunner.manager.findOne(Trade, {
+        where: { tradeId },
+      });
+
+      await queryRunner.manager.delete(Trade, tradeId);
+
+      return trade;
+    } catch (e) {
+      console.log(e);
+      throw e;
     }
-  }  
-  async searchTrade(coinPrice){
-    try{
-      const queryBuilder = this.createQueryBuilder('trade').leftJoinAndSelect('trade.user', 'user');
+  }
+  async searchTrade(coinPrice) {
+    try {
+      const queryBuilder = this.createQueryBuilder('trade').leftJoinAndSelect(
+        'trade.user',
+        'user',
+      );
       coinPrice.forEach(({ give, receive, price }, index) => {
         const params = {
           [`give${index}`]: give,
           [`receive${index}`]: receive,
           [`price${index}`]: price,
-          [`type${index}`]: 'buy'
+          [`type${index}`]: 'buy',
         };
         if (index === 0) {
           queryBuilder.where(
             'trade.tradeCurrency = :give0 AND trade.assetName = :receive0 AND trade.price >= :price0 AND trade.tradeType = :type0',
-            params
+            params,
           );
         } else {
           queryBuilder.orWhere(
             `trade.tradeCurrency = :give${index} AND trade.assetName = :receive${index} AND trade.price >= :price${index} AND trade.tradeType = :type${index}`,
-            params
+            params,
           );
         }
       });
       const trades = await queryBuilder.getMany();
       return trades;
-    }catch(e){console.log(e)}
+    } catch (e) {
+      console.log(e);
+    }
   }
 }
