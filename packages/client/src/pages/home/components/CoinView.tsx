@@ -1,4 +1,4 @@
-import { useMarketAll } from '@/hooks/useMarketAll';
+import { useMarketAll } from '@/hooks/market/useMarketAll';
 import CoinCategories from '@/pages/home/components/CoinCategories';
 import CoinList from '@/pages/home/components/CoinList';
 import { MarketData } from '@/types/market';

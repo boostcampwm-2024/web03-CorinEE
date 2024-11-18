@@ -1,4 +1,4 @@
-import { useSSETicker } from '@/hooks/useSSETicker';
+import { useSSETicker } from '@/hooks/SSE/useSSETicker';
 import Coin from '@/pages/home/components/Coin';
 import ScrollPageButton from '@/pages/home/components/ScrollPageButton';
 import { MarketData } from '@/types/market';

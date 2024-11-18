@@ -8,7 +8,7 @@ export async function getMarketAll(): Promise<MarketData[]> {
 }
 
 export async function getMarketTop20(): Promise<SidebarMarketData[]> {
-	const response = await instance.get('upbit/market/top20-trade/krw');
+	const response = await instance.get('/upbit/market/top20-trade/krw');
 	return response.data;
 }
 
@@ -16,7 +16,7 @@ export async function getRecentlyMarketList(
 	queryString: string,
 ): Promise<SidebarMarketData[]> {
 	const response = await instance.get(
-		`upbit/market/simplelist/krw?${queryString}`,
+		`/upbit/market/simplelist/krw?${queryString}`,
 	);
 	return response.data;
 }
