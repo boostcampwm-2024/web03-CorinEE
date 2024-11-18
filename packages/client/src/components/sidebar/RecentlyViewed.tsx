@@ -4,6 +4,7 @@ import { formatData } from '@/utility/format/formatSSEData';
 import useRecentlyMarketStore from '@/store/recentlyViewed';
 import { useRecentlyMarketList } from '@/hooks/market/useRecentlyMarket';
 import { convertToQueryString } from '@/utility/queryString';
+import { SidebarMarketData } from '@/types/market';
 
 function RecentlyViewed() {
 	const { recentlyViewedMarketList } = useRecentlyMarketStore();
@@ -13,6 +14,12 @@ function RecentlyViewed() {
 	const { sseData } = useSSETicker(viewedMarket || []);
 
 	if (!sseData || !viewedMarket) return;
+
+	const sortedViewedMarketData = recentlyViewedMarketList
+		.map((marketName) =>
+			viewedMarket.find((item) => item.market === marketName),
+		)
+		.filter((item): item is SidebarMarketData => item !== undefined);
 
 	const formatters = formatData('KRW');
 
@@ -24,7 +31,7 @@ function RecentlyViewed() {
 			</div>
 			<div className="border border-solid border-gray-300 my-3"></div>
 			{recentlyViewedMarketList.length !== 0
-				? viewedMarket.map((coin, index) => (
+				? sortedViewedMarketData.map((coin, index) => (
 						<SidebarCoin
 							key={coin.market}
 							listNumber={index + 1}
