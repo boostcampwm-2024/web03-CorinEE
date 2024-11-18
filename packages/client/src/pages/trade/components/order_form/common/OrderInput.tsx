@@ -3,9 +3,16 @@ type OrderInputProps = {
 	value: string | undefined;
 	onChange: (value: string) => void;
 	placeholder?: string;
+	errorMessage?: string;
 };
 
-function OrderInput({ label, value, onChange, placeholder }: OrderInputProps) {
+function OrderInput({
+	label,
+	value,
+	onChange,
+	placeholder,
+	errorMessage,
+}: OrderInputProps) {
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const newValue = e.target.value;
 
@@ -23,17 +30,35 @@ function OrderInput({ label, value, onChange, placeholder }: OrderInputProps) {
 		onChange(numericValue);
 	};
 
+	const inputClasses = [
+		'w-full',
+		'border-2',
+		'border-solid',
+		'rounded-md',
+		'p-1',
+		'transition-colors',
+		'duration-200',
+		errorMessage
+			? ['border-red-500', 'focus:outline-red-500']
+			: ['border-gray-300', 'focus:outline-blue-500', 'hover:border-blue-300'],
+	]
+		.flat()
+		.join(' ');
+
 	return (
 		<label className="flex flex-col gap-1">
 			<span>{label}</span>
 			<input
-				className="w-full border-2 border-solid border-gray-300 rounded-md focus:outline-blue-500 p-1 hover:border-blue-300 transition-colors duration-200"
+				className={inputClasses}
 				type="text"
 				value={value}
 				onChange={handleChange}
 				placeholder={placeholder}
 				inputMode="decimal"
 			/>
+			{errorMessage ? (
+				<span className="text-sm text-red-500">{errorMessage}</span>
+			) : null}
 		</label>
 	);
 }
