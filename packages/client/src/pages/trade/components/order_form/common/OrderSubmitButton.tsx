@@ -6,7 +6,7 @@ function OrderSubmitButton({ type, onClick }: OrderSubmitButtonProps) {
 	const buttonStyle =
 		type === 'buy'
 			? 'bg-red-400 hover:bg-red-500'
-			: 'bg-blue-400 hover:bg-blue-500';
+			: 'bg-blue-600 hover:bg-blue-500';
 	const text = type === 'buy' ? '구매하기' : '판매하기';
 
 	return (
