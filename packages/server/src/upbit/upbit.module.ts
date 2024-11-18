@@ -9,15 +9,15 @@ import { CoinDataUpdaterService } from './coin-data-updater.service';
 
 @Global()
 @Module({
-	imports: [HttpModule],
-	providers: [
-		CoinTickerService,
-		CoinListService,
-		SseService,
-		OrderbookService,
-		CoinDataUpdaterService,
-	],
-	controllers: [UpbitController],
-	exports:[CoinDataUpdaterService]
+  imports: [HttpModule],
+  providers: [
+    CoinTickerService,
+    CoinListService,
+    SseService,
+    OrderbookService,
+    CoinDataUpdaterService,
+  ],
+  controllers: [UpbitController],
+  exports: [CoinDataUpdaterService],
 })
 export class UpbitModule {}
