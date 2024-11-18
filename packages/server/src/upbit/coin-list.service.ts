@@ -33,11 +33,15 @@ export class CoinListService implements OnModuleInit {
 			});
 	}
 	async getSimpleCoin(coins) {
+    console.log(coins);
 		let krwCoinInfo = this.coinDataUpdaterService.getKrwCoinInfo();
 		while (!krwCoinInfo) {
 			await new Promise((resolve) => setTimeout(resolve, 100));
 			krwCoinInfo = this.coinDataUpdaterService.getKrwCoinInfo();
 		}
+
+    if (!coins.length) return [];
+    
 		return krwCoinInfo
 			.filter((coin) => coins.includes(coin.market))
 			.map((coin) => {
@@ -50,7 +54,7 @@ export class CoinListService implements OnModuleInit {
 				};
 			});
 	}
-  
+
 	getCoinNameList() {
 		return this.coinDataUpdaterService.getCoinCodeList();
 	}
