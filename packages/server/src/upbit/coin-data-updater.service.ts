@@ -2,9 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import {
+  UPBIT_CURRENT_ORDERBOOK_URL,
   UPBIT_CURRENT_PRICE_URL,
   UPBIT_RESTAPI_URL,
   UPBIT_UPDATED_COIN_INFO_TIME,
+  UPBIT_UPDATED_COIN_LIST_TIME,
 } from 'common/upbit';
 
 @Injectable()
@@ -37,7 +39,7 @@ export class CoinDataUpdaterService {
       if (this.coinListTimeoutId) clearTimeout(this.coinListTimeoutId);
       this.coinListTimeoutId = setTimeout(
         () => this.updateCoinList(),
-        UPBIT_UPDATED_COIN_INFO_TIME,
+        UPBIT_UPDATED_COIN_LIST_TIME,
       );
     }
   }
@@ -60,7 +62,7 @@ export class CoinDataUpdaterService {
     } catch (error) {
       console.error('getCoinListFromUpbit error:', error);
     } finally {
-      console.log(`코인 정보 최신화: ${Date()}`);
+      console.log(`코인 현재가 정보 최신화: ${Date()}`);
       if (this.coinCurrentPriceTimeoutId)
         clearTimeout(this.coinCurrentPriceTimeoutId);
       this.coinCurrentPriceTimeoutId = setTimeout(
@@ -70,6 +72,32 @@ export class CoinDataUpdaterService {
     }
   }
 
+  
+  async updateCurrentOrderBook() {
+    try {
+      while (this.coinCodeList.length === 1)
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      const response = await firstValueFrom(
+        this.httpService.get(
+          `${UPBIT_CURRENT_ORDERBOOK_URL}markets=${this.coinCodeList.join(',')}`,
+        ),
+      );
+      this.orderbookLatestInfo = new Map(
+        response.data.map((coin) => [coin.market, coin]),
+      );
+
+    } catch (error) {
+      console.error('getCoinListFromUpbit error:', error);
+    } finally {
+      console.log(`코인 호가 정보 최신화: ${Date()}`);
+      if (this.coinCurrentPriceTimeoutId)
+        clearTimeout(this.coinCurrentPriceTimeoutId);
+      this.coinCurrentPriceTimeoutId = setTimeout(
+        () => this.updateCurrentOrderBook(),
+        UPBIT_UPDATED_COIN_INFO_TIME,
+      );
+    }
+  }
   getCoinCodeList() {
     return this.coinCodeList;
   }
@@ -89,24 +117,16 @@ export class CoinDataUpdaterService {
   getCoinLatestInfo() {
     return this.coinLatestInfo;
   }
-  getCoinPrice(buyDto) {
+
+  getCoinOrderbookInfo() {
+    return this.orderbookLatestInfo;
+  }
+
+  getCoinOrderbookByDto(buyDto) {
     const { typeGiven, typeReceived } = buyDto;
     const code = [typeGiven, typeReceived].join('-');
 
-    const coinPrice = this.coinLatestInfo.get(code).trade_price;
-    return coinPrice;
-  }
-  updateOrderbook(message) {
-    this.orderbookLatestInfo.set(message.code, message);
-  }
-  getOrderbook(buyDto) {
-    const { typeGiven, typeReceived, receivedPrice } = buyDto;
-    const code = [typeGiven, typeReceived].join('-');
-
-    const orderbook = this.orderbookLatestInfo.get(code);
-    console.log(orderbook);
-    return orderbook.orderbook_units.filter(
-      (unit) => unit.ask_price === receivedPrice,
-    );
+    const coinOrderbook = this.orderbookLatestInfo.get(code).orderbook_units;
+    return coinOrderbook;
   }
 }

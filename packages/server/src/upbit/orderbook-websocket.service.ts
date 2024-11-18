@@ -39,7 +39,6 @@ export class OrderbookService implements OnModuleInit {
       try {
         const message = JSON.parse(data.toString());
         if (message.error) throw new Error(JSON.stringify(message));
-        this.coinDataUpdaterService.updateOrderbook(message);
         this.sseService.orderbookSendEvent(message);
       } catch (error) {
         console.error('OrderbookWebSocket 오류:', error);

@@ -11,6 +11,7 @@ export class CoinListService implements OnModuleInit {
 	onModuleInit() {
 		this.coinDataUpdaterService.updateCoinList();
 		this.coinDataUpdaterService.updateCoinCurrentPrice();
+		this.coinDataUpdaterService.updateCurrentOrderBook();
 	}
 
 	async getMostTradeCoin() {
