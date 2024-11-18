@@ -10,7 +10,10 @@ import { setupSshTunnel } from './configs/ssh-tunnel';
 import { AllExceptionsFilter } from 'common/all-exceptions.filter';
 
 config();
-
+console.log({
+  synchronize: Boolean(process.env.DB_SYNCHRONIZE),
+  dropSchema: Boolean(process.env.DB_DROPSCHEMA),
+});
 async function bootstrap() {
   await setupSshTunnel();
   const app = await NestFactory.create(AppModule);
