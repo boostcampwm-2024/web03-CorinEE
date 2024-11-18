@@ -24,6 +24,6 @@ export function getCookie(name: string) {
 	return cookies.get(name);
 }
 
-export function removeCookie(name: string) {
-	return cookies.remove(name);
+export function removeCookie(name: string, options?: CookieOptions) {
+	return cookies.remove(name, { ...options });
 }
