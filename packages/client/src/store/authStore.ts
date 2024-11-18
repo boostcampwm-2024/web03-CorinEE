@@ -18,7 +18,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 	},
 
 	logout: () => {
-		removeCookie('access_token');
+		removeCookie('access_token', { path: '/' });
 		set({ isAuthenticated: false });
 	},
 
