@@ -11,9 +11,9 @@ export class TradeRepository extends Repository<Trade> {
   ) {
     super(Trade, dataSource.createEntityManager());
   }
-  async createTrade(buyDto: any): Promise<number> {
+  async createTrade(buyDto: any, userId, queryRunner): Promise<number> {
     try {
-      const { userId, typeGiven, typeReceived, receivedPrice, receivedAmount } =
+      const { typeGiven, typeReceived, receivedPrice, receivedAmount } =
         buyDto;
 
       const user = await this.userRepository.getUser(userId);
@@ -34,12 +34,15 @@ export class TradeRepository extends Repository<Trade> {
       trade.quantity = receivedAmount;
       trade.user = user;
 
-      const savedTrade = await this.save(trade);
+      const savedTrade = await queryRunner.manager.save(Trade, trade);
 
       return savedTrade.tradeId;
     } catch (e) {
       console.log(e);
     }
+  }
+  async updateTradeTransaction(tradeData, queryRunner){
+    await queryRunner.manager.save(Trade, tradeData);
   }
   async deleteTrade(tradeId: number, queryRunner: QueryRunner): Promise<Trade> {
     try {
@@ -84,6 +87,6 @@ export class TradeRepository extends Repository<Trade> {
       return trades;
     } catch (e) {
       console.log(e);
-    }
+    } 
   }
 }

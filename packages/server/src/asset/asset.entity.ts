@@ -19,7 +19,7 @@ export class Asset {
   @Column('double')
   price: number;
 
-  @Column()
+  @Column('double')
   quantity: number;
 
   @CreateDateColumn({ type: 'timestamp' })
