@@ -6,7 +6,9 @@ export function useCheckCoin(coin: string) {
 	const token = getCookie('access_token');
 	const { data } = useSuspenseQuery({
 		queryFn: () => checkCoin(coin, token),
-		queryKey: ['checkCoin'],
+		queryKey: ['checkCoin', coin],
+		staleTime: 0,
+		gcTime: 0,
 	});
 
 	return { data };
