@@ -11,6 +11,7 @@ export const initializeChart = (
 
 	chart.timeScale().applyOptions({
 		borderColor: '#1111',
+		timeVisible: true,
 	});
 
 	return chart;
