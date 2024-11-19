@@ -24,13 +24,21 @@ export async function getRecentlyMarketList(
 export async function getCandleByPeriod(
 	market: string,
 	params: CandlePeriod,
+	to?: string,
+	minutes?: number,
 ): Promise<Candle[]> {
-	const response = await upbitInstance.get(`/candles/${params}`, {
+	const url =
+		params === 'minutes'
+			? `/candles/${params}/${minutes}`
+			: `/candles/${params}`;
+
+	const response = await upbitInstance.get(url, {
 		params: {
 			market,
 			count: 200,
-			to: '',
+			to: to ?? '',
 		},
 	});
+
 	return response.data;
 }
