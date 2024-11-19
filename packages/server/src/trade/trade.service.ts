@@ -42,7 +42,7 @@ export class TradeService {
             }
         }else{
             return {
-                statusCode : 422,
+                statusCode : 201,
                 message : "보유하지 않은 코인입니다."
             }
         }
