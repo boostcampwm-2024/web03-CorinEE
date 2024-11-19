@@ -34,25 +34,29 @@ export class AuthService {
 	}
 
 	async guestSignIn(): Promise<{ access_token: string }> {
-		const username = `guest_${uuidv4()}`;
+		try{
+			const username = `guest_${uuidv4()}`;
 
-		await this.signUp(username, true);
+			await this.signUp(username, true);
 
-		const guestUser = await this.userRepository.findOneBy({ username });
+			const guestUser = await this.userRepository.findOneBy({ username });
 
-		await this.redisRepository.setAuthData(
-			`guest:${guestUser.id}`,
-			JSON.stringify({ userId: guestUser.id }),
-			6000,
-		);
+			await this.redisRepository.setAuthData(
+				`guest:${guestUser.id}`,
+				JSON.stringify({ userId: guestUser.id }),
+				6000,
+			);
 
-		const payload = { userId: guestUser.id, userName: guestUser.username };
-		return {
-			access_token: await this.jwtService.signAsync(payload, {
-				secret: jwtConstants.secret,
-				expiresIn: '6000s',
-			}),
-		};
+			const payload = { userId: guestUser.id, userName: guestUser.username };
+			return {
+				access_token: await this.jwtService.signAsync(payload, {
+					secret: jwtConstants.secret,
+					expiresIn: '6000s',
+				}),
+			};
+		}catch(error){
+			console.error(error)
+		}
 	}
 
 	async signUp(
