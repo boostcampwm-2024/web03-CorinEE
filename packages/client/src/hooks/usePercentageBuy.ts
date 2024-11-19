@@ -3,23 +3,25 @@ import { getCookie } from '@/utility/cookies';
 import { useQuery } from '@tanstack/react-query';
 import { Market } from '@/types/market';
 type CalculateAPI = {
-	moneyType: Market;
+	askType: 'bid' | 'ask';
+	moneyType: Market | string;
 	percent: number | undefined;
-	type: 'buy' | 'sell';
 };
 
-export function usePercentageBuy({ moneyType, percent, type }: CalculateAPI) {
+export function usePercentageBuy({
+	askType,
+	moneyType,
+	percent,
+}: CalculateAPI) {
 	const QUERY_KEY = 'percentage_buy';
 	const token = getCookie('access_token');
 
 	const { data, isLoading, refetch } = useQuery({
 		queryFn: () => {
 			if (percent === undefined) return null;
-			if (type === 'buy')
-				return calculatePercentageBuy({ moneyType, percent }, token);
-			else if (type === 'sell') return null;
+			return calculatePercentageBuy({ askType, moneyType, percent }, token);
 		},
-		queryKey: [QUERY_KEY, percent, type],
+		queryKey: [QUERY_KEY, percent, askType],
 		enabled: percent !== undefined,
 		staleTime: 1000 * 60,
 		gcTime: 1000 * 60 * 5,
