@@ -1,5 +1,5 @@
 import AccountCategories from '@/pages/account/AccountCategory';
-import Balance from '@/pages/account/Balance';
+import Balance from '@/pages/account/balance/Balance';
 import History from '@/pages/account/History';
 import WaitOrders from '@/pages/account/WaitOrders';
 import { AccountCategory } from '@/types/category';
