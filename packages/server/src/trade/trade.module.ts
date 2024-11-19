@@ -11,6 +11,7 @@ import { HttpModule } from '@nestjs/axios';
 import { UpbitModule } from 'src/upbit/upbit.module';
 import { TradeHistoryRepository } from 'src/trade-history/trade-history.repository';
 import { AskService } from './trade-ask.service';
+import { TradeService } from './trade.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Trade]), HttpModule, UpbitModule],
@@ -22,6 +23,7 @@ import { AskService } from './trade-ask.service';
     AssetRepository,
     UserRepository,
     TradeHistoryRepository,
+    TradeService
   ],
   controllers: [TradeController],
 })

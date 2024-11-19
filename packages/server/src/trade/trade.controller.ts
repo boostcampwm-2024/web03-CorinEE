@@ -13,12 +13,14 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { ApiBearerAuth, ApiSecurity, ApiBody } from '@nestjs/swagger';
 import { AskService } from './trade-ask.service';
 import { TradeDto } from './dtos/trade.dto';
+import { TradeService } from './trade.service';
 
 @Controller('trade')
 export class TradeController {
   constructor(
     private bidService: BidService,
     private askService: AskService,
+    private tradeService: TradeService
   ) {}
 
   @ApiBearerAuth('access-token')
@@ -71,5 +73,15 @@ export class TradeController {
     @Query('percent') percent: number,
   ) {
     return this.askService.calculatePercentBuy(req.user, moneyType, percent);
+  }
+  @ApiBearerAuth('access-token')
+  @ApiSecurity('access-token')
+  @UseGuards(AuthGuard)
+  @Get('check-coindata/:coin')
+  getMyCoinData(
+    @Request() req,
+    @Param('coin') coin: string,
+  ) {
+    return this.tradeService.checkMyCoinData(req.user, coin)
   }
 }
