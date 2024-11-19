@@ -1,8 +1,6 @@
-import NotLogin from '@/components/NotLogin';
 import OrderInput from '@/pages/trade/components/order_form/common/OrderInput';
 import OrderSubmitButton from '@/pages/trade/components/order_form/common/OrderSubmitButton';
 import PercentageButtons from '@/pages/trade/components/order_form/common/PercentageButtons';
-import { useAuthStore } from '@/store/authStore';
 import { useState, useEffect } from 'react';
 import { calculateTotalPrice } from '@/utility/order';
 import { FormEvent } from 'react';
@@ -10,9 +8,9 @@ import { useCheckCoin } from '@/hooks/useCheckCoin';
 import { useParams } from 'react-router-dom';
 import { useTrade } from '@/hooks/useTrade';
 import { Market } from '@/types/market';
+import NoCoin from '@/pages/trade/components/order_form/common/NoCoin';
 
 function OrderSellForm({ currentPrice }: { currentPrice: number }) {
-	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 	const [price, setPrice] = useState(String(currentPrice));
 	const [quantity, setQuantity] = useState<string>('');
 	const tradeMutation = useTrade('ask');
@@ -20,18 +18,6 @@ function OrderSellForm({ currentPrice }: { currentPrice: number }) {
 	const { market } = useParams();
 	const [marketType, code] = market?.split('-') ?? [];
 	const { data: checkCoin } = useCheckCoin(code);
-
-	useEffect(() => {
-		if (quantityErrorMessage) {
-			const timer = setTimeout(() => {
-				setQuantityErrorMessage('');
-			}, 1500);
-
-			return () => clearTimeout(timer);
-		}
-	}, [quantityErrorMessage]);
-
-	if (!isAuthenticated) return <NotLogin size="md" />;
 
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -48,6 +34,18 @@ function OrderSellForm({ currentPrice }: { currentPrice: number }) {
 			receivedAmount: Number(quantity),
 		});
 	};
+
+	useEffect(() => {
+		if (quantityErrorMessage) {
+			const timer = setTimeout(() => {
+				setQuantityErrorMessage('');
+			}, 1500);
+
+			return () => clearTimeout(timer);
+		}
+	}, [quantityErrorMessage]);
+
+	if (!checkCoin.own) return <NoCoin />;
 
 	return (
 		<div className="text-black font-normal text-sm">
