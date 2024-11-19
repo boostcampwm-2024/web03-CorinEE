@@ -3,7 +3,7 @@ import {
 	OnModuleInit,
 	UnprocessableEntityException,
 } from '@nestjs/common';
-import { DataSource, QueryRunner } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { AccountRepository } from 'src/account/account.repository';
 import { AssetRepository } from 'src/asset/asset.repository';
 import { TradeRepository } from './trade.repository';
@@ -61,7 +61,17 @@ export class AskService implements OnModuleInit {
 					statusCode: 422,
 				});
 			}
-
+			const userAsset = await this.checkCurrency(user,askDto, queryRunner)
+			const assetBalance = userAsset.quantity - askDto.receivedAmount;
+			if(assetBalance <= 0){
+				await this.assetRepository.delete({
+					assetId: userAsset.assetId
+				})
+			}else{
+				userAsset.quantity = assetBalance
+				userAsset.price -= askDto.receivedPrice+ askDto.receivedAmount
+				this.assetRepository.updateAssetPrice(userAsset, queryRunner);
+			}
 			await this.tradeRepository.createTrade(askDto, user.userId,'sell', queryRunner);
 			await queryRunner.commitTransaction();
 			
@@ -119,9 +129,10 @@ export class AskService implements OnModuleInit {
 					assetName: typeGiven
 				},
 			});
-			if(!userAsset) return;
-			askDto.assetBalance = userAsset.quantity;
-			askDto.asset = userAsset;
+			if(userAsset){
+				askDto.assetBalance = userAsset.quantity;
+				askDto.asset = userAsset;
+			}
 			const currentCoinOrderbook =
 				this.coinDataUpdaterService.getCoinOrderbookByAsk(askDto);
 			for (const order of currentCoinOrderbook) {
@@ -131,12 +142,6 @@ export class AskService implements OnModuleInit {
 				});
 				if (!tradeData) break;
 				const result = await this.executeTrade(askDto, order, tradeData);
-				if(askDto.asset.quantity ===0){
-					await this.assetRepository.delete({
-						assetId: askDto.asset.assetId
-					})
-					break;
-				}
 				if (!result) break;
 			}
 
@@ -160,7 +165,6 @@ export class AskService implements OnModuleInit {
 			tradeId,
 			asset,
 			typeGiven,
-			assetBalance,
 			typeReceived,
 			krw
 		} = askDto;
@@ -176,10 +180,10 @@ export class AskService implements OnModuleInit {
 				queryRunner,
 			);
 
-			if (assetBalance !== 0) {
+			if (!asset && tradeData.price > buyData.price) {
 				asset.price =
-					asset.price - buyData.price * buyData.quantity;
-				asset.quantity -= buyData.quantity;
+					asset.price + (tradeData.price - buyData.price) * buyData.quantity;
+				
 				await this.assetRepository.updateAssetPrice(asset, queryRunner);
 			}
 
@@ -192,9 +196,6 @@ export class AskService implements OnModuleInit {
 				await this.accountRepository.updateAccountBTC(account.id, BTC_QUANTITY, queryRunner)
 			}
 			const change = account[typeReceived] + buyData.price * buyData.quantity
-			console.log("account : "+account[typeReceived])
-			console.log("change : "+buyData.price*buyData.quantity)
-			console.log("result : "+change)
 			await this.accountRepository.updateAccountCurrency(typeReceived, change, account.id, queryRunner)
 			
 
