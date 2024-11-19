@@ -25,7 +25,7 @@ export class TradeService {
         })
         if(!account) {
             return {
-                code :400,
+                statusCode :400,
                 message: "등록되지 않은 사용자입니다."
             }
         }
@@ -37,12 +37,12 @@ export class TradeService {
         })
         if(coinData){
             return {
-                code : 200,
+                statusCode : 200,
                 message: "보유하고 계신 코인입니다."
             }
         }else{
             return {
-                code : 422,
+                statusCode : 422,
                 message : "보유하지 않은 코인입니다."
             }
         }

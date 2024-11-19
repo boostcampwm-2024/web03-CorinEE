@@ -58,7 +58,7 @@ export class AskService implements OnModuleInit {
 			if (!userAccount) {
 				throw new UnprocessableEntityException({
 					message: '유저가 존재하지 않습니다.',
-					code: 422,
+					statusCode: 422,
 				});
 			}
 
@@ -66,7 +66,7 @@ export class AskService implements OnModuleInit {
 			await queryRunner.commitTransaction();
 			
 			return {
-				code: 200,
+				statusCode: 200,
 				message: '거래가 정상적으로 등록되었습니다.',
 			};
 		} catch (error) {
@@ -74,7 +74,7 @@ export class AskService implements OnModuleInit {
 			await queryRunner.rollbackTransaction();
 			if (error instanceof UnprocessableEntityException) throw error;
 			return new UnprocessableEntityException({
-				code: 422,
+				statusCode: 422,
 				message: '거래 등록에 실패했습니다.',
 			});
 		} finally {
@@ -141,7 +141,7 @@ export class AskService implements OnModuleInit {
 			}
 
 			return {
-				code: 200,
+				statusCode: 200,
 				message: '거래가 정상적으로 등록되었습니다.',
 			};
 		} catch (error) {
