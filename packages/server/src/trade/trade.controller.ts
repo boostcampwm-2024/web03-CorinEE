@@ -7,6 +7,7 @@ import {
   Param,
   Request,
   UseGuards,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { BidService } from './trade-bid.service';
 import { AuthGuard } from 'src/auth/auth.guard';
@@ -45,7 +46,7 @@ export class TradeController {
       const response = await this.bidService.createBidTrade(req.user, bidDto);
       return response;
     } catch (error) {
-      return error.response;
+      return error;
     }
   }
 
@@ -59,7 +60,7 @@ export class TradeController {
       const response = await this.askService.createAskTrade(req.user, askDto);
       return response;
     } catch (error) {
-      return error.response;
+      return error;
     }
   }
 
