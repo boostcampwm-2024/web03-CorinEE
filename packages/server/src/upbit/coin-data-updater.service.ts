@@ -16,6 +16,7 @@ export class CoinDataUpdaterService {
   private coinNameList: Map<string, string>;
   private coinListTimeoutId: NodeJS.Timeout | null = null;
   private coinCurrentPriceTimeoutId: NodeJS.Timeout | null = null;
+  private coinCurrentOrderBookTimeoutId: NodeJS.Timeout | null = null;
   private coinLatestInfo = new Map();
   private krwCoinInfo: any[] = [];
   private orderbookLatestInfo = new Map();
@@ -90,9 +91,9 @@ export class CoinDataUpdaterService {
       console.error('getCoinListFromUpbit error:', error);
     } finally {
       console.log(`코인 호가 정보 최신화: ${Date()}`);
-      if (this.coinCurrentPriceTimeoutId)
-        clearTimeout(this.coinCurrentPriceTimeoutId);
-      this.coinCurrentPriceTimeoutId = setTimeout(
+      if (this.coinCurrentOrderBookTimeoutId)
+        clearTimeout(this.coinCurrentOrderBookTimeoutId);
+      this.coinCurrentOrderBookTimeoutId = setTimeout(
         () => this.updateCurrentOrderBook(),
         UPBIT_UPDATED_COIN_INFO_TIME,
       );
@@ -122,9 +123,16 @@ export class CoinDataUpdaterService {
     return this.orderbookLatestInfo;
   }
 
-  getCoinOrderbookByDto(buyDto) {
+  getCoinOrderbookByBid(buyDto) {
     const { typeGiven, typeReceived } = buyDto;
     const code = [typeGiven, typeReceived].join('-');
+
+    const coinOrderbook = this.orderbookLatestInfo.get(code).orderbook_units;
+    return coinOrderbook;
+  }
+  getCoinOrderbookByAsk(buyDto) {
+    const { typeGiven, typeReceived } = buyDto;
+    const code = [typeReceived, typeGiven].join('-');
 
     const coinOrderbook = this.orderbookLatestInfo.get(code).orderbook_units;
     return coinOrderbook;

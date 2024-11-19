@@ -3,7 +3,7 @@ import {
 	OnModuleInit,
 	UnprocessableEntityException,
 } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { DataSource, QueryRunner } from 'typeorm';
 import { AccountRepository } from 'src/account/account.repository';
 import { AssetRepository } from 'src/asset/asset.repository';
 import { TradeRepository } from './trade.repository';
@@ -13,8 +13,8 @@ import { UPBIT_UPDATED_COIN_INFO_TIME } from 'common/upbit';
 
 @Injectable()
 export class AskService implements OnModuleInit {
-	private transactionBid: boolean = false;
-	private transactionCreateBid: boolean = false;
+	private transactionAsk: boolean = false;
+	private transactionCreateAsk: boolean = false;
 	private matchPendingTradesTimeoutId: NodeJS.Timeout | null = null;
 
 	constructor(
@@ -31,16 +31,25 @@ export class AskService implements OnModuleInit {
 	}
 
 	async calculatePercentBuy(user, moneyType: string, percent: number) {
-		const money = await this.accountRepository.getMyMoney(user, moneyType);
+		const asset = await this.assetRepository.findOne({
+			where:{
+				account: {id: user.userId},
+				assetName: moneyType
+			}
+		})
 
-		return Number(money) * (percent / 100);
+		return Number(asset.quantity) * (percent / 100);
 	}
 	async createAskTrade(user, askDto) {
-		if (this.transactionCreateBid) await this.waitForTransactionOrder();
-		this.transactionCreateBid = true;
+		if (this.transactionCreateAsk) await this.waitForTransactionCreate();
+		this.transactionCreateAsk = true;
+		// const temp = await this.assetRepository.findOne({
+		// 	where: {assetId: 1}
+		// })
+		// console.log(temp.quantity)
 		const queryRunner = this.dataSource.createQueryRunner();
 		await queryRunner.connect();
-		await queryRunner.startTransaction();
+		await queryRunner.startTransaction('READ COMMITTED');
 		try {
 			const userAccount = await this.accountRepository.findOne({
 				where: {
@@ -53,15 +62,24 @@ export class AskService implements OnModuleInit {
 					code: 422,
 				});
 			}
-			const accountBalance = await this.checkCurrency(user, askDto);
-			await this.accountRepository.updateAccountCurrency(
-				askDto.typeGiven,
-				accountBalance,
-				userAccount.id,
-				queryRunner,
-			);
-			await this.tradeRepository.createTrade(askDto, user.userId, queryRunner);
+			const userAsset = await this.checkCurrency(user, askDto, queryRunner);
+			userAsset.quantity -= askDto.receivedAmount
+			if(userAsset.quantity !==0){
+				await this.assetRepository.updateAssetQuantity(
+					userAsset,
+					queryRunner,
+				)
+			}else {
+				await this.assetRepository.delete({
+					assetId: userAsset.assetId
+				})
+			}
+			await this.tradeRepository.createTrade(askDto, user.userId,'sell', queryRunner);
 			await queryRunner.commitTransaction();
+			const temp = await this.assetRepository.findOne({
+				where: {assetId: userAsset.assetId}
+			})
+			console.log(temp.quantity)
 			return {
 				code: 200,
 				message: '거래가 정상적으로 등록되었습니다.',
@@ -76,27 +94,30 @@ export class AskService implements OnModuleInit {
 			});
 		} finally {
 			await queryRunner.release();
-			this.transactionCreateBid = false;
+			this.transactionCreateAsk = false;
 		}
 	}
-	async checkCurrency(user, askDto) {
-		const { typeGiven, receivedPrice, receivedAmount } = askDto;
-		const givenAmount = receivedPrice * receivedAmount;
-		const userAccount = await this.accountRepository.findOne({
-			where: {
-				user: { id: user.userId },
-			},
-		});
-		const accountBalance = userAccount[typeGiven];
-		const accountResult = accountBalance - givenAmount;
-		if (accountResult < 0)
+	async checkCurrency(user, askDto,queryRunner) {
+		const { typeGiven, receivedAmount } = askDto;
+		const userAsset = await this.assetRepository.getAsset(user.userId, typeGiven,queryRunner)
+		if(!userAsset){
 			throw new UnprocessableEntityException({
 				message: '자산이 부족합니다.',
 				statusCode: 422,
 			});
-		return accountResult;
+		}
+		const accountBalance = userAsset.quantity;
+		const accountResult = accountBalance - receivedAmount;
+		if (accountResult < 0)
+			throw new UnprocessableEntityException({
+				message: '자산이 부족합니다.',
+				statusCode: 422,
+		});
+		return userAsset;
 	}
 	async askTradeService(askDto) {
+		if (this.transactionAsk) await this.waitForTransactionOrder();
+		this.transactionAsk = true;
 		const {
 			tradeId,
 			typeGiven,
@@ -107,17 +128,18 @@ export class AskService implements OnModuleInit {
 			userId,
 		} = askDto;
 		try {
-			const account = await this.accountRepository.findOne({
+			const userAsset = await this.assetRepository.findOne({
 				where: {
-					user: { id: userId },
+					account: { id: userId },
+					assetName: typeGiven
 				},
 			});
-			askDto.accountBalance = account[typeGiven];
-			askDto.account = account;
+			askDto.assetBalance = userAsset.quantity;
+			askDto.asset = userAsset;
 			const currentCoinOrderbook =
-				this.coinDataUpdaterService.getCoinOrderbookByDto(askDto);
+				this.coinDataUpdaterService.getCoinOrderbookByAsk(askDto);
 			for (const order of currentCoinOrderbook) {
-				if (order.ask_price > receivedPrice) break;
+				if (order.bid_price < receivedPrice) break;
 				const tradeData = await this.tradeRepository.findOne({
 					where: { tradeId: tradeId },
 				});
@@ -133,15 +155,14 @@ export class AskService implements OnModuleInit {
 		} catch (error) {
 			throw error;
 		} finally {
+			this.transactionAsk = false;
 		}
 	}
 	async executeTrade(askDto, order, tradeData) {
-		if (this.transactionBid) await this.waitForTransactionOrder();
-		this.transactionBid = true;
 		const queryRunner = this.dataSource.createQueryRunner();
 		await queryRunner.connect();
-		await queryRunner.startTransaction();
-		const { ask_price, ask_size } = order;
+		await queryRunner.startTransaction('READ COMMITTED');
+		const { bid_price, bid_size } = order;
 		const {
 			userId,
 			accountBalance,
@@ -150,34 +171,26 @@ export class AskService implements OnModuleInit {
 			typeGiven,
 			typeReceived,
 			tradeId,
+			asset,
+			assetBalance
 		} = askDto;
 		let result = false;
 		try {
 			const buyData = { ...tradeData };
 			buyData.quantity =
-				tradeData.quantity >= ask_size ? ask_size : tradeData.quantity;
-			buyData.price = ask_price;
+				tradeData.quantity >= bid_size ? bid_size : tradeData.quantity;
+			buyData.price = bid_price;
 			await this.tradeHistoryRepository.createTradeHistory(
 				userId,
 				buyData,
 				queryRunner,
 			);
 
-			const asset = await this.assetRepository.findOne({
-				where: { account: { id: account.accountId }, assetName: typeReceived },
-			});
-			if (asset) {
+			if (assetBalance !== 0) {
 				asset.price =
-					asset.price * asset.quantity + buyData.price * buyData.quantity;
-				asset.quantity += buyData.quantity;
-				await this.assetRepository.updateAsset(asset, queryRunner);
-			} else {
-				await this.assetRepository.createAsset(
-					askDto,
-					buyData.price,
-					buyData.quantity,
-					queryRunner,
-				);
+					asset.price * asset.quantity - buyData.price * buyData.quantity;
+				await this.assetRepository.updateAssetPrice(asset, queryRunner);
+
 			}
 
 			tradeData.quantity -= buyData.quantity;
@@ -190,16 +203,6 @@ export class AskService implements OnModuleInit {
 					queryRunner,
 				);
 
-			const change = (tradeData.price - buyData.price) * buyData.quantity;
-			const returnChange = change + account[typeGiven];
-
-			await this.accountRepository.updateAccountCurrency(
-				typeGiven,
-				returnChange,
-				account.id,
-				queryRunner,
-			);
-
 			await queryRunner.commitTransaction();
 			result = true;
 		} catch (error) {
@@ -207,7 +210,6 @@ export class AskService implements OnModuleInit {
 			console.log(error);
 		} finally {
 			await queryRunner.release();
-			this.transactionBid = false;
 			return result;
 		}
 	}
@@ -215,7 +217,7 @@ export class AskService implements OnModuleInit {
 	async waitForTransactionOrder() {
 		return new Promise<void>((resolve) => {
 			const check = () => {
-				if (!this.transactionBid) resolve();
+				if (!this.transactionAsk) resolve();
 				else setTimeout(check, 100);
 			};
 			check();
@@ -224,7 +226,7 @@ export class AskService implements OnModuleInit {
     async waitForTransactionCreate() {
 		return new Promise<void>((resolve) => {
 			const check = () => {
-				if (!this.transactionCreateBid) resolve();
+				if (!this.transactionCreateAsk) resolve();
 				else setTimeout(check, 100);
 			};
 			check();
@@ -238,9 +240,9 @@ export class AskService implements OnModuleInit {
 			coinLatestInfo.forEach((value, key) => {
 				const price = value.trade_price;
 				const [give, receive] = key.split('-');
-				coinPrice.push({ give: give, receive: receive, price: price });
+				coinPrice.push({ give: receive, receive: give, price: price });
 			});
-			const availableTrades = await this.tradeRepository.searchTrade(coinPrice);
+			const availableTrades = await this.tradeRepository.searchSellTrade(coinPrice);
 			availableTrades.forEach((trade) => {
 				const askDto = {
 					userId: trade.user.id,
