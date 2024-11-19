@@ -3,12 +3,15 @@ import { useState } from 'react';
 import ChartSelector from '@/pages/trade/components/chart/ChartSelector';
 import { CandlePeriod } from '@/types/chart';
 import CandleChart from '@/pages/trade/components/chart/CandleChart';
+
 function Chart({ market }: { market: string }) {
 	const [activePeriod, setActivePeriod] = useState<CandlePeriod>('days');
+	const [minute, setMinute] = useState<number>();
+	const { data, fetchNextPage } = usePeriodChart(market, activePeriod, minute);
 
-	const { data } = usePeriodChart(market, activePeriod);
-	const handleActivePeriod = (period: CandlePeriod) => {
+	const handleActivePeriod = (period: CandlePeriod, minute?: number) => {
 		setActivePeriod(period);
+		setMinute(minute);
 	};
 
 	return (
@@ -17,7 +20,11 @@ function Chart({ market }: { market: string }) {
 				activePeriods={activePeriod}
 				handleActivePeriod={handleActivePeriod}
 			/>
-			<CandleChart data={data} />
+			<CandleChart
+				activePeriod={activePeriod}
+				data={data.candles.flat()}
+				fetchNextPage={fetchNextPage}
+			/>
 		</div>
 	);
 }
