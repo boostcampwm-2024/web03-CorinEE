@@ -1,18 +1,14 @@
 import OrderBuyForm from '@/pages/trade/components/order_form/OrderBuyForm';
 import OrderSellForm from '@/pages/trade/components/order_form/OrderSellForm';
 import OrderWaitForm from '@/pages/trade/components/order_form/OrderWaitForm';
-import {
-	Tabs,
-	Tab,
-	TabsHeader,
-	TabsBody,
-	TabPanel,
-} from '@material-tailwind/react';
+import { Tabs, Tab, TabsHeader } from '@material-tailwind/react';
 import { useState } from 'react';
+import { useAuthStore } from '@/store/authStore';
+import NotLogin from '@/components/NotLogin';
 
 function OrderForm({ currentPrice }: { currentPrice: number }) {
 	const [activeTabs, setActiveTabs] = useState('buy');
-
+	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 	const handleActiveTabs = (value: string) => {
 		setActiveTabs(value);
 	};
@@ -23,18 +19,21 @@ function OrderForm({ currentPrice }: { currentPrice: number }) {
 			id: 'buy',
 			activeColor: 'text-red-500',
 			component: <OrderBuyForm currentPrice={currentPrice} />,
+			notLogin: <NotLogin size="md" />,
 		},
 		{
 			value: '판매',
 			id: 'sell',
 			activeColor: 'text-blue-600',
 			component: <OrderSellForm currentPrice={currentPrice} />,
+			notLogin: <NotLogin size="md" />,
 		},
 		{
 			value: '대기',
 			id: 'wait',
 			activeColor: 'text-green-500',
 			component: <OrderWaitForm />,
+			notLogin: <NotLogin size="md" />,
 		},
 	];
 
@@ -54,20 +53,16 @@ function OrderForm({ currentPrice }: { currentPrice: number }) {
 						</Tab>
 					))}
 				</TabsHeader>
-				<TabsBody
-					animate={{
-						initial: { y: 250 },
-						mount: { y: 0 },
-						unmount: { y: 250 },
-					}}
-					className="z-0"
-				>
+				<div className="mt-4">
 					{TABS.map((tab) => (
-						<TabPanel key={tab.id} value={tab.value}>
-							{tab.component}
-						</TabPanel>
+						<div
+							key={tab.id}
+							className={activeTabs === tab.id ? 'block' : 'hidden'}
+						>
+							{isAuthenticated ? tab.component : tab.notLogin}
+						</div>
 					))}
-				</TabsBody>
+				</div>
 			</Tabs>
 		</div>
 	);
