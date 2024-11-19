@@ -52,7 +52,10 @@ export class AssetRepository extends Repository<Asset> {
       await queryRunner.manager
         .createQueryBuilder()
         .update(Asset)
-        .set({ price: asset.price })
+        .set({ 
+          price: asset.price,
+          quantity: asset.quantity
+        })
         .where('assetId = :assetId', { assetId: asset.assetId })
         .execute();
     } catch (e) {

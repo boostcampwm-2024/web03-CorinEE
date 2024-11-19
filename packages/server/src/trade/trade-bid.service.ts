@@ -89,11 +89,8 @@ export class BidService implements OnModuleInit {
 		});
 		const accountBalance = userAccount[typeGiven];
 		const accountResult = accountBalance - givenAmount;
-		console.error(`accountResult : ${accountResult}`)
+		
 		if (accountResult < 0){
-			console.error(`매수 희망 금액 : ${givenAmount}`)
-			console.error(`계좌 잔액 : ${accountBalance}`)
-			console.error(`accountResult : ${accountResult}`)
 			throw new UnprocessableEntityException({
 				message: '자산이 부족합니다.',
 				code: 422,
@@ -111,17 +108,17 @@ export class BidService implements OnModuleInit {
 			userId,
 		} = bidDto;
 		try {
-			const account = await this.accountRepository.findOne({
-				where: {
-					user: { id: userId },
-				},
-			});
-			bidDto.accountBalance = account[typeGiven];
-			bidDto.account = account;
 			const currentCoinOrderbook =
 				this.coinDataUpdaterService.getCoinOrderbookByBid(bidDto);
 			for(const order of currentCoinOrderbook){
 				if (order.ask_price > receivedPrice) break;
+				const account = await this.accountRepository.findOne({
+					where: {
+						user: { id: userId },
+					},
+				});
+				bidDto.accountBalance = account[typeGiven];
+				bidDto.account = account;
 				const tradeData = await this.tradeRepository.findOne({
 					where: { tradeId: tradeId },
 				});
@@ -156,9 +153,9 @@ export class BidService implements OnModuleInit {
 		let result = false;
 		try {
 			const buyData = {...tradeData};
-
+			
 			buyData.quantity = buyData.quantity >= ask_size ? ask_size : buyData.quantity;
-			buyData.price = ask_price;
+			buyData.price = ask_price * krw;
 
 			await this.tradeHistoryRepository.createTradeHistory(
 				userId,
@@ -167,34 +164,40 @@ export class BidService implements OnModuleInit {
 			);
 
 			const asset = await this.assetRepository.findOne({
-				where: { account: {id: account.accountId}, assetName: typeReceived },
+				where: { account: {id: account.id}, assetName: typeReceived },
 			});
 
 			if (asset) {
 				asset.price =
-					asset.price * asset.quantity + krw * buyData.quantity;
+					asset.price + buyData.price * buyData.quantity;
 				asset.quantity += buyData.quantity;
 
 				await this.assetRepository.updateAssetQuantityPrice(asset, queryRunner);
 			} else {
 				await this.assetRepository.createAsset(
 					bidDto,
-					buyData.price,
+					buyData.price * buyData.quantity,
 					buyData.quantity,
 					queryRunner,
 				);
 			}
-
+			
 			tradeData.quantity -= buyData.quantity;
 			
 			if (tradeData.quantity === 0) {
 				await this.tradeRepository.deleteTrade(tradeId, queryRunner);
 			} else await this.tradeRepository.updateTradeTransaction(tradeData, queryRunner);
-			const temp = await this.tradeRepository.findOne({
-				where: {tradeId: tradeData.tradeId}
-			})
+
 			const change = (tradeData.price - buyData.price) * buyData.quantity;
 			const returnChange = change + account[typeGiven]
+			const new_asset = await this.assetRepository.findOne({
+				where: {account:{id:account.id}, assetName: "BTC"}
+			})
+
+			if(typeReceived === "BTC"){
+				const BTC_QUANTITY = new_asset ? asset.quantity : buyData.quantity;
+				await this.accountRepository.updateAccountBTC(account.id, BTC_QUANTITY, queryRunner)
+			}
 
 			await this.accountRepository.updateAccountCurrency(typeGiven,returnChange, account.id, queryRunner);
 
@@ -239,6 +242,8 @@ export class BidService implements OnModuleInit {
 			});
 			const availableTrades = await this.tradeRepository.searchBuyTrade(coinPrice);
 			availableTrades.forEach((trade) => {
+				const krw = coinLatestInfo.get(["KRW",trade.assetName].join("-")).trade_price
+				const another = coinLatestInfo.get([trade.tradeCurrency,trade.assetName].join("-")).trade_price
 				const bidDto = {
 					userId: trade.user.id,
 					typeGiven: trade.tradeCurrency, //건네주는 통화
@@ -246,7 +251,7 @@ export class BidService implements OnModuleInit {
 					receivedPrice: trade.price, //건네받을 통화 가격
 					receivedAmount: trade.quantity, //건네 받을 통화 갯수
 					tradeId: trade.tradeId,
-					krw: coinLatestInfo.get(["KRW",trade.assetName].join("-")),
+					krw: another/krw
 				};
 				this.bidTradeService(bidDto);
 			});
