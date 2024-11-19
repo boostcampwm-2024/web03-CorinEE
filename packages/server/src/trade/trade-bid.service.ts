@@ -50,7 +50,7 @@ export class BidService implements OnModuleInit {
 			if (!userAccount) {
 				throw new UnprocessableEntityException({
 					message: '유저가 존재하지 않습니다.',
-					code: 422,
+					statusCode: 422,
 				});
 			}
 			const accountBalance = await this.checkCurrency(user, bidDto);
@@ -63,7 +63,7 @@ export class BidService implements OnModuleInit {
 			await this.tradeRepository.createTrade(bidDto, user.userId, 'buy', queryRunner);
 			await queryRunner.commitTransaction();
 			return {
-				code: 200,
+				statusCode: 200,
 				message: '거래가 정상적으로 등록되었습니다.',
 			};
 		} catch (error) {
@@ -71,7 +71,7 @@ export class BidService implements OnModuleInit {
 			await queryRunner.rollbackTransaction();
 			if (error instanceof UnprocessableEntityException) throw error;
 			return new UnprocessableEntityException({
-				code: 422,
+				statusCode: 422,
 				message: '거래 등록에 실패했습니다.',
 			});
 		} finally {
@@ -93,7 +93,7 @@ export class BidService implements OnModuleInit {
 		if (accountResult < 0){
 			throw new UnprocessableEntityException({
 				message: '자산이 부족합니다.',
-				code: 422,
+				statusCode: 422,
 			});
 		}
 		return accountResult;
@@ -128,7 +128,7 @@ export class BidService implements OnModuleInit {
 			}
 
 			return {
-				code: 200,
+				statusCode: 200,
 				message: '거래가 정상적으로 등록되었습니다.',
 			};
 		} catch (error) {
