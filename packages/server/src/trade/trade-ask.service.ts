@@ -51,7 +51,7 @@ export class AskService implements OnModuleInit {
 		await queryRunner.connect();
 		await queryRunner.startTransaction('READ COMMITTED');
 		try {
-			if(askDto.receivedAmount) throw new BadRequestException();
+			if(askDto.receivedAmount<=0) throw new BadRequestException();
 			const userAccount = await this.accountRepository.findOne({
 				where: {
 					user: { id: user.userId },

@@ -44,7 +44,7 @@ export class BidService implements OnModuleInit {
 		await queryRunner.connect();
 		await queryRunner.startTransaction('READ COMMITTED');
 		try {
-			if(bidDto.receivedAmount===0) throw new BadRequestException();
+			if(bidDto.receivedAmount<=0) throw new BadRequestException();
 			const userAccount = await this.accountRepository.findOne({
 				where: {
 					user: { id: user.userId },
