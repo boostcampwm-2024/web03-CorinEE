@@ -31,9 +31,12 @@ export class AskService implements OnModuleInit {
 	}
 
 	async calculatePercentBuy(user, moneyType: string, percent: number) {
+		const account = await this.accountRepository.findOne({
+			where : {user: {id: user.userId}}
+		})
 		const asset = await this.assetRepository.findOne({
 			where:{
-				account: {id: user.userId},
+				account: {id: account.id},
 				assetName: moneyType
 			}
 		})
@@ -58,24 +61,10 @@ export class AskService implements OnModuleInit {
 					code: 422,
 				});
 			}
-			const userAsset = await this.checkCurrency(user, askDto, queryRunner);
-			userAsset.quantity -= askDto.receivedAmount
-			if(userAsset.quantity !==0){
-				await this.assetRepository.updateAssetQuantity(
-					userAsset,
-					queryRunner,
-				)
-			}else {
-				await this.assetRepository.delete({
-					assetId: userAsset.assetId
-				})
-			}
+
 			await this.tradeRepository.createTrade(askDto, user.userId,'sell', queryRunner);
 			await queryRunner.commitTransaction();
-			const temp = await this.assetRepository.findOne({
-				where: {assetId: userAsset.assetId}
-			})
-			console.log(temp.quantity)
+			
 			return {
 				code: 200,
 				message: '거래가 정상적으로 등록되었습니다.',
@@ -121,12 +110,16 @@ export class AskService implements OnModuleInit {
 			userId,
 		} = askDto;
 		try {
+			const account = await this.accountRepository.findOne({
+				where: { user : { id : userId } }
+			})
 			const userAsset = await this.assetRepository.findOne({
 				where: {
-					account: { id: userId },
+					account: { id: account.id },
 					assetName: typeGiven
 				},
 			});
+			if(!userAsset) return;
 			askDto.assetBalance = userAsset.quantity;
 			askDto.asset = userAsset;
 			const currentCoinOrderbook =
@@ -138,6 +131,12 @@ export class AskService implements OnModuleInit {
 				});
 				if (!tradeData) break;
 				const result = await this.executeTrade(askDto, order, tradeData);
+				if(askDto.asset.quantity ===0){
+					await this.assetRepository.delete({
+						assetId: askDto.asset.assetId
+					})
+					break;
+				}
 				if (!result) break;
 			}
 
@@ -160,7 +159,9 @@ export class AskService implements OnModuleInit {
 			userId,
 			tradeId,
 			asset,
+			typeGiven,
 			assetBalance,
+			typeReceived,
 			krw
 		} = askDto;
 		let result = false;
@@ -168,7 +169,7 @@ export class AskService implements OnModuleInit {
 			const buyData = { ...tradeData };
 			buyData.quantity =
 				tradeData.quantity >= bid_size ? bid_size : tradeData.quantity;
-			buyData.price = bid_price;
+			buyData.price = bid_price * krw;
 			await this.tradeHistoryRepository.createTradeHistory(
 				userId,
 				buyData,
@@ -177,21 +178,36 @@ export class AskService implements OnModuleInit {
 
 			if (assetBalance !== 0) {
 				asset.price =
-					asset.price * asset.quantity - krw * buyData.quantity;
+					asset.price - buyData.price * buyData.quantity;
+				asset.quantity -= buyData.quantity;
 				await this.assetRepository.updateAssetPrice(asset, queryRunner);
-
 			}
+
+			const account = await this.accountRepository.findOne({
+				where: { user : { id : userId } }
+			})
+
+			if(typeGiven === "BTC"){
+				const BTC_QUANTITY = account.BTC - buyData.quantity
+				await this.accountRepository.updateAccountBTC(account.id, BTC_QUANTITY, queryRunner)
+			}
+			const change = account[typeReceived] + buyData.price * buyData.quantity
+			console.log("account : "+account[typeReceived])
+			console.log("change : "+buyData.price*buyData.quantity)
+			console.log("result : "+change)
+			await this.accountRepository.updateAccountCurrency(typeReceived, change, account.id, queryRunner)
+			
 
 			tradeData.quantity -= buyData.quantity;
 
 			if (tradeData.quantity === 0) {
 				await this.tradeRepository.deleteTrade(tradeId, queryRunner);
-			} else
+			} else{
 				await this.tradeRepository.updateTradeTransaction(
 					tradeData,
 					queryRunner,
 				);
-
+			}
 			await queryRunner.commitTransaction();
 			result = true;
 		} catch (error) {
@@ -233,6 +249,8 @@ export class AskService implements OnModuleInit {
 			});
 			const availableTrades = await this.tradeRepository.searchSellTrade(coinPrice);
 			availableTrades.forEach((trade) => {
+				const krw = coinLatestInfo.get(["KRW",trade.tradeCurrency].join("-")).trade_price;
+				const another = coinLatestInfo.get([trade.assetName,trade.tradeCurrency].join("-")).trade_price;
 				const askDto = {
 					userId: trade.user.id,
 					typeGiven: trade.tradeCurrency, //건네주는 통화
@@ -240,7 +258,7 @@ export class AskService implements OnModuleInit {
 					receivedPrice: trade.price, //건네받을 통화 가격
 					receivedAmount: trade.quantity, //건네 받을 통화 갯수
 					tradeId: trade.tradeId,
-					krw: coinLatestInfo.get(["KRW",trade.assetName].join("-")),
+					krw: another/krw
 				};
 				this.askTradeService(askDto);
 			});
