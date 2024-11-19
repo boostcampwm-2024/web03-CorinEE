@@ -1,3 +1,5 @@
+import { Time } from 'lightweight-charts';
+
 export type Candle = {
 	market: string;
 	candle_date_time_utc: string;
@@ -15,11 +17,17 @@ export type Candle = {
 };
 
 export type CandleFormat = {
-	time: string;
+	time: Time;
 	open: number;
 	high: number;
 	low: number;
 	close: number;
 };
 
-export type CandlePeriod = 'days' | 'weeks' | 'months' | 'years';
+export type InfiniteCandle = {
+	candles: Candle[];
+	hasNextPage: boolean;
+};
+
+export type CandlePeriod = 'minutes' | 'days' | 'weeks' | 'months' | 'years';
+export type CandleMinutes = 1 | 3 | 5 | 10 | 15 | 30 | 60;
