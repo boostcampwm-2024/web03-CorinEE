@@ -61,7 +61,7 @@ export class AskService implements OnModuleInit {
 					statusCode: 422,
 				});
 			}
-			const userAsset = await this.checkCurrency(user,askDto, queryRunner)
+			const userAsset = await this.checkCurrency(user,askDto, userAccount, queryRunner)
 			const assetBalance = userAsset.quantity - askDto.receivedAmount;
 			if(assetBalance <= 0){
 				await this.assetRepository.delete({
@@ -92,9 +92,9 @@ export class AskService implements OnModuleInit {
 			this.transactionCreateAsk = false;
 		}
 	}
-	async checkCurrency(user, askDto,queryRunner) {
+	async checkCurrency(user, askDto,account,queryRunner) {
 		const { typeGiven, receivedAmount } = askDto;
-		const userAsset = await this.assetRepository.getAsset(user.userId, typeGiven,queryRunner)
+		const userAsset = await this.assetRepository.getAsset(account.id,typeGiven,queryRunner)
 		if(!userAsset){
 			throw new UnprocessableEntityException({
 				message: '자산이 부족합니다.',
