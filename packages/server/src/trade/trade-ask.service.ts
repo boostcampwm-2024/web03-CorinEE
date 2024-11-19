@@ -37,16 +37,12 @@ export class AskService implements OnModuleInit {
 				assetName: moneyType
 			}
 		})
-
+		if(!asset) return 0;
 		return Number(asset.quantity) * (percent / 100);
 	}
 	async createAskTrade(user, askDto) {
 		if (this.transactionCreateAsk) await this.waitForTransactionCreate();
 		this.transactionCreateAsk = true;
-		// const temp = await this.assetRepository.findOne({
-		// 	where: {assetId: 1}
-		// })
-		// console.log(temp.quantity)
 		const queryRunner = this.dataSource.createQueryRunner();
 		await queryRunner.connect();
 		await queryRunner.startTransaction('READ COMMITTED');
@@ -121,10 +117,7 @@ export class AskService implements OnModuleInit {
 		const {
 			tradeId,
 			typeGiven,
-			typeReceived,
-			givenAmount,
 			receivedPrice,
-			receivedAmount,
 			userId,
 		} = askDto;
 		try {
@@ -165,14 +158,10 @@ export class AskService implements OnModuleInit {
 		const { bid_price, bid_size } = order;
 		const {
 			userId,
-			accountBalance,
-			account,
-			receivedAmount,
-			typeGiven,
-			typeReceived,
 			tradeId,
 			asset,
-			assetBalance
+			assetBalance,
+			krw
 		} = askDto;
 		let result = false;
 		try {
@@ -188,7 +177,7 @@ export class AskService implements OnModuleInit {
 
 			if (assetBalance !== 0) {
 				asset.price =
-					asset.price * asset.quantity - buyData.price * buyData.quantity;
+					asset.price * asset.quantity - krw * buyData.quantity;
 				await this.assetRepository.updateAssetPrice(asset, queryRunner);
 
 			}
@@ -251,6 +240,7 @@ export class AskService implements OnModuleInit {
 					receivedPrice: trade.price, //건네받을 통화 가격
 					receivedAmount: trade.quantity, //건네 받을 통화 갯수
 					tradeId: trade.tradeId,
+					krw: coinLatestInfo.get(["KRW",trade.assetName].join("-")),
 				};
 				this.askTradeService(askDto);
 			});

@@ -32,7 +32,7 @@ export class AccountRepository extends Repository<Account> {
         [typeGiven]: accountBalance,
       };
 
-		  await queryRunner.manager.save(Account, updateData);
+		await queryRunner.manager.save(Account, updateData);
     }catch(error){
       console.log(error)
     }

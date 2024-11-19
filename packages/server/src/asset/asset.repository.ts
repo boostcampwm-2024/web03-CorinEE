@@ -20,9 +20,17 @@ export class AssetRepository extends Repository<Asset> {
       console.log(e);
     }
   }
-  async updateAsset(asset, queryRunner) {
+  async updateAssetQuantityPrice(asset, queryRunner) {
     try {
-      await queryRunner.manager.save(Asset, asset);
+      await queryRunner.manager
+        .createQueryBuilder()
+        .update(Asset)
+        .set({ 
+          quantity: asset.quantity,
+          price: asset.price
+        })
+        .where('assetId = :assetId', { assetId: asset.assetId })
+        .execute();
     } catch (e) {
       console.log(e);
     }
