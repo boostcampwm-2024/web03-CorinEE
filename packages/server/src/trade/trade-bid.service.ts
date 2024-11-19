@@ -14,6 +14,7 @@ import { UPBIT_UPDATED_COIN_INFO_TIME } from 'common/upbit';
 @Injectable()
 export class BidService implements OnModuleInit {
 	private transactionBuy: boolean = false;
+	private transactionCreateBid: boolean = false;
 	private matchPendingTradesTimeoutId: NodeJS.Timeout | null = null;
 
 	constructor(
@@ -35,6 +36,8 @@ export class BidService implements OnModuleInit {
 		return Number(money) * (percent / 100);
 	}
 	async createBidTrade(user, bidDto) {
+		if (this.transactionCreateBid) await this.waitForTransactionOrderBid();
+		this.transactionCreateBid = true;
 		const queryRunner = this.dataSource.createQueryRunner();
 		await queryRunner.connect();
 		await queryRunner.startTransaction('READ COMMITTED');
@@ -73,6 +76,7 @@ export class BidService implements OnModuleInit {
 			});
 		} finally {
 			await queryRunner.release();
+			this.transactionCreateBid = false;
 		}
 	}
 	async checkCurrency(user, bidDto) {
@@ -85,11 +89,16 @@ export class BidService implements OnModuleInit {
 		});
 		const accountBalance = userAccount[typeGiven];
 		const accountResult = accountBalance - givenAmount;
-		if (accountResult < 0)
+		console.error(`accountResult : ${accountResult}`)
+		if (accountResult < 0){
+			console.error(`매수 희망 금액 : ${givenAmount}`)
+			console.error(`계좌 잔액 : ${accountBalance}`)
+			console.error(`accountResult : ${accountResult}`)
 			throw new UnprocessableEntityException({
 				message: '자산이 부족합니다.',
 				code: 422,
 			});
+		}
 		return accountResult;
 	}
 	async bidTradeService(bidDto) {
@@ -98,10 +107,7 @@ export class BidService implements OnModuleInit {
 		const {
 			tradeId,
 			typeGiven,
-			typeReceived,
-			givenAmount,
 			receivedPrice,
-			receivedAmount,
 			userId,
 		} = bidDto;
 		try {
@@ -141,18 +147,19 @@ export class BidService implements OnModuleInit {
 		const { ask_price, ask_size } = order;
 		const {
 			userId,
-			accountBalance,
 			account,
-			receivedAmount,
 			typeGiven,
 			typeReceived,
 			tradeId,
+			krw
 		} = bidDto;
 		let result = false;
 		try {
 			const buyData = {...tradeData};
-			buyData.quantity = tradeData.quantity >= ask_size ? ask_size : tradeData.quantity;
+
+			buyData.quantity = buyData.quantity >= ask_size ? ask_size : buyData.quantity;
 			buyData.price = ask_price;
+
 			await this.tradeHistoryRepository.createTradeHistory(
 				userId,
 				buyData,
@@ -162,11 +169,13 @@ export class BidService implements OnModuleInit {
 			const asset = await this.assetRepository.findOne({
 				where: { account: {id: account.accountId}, assetName: typeReceived },
 			});
+
 			if (asset) {
 				asset.price =
-					asset.price * asset.quantity + buyData.price * buyData.quantity;
+					asset.price * asset.quantity + krw * buyData.quantity;
 				asset.quantity += buyData.quantity;
-				await this.assetRepository.updateAsset(asset, queryRunner);
+
+				await this.assetRepository.updateAssetQuantityPrice(asset, queryRunner);
 			} else {
 				await this.assetRepository.createAsset(
 					bidDto,
@@ -181,7 +190,9 @@ export class BidService implements OnModuleInit {
 			if (tradeData.quantity === 0) {
 				await this.tradeRepository.deleteTrade(tradeId, queryRunner);
 			} else await this.tradeRepository.updateTradeTransaction(tradeData, queryRunner);
-
+			const temp = await this.tradeRepository.findOne({
+				where: {tradeId: tradeData.tradeId}
+			})
 			const change = (tradeData.price - buyData.price) * buyData.quantity;
 			const returnChange = change + account[typeGiven]
 
@@ -207,6 +218,15 @@ export class BidService implements OnModuleInit {
 			check();
 		});
 	}
+	async waitForTransactionOrderBid() {
+		return new Promise<void>((resolve) => {
+			const check = () => {
+				if (!this.transactionCreateBid) resolve();
+				else setTimeout(check, 100);
+			};
+			check();
+		});
+	}
 	async matchPendingTrades() {
 		try {
 			const coinLatestInfo = this.coinDataUpdaterService.getCoinLatestInfo();
@@ -225,7 +245,8 @@ export class BidService implements OnModuleInit {
 					typeReceived: trade.assetName, //건네받을 통화 타입
 					receivedPrice: trade.price, //건네받을 통화 가격
 					receivedAmount: trade.quantity, //건네 받을 통화 갯수
-					tradeId: trade.tradeId
+					tradeId: trade.tradeId,
+					krw: coinLatestInfo.get(["KRW",trade.assetName].join("-")),
 				};
 				this.bidTradeService(bidDto);
 			});
