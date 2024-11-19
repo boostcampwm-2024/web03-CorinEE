@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react';
 import OrderInput from '@/pages/trade/components/order_form/common/OrderInput';
 import OrderSubmitButton from '@/pages/trade/components/order_form/common/OrderSubmitButton';
 import PercentageButtons from '@/pages/trade/components/order_form/common/PercentageButtons';
-import NotLogin from '@/components/NotLogin';
-import { useAuthStore } from '@/store/authStore';
 import { calculateTotalPrice } from '@/utility/order';
 import { FormEvent } from 'react';
 import { useTrade } from '@/hooks/useTrade';
@@ -12,7 +10,6 @@ import { Market } from '@/types/market';
 import { useMyAccount } from '@/hooks/useMyAccount';
 
 function OrderBuyForm({ currentPrice }: { currentPrice: number }) {
-	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 	const [price, setPrice] = useState(String(currentPrice));
 	const [quantity, setQuantity] = useState<string>('');
 	const tradeMutation = useTrade('bid');
@@ -46,8 +43,6 @@ function OrderBuyForm({ currentPrice }: { currentPrice: number }) {
 			return () => clearTimeout(timer);
 		}
 	}, [quantityErrorMessage]);
-
-	if (!isAuthenticated) return <NotLogin size="md" />;
 
 	return (
 		<>
