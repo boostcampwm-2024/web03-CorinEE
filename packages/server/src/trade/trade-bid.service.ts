@@ -1,4 +1,5 @@
 import {
+	BadRequestException,
 	Injectable,
 	InternalServerErrorException,
 	OnModuleInit,
@@ -43,6 +44,7 @@ export class BidService implements OnModuleInit {
 		await queryRunner.connect();
 		await queryRunner.startTransaction('READ COMMITTED');
 		try {
+			if(bidDto.receivedAmount===0) throw new BadRequestException();
 			const userAccount = await this.accountRepository.findOne({
 				where: {
 					user: { id: user.userId },
@@ -57,7 +59,7 @@ export class BidService implements OnModuleInit {
 			const accountBalance = await this.checkCurrency(user, bidDto);
 			await this.accountRepository.updateAccountCurrency(
 				bidDto.typeGiven,
-				accountBalance,
+				Math.floor(accountBalance),
 				userAccount.id,
 				queryRunner,
 			);
@@ -70,7 +72,7 @@ export class BidService implements OnModuleInit {
 		} catch (error) {
 			console.log(error);
 			await queryRunner.rollbackTransaction();
-			if (error instanceof UnprocessableEntityException) throw error;
+			if (error instanceof UnprocessableEntityException || BadRequestException) throw error;
 			return new InternalServerErrorException({
 				statusCode: 500,
 				message: '거래 등록에 실패했습니다.',
@@ -82,7 +84,7 @@ export class BidService implements OnModuleInit {
 	}
 	async checkCurrency(user, bidDto) {
 		const { typeGiven, receivedPrice, receivedAmount } = bidDto;
-		const givenAmount = receivedPrice * receivedAmount;
+		const givenAmount = Math.floor(receivedPrice * receivedAmount);
 		const userAccount = await this.accountRepository.findOne({
 			where: {
 				user: { id: user.userId },
@@ -156,7 +158,7 @@ export class BidService implements OnModuleInit {
 			const buyData = {...tradeData};
 			
 			buyData.quantity = buyData.quantity >= ask_size ? ask_size : buyData.quantity;
-			buyData.price = ask_price * krw;
+			buyData.price = Math.floor(ask_price * krw);
 
 			await this.tradeHistoryRepository.createTradeHistory(
 				userId,
@@ -169,15 +171,14 @@ export class BidService implements OnModuleInit {
 			});
 			
 			if (asset) {
-				asset.price =
-					asset.price + buyData.price * buyData.quantity;
+				asset.price = Math.floor(asset.price + buyData.price * buyData.quantity);
 				asset.quantity += buyData.quantity;
-
+				
 				await this.assetRepository.updateAssetQuantityPrice(asset, queryRunner);
 			} else {
 				await this.assetRepository.createAsset(
 					bidDto,
-					buyData.price * buyData.quantity,
+					Math.floor(buyData.price * buyData.quantity),
 					buyData.quantity,
 					queryRunner,
 				);
@@ -190,7 +191,7 @@ export class BidService implements OnModuleInit {
 			} else await this.tradeRepository.updateTradeTransaction(tradeData, queryRunner);
 
 			const change = (tradeData.price - buyData.price) * buyData.quantity;
-			const returnChange = change + account[typeGiven]
+			const returnChange = Math.floor(change + account[typeGiven])
 			const new_asset = await this.assetRepository.findOne({
 				where: {account:{id:account.id}, assetName: "BTC"}
 			})
