@@ -37,7 +37,7 @@ export class BidService implements OnModuleInit {
 	async createBidTrade(user, bidDto) {
 		const queryRunner = this.dataSource.createQueryRunner();
 		await queryRunner.connect();
-		await queryRunner.startTransaction();
+		await queryRunner.startTransaction('READ COMMITTED');
 		try {
 			const userAccount = await this.accountRepository.findOne({
 				where: {
@@ -57,7 +57,7 @@ export class BidService implements OnModuleInit {
 				userAccount.id,
 				queryRunner,
 			);
-			await this.tradeRepository.createTrade(bidDto, user.userId, queryRunner);
+			await this.tradeRepository.createTrade(bidDto, user.userId, 'buy', queryRunner);
 			await queryRunner.commitTransaction();
 			return {
 				code: 200,
@@ -113,7 +113,7 @@ export class BidService implements OnModuleInit {
 			bidDto.accountBalance = account[typeGiven];
 			bidDto.account = account;
 			const currentCoinOrderbook =
-				this.coinDataUpdaterService.getCoinOrderbookByDto(bidDto);
+				this.coinDataUpdaterService.getCoinOrderbookByBid(bidDto);
 			for(const order of currentCoinOrderbook){
 				if (order.ask_price > receivedPrice) break;
 				const tradeData = await this.tradeRepository.findOne({
@@ -137,7 +137,7 @@ export class BidService implements OnModuleInit {
 	async executeTrade(bidDto, order, tradeData) {
 		const queryRunner = this.dataSource.createQueryRunner();
 		await queryRunner.connect();
-		await queryRunner.startTransaction();
+		await queryRunner.startTransaction('READ COMMITTED');
 		const { ask_price, ask_size } = order;
 		const {
 			userId,
@@ -177,7 +177,7 @@ export class BidService implements OnModuleInit {
 			}
 
 			tradeData.quantity -= buyData.quantity;
-
+			
 			if (tradeData.quantity === 0) {
 				await this.tradeRepository.deleteTrade(tradeId, queryRunner);
 			} else await this.tradeRepository.updateTradeTransaction(tradeData, queryRunner);
@@ -194,7 +194,6 @@ export class BidService implements OnModuleInit {
 			console.log(error);
 		} finally {
 			await queryRunner.release();
-			this.transactionBuy = false;
 			return result;
 		}
 	}
@@ -218,7 +217,7 @@ export class BidService implements OnModuleInit {
 				const [give, receive] = key.split('-');
 				coinPrice.push({ give: give, receive: receive, price: price });
 			});
-			const availableTrades = await this.tradeRepository.searchTrade(coinPrice);
+			const availableTrades = await this.tradeRepository.searchBuyTrade(coinPrice);
 			availableTrades.forEach((trade) => {
 				const bidDto = {
 					userId: trade.user.id,

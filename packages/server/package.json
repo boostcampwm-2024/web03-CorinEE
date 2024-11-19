@@ -23,13 +23,13 @@
 	"dependencies": {
 		"@nestjs/axios": "^3.1.2",
 		"@nestjs/common": "^10.0.0",
-		"@nestjs/core": "^10.4.7",
+		"@nestjs/core": "^10.0.0",
 		"@nestjs/jwt": "^10.2.0",
 		"@nestjs/platform-express": "^10.0.0",
 		"@nestjs/platform-socket.io": "^10.4.7",
 		"@nestjs/schedule": "^4.1.1",
 		"@nestjs/swagger": "^8.0.5",
-		"@nestjs/typeorm": "9.0.0",
+		"@nestjs/typeorm": "^10.0.0",
 		"@nestjs/websockets": "^10.4.7",
 		"@types/swagger-ui-express": "^4.1.7",
 		"axios": "^1.7.7",
@@ -46,8 +46,7 @@
 		"tunnel-ssh": "^5.1.2",
 		"typeorm": "^0.3.20",
 		"uuid": "^11.0.3",
-		"ws": "^8.18.0",
-		"src": "workspace:*"
+		"ws": "^8.18.0"
 	},
 	"devDependencies": {
 		"@nestjs/cli": "^10.0.0",
