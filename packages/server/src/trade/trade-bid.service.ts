@@ -1,5 +1,6 @@
 import {
 	Injectable,
+	InternalServerErrorException,
 	OnModuleInit,
 	UnprocessableEntityException,
 } from '@nestjs/common';
@@ -70,8 +71,8 @@ export class BidService implements OnModuleInit {
 			console.log(error);
 			await queryRunner.rollbackTransaction();
 			if (error instanceof UnprocessableEntityException) throw error;
-			return new UnprocessableEntityException({
-				statusCode: 422,
+			return new InternalServerErrorException({
+				statusCode: 500,
 				message: '거래 등록에 실패했습니다.',
 			});
 		} finally {

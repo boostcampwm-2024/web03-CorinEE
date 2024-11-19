@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit, UnauthorizedException } from '@nestjs/common';
 import { AssetRepository } from '@src/asset/asset.repository';
 import { UPBIT_IMAGE_URL } from 'common/upbit';
 import { AccountRepository } from 'src/account/account.repository';
@@ -21,10 +21,10 @@ export class AccountService {
             where: {user:{id:user.userId}}
         })
         if(!account){
-            return {
-                code: 400,
+            return new UnauthorizedException({
+                statusCode: 401,
                 message: "등록되지 않은 사용자입니다."
-            }
+            })
         }
         const KRW = account.KRW;
         let total_price = 0;
@@ -50,6 +50,9 @@ export class AccountService {
         accountData.KRW = KRW;
         accountData.total_bid = total_price;
         accountData.coins = coins;
-        return accountData;
+        return {
+            statusCode: 200,
+            message: accountData
+        };
     }
 }
