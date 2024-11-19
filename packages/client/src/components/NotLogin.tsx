@@ -1,6 +1,7 @@
 import Lottie from 'lottie-react';
 import BitcoinLottie from '@asset/lotties/BitcoinLottie.json';
 import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/useToast';
 
 type Size = 'sm' | 'md' | 'lg';
 
@@ -44,7 +45,7 @@ function NotLogin({ size }: NotLoginProps) {
 	};
 
 	const { login } = useAuth();
-
+	const toast = useToast();
 	return (
 		<div className="w-full min-h-[50vh] flex flex-col justify-center items-center gap-6 p-6">
 			<Lottie
@@ -61,7 +62,10 @@ function NotLogin({ size }: NotLoginProps) {
 					서비스 이용을 위해 로그인해 주세요
 				</p>
 				<p
-					onClick={() => login.mutate()}
+					onClick={() => {
+						login.mutate();
+						toast.success('안녕하세요');
+					}}
 					className={sizeTable[size].highlightText}
 				>
 					체험 계정으로 1초 만에 시작하기 →
