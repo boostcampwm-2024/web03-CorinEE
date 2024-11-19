@@ -42,7 +42,14 @@ export class TradeRepository extends Repository<Trade> {
     }
   }
   async updateTradeTransaction(tradeData, queryRunner){
-    await queryRunner.manager.save(Trade, tradeData);
+    await queryRunner.manager
+      .createQueryBuilder()
+      .update(Trade)
+      .set({ 
+        quantity: tradeData.quantity,
+      })
+      .where('tradeId = :tradeId', { tradeId: tradeData.tradeId })
+      .execute();
   }
   async deleteTrade(tradeId: number, queryRunner: QueryRunner): Promise<Trade> {
     try {
