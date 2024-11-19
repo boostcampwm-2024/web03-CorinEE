@@ -8,6 +8,7 @@ import {
     Post,
     Request,
     Res,
+    UnauthorizedException,
     UseGuards,
   } from '@nestjs/common';
   import { AuthGuard } from '../auth/auth.guard';
@@ -36,7 +37,13 @@ import {Response} from "express";
     ) {
         try{
             const response = await this.accountService.getMyAccountData(req.user);
-            return res.status(response.statusCode).json(response.message)
+            if (response instanceof UnauthorizedException) {
+                return res
+                  .status(HttpStatus.UNAUTHORIZED)
+                  .json({ message: response.message }); // UnauthorizedException 처리
+            }
+
+            return res.status(response.statusCode).json(response.message);
         }catch(error){
             return res.status(error.statusCode).json(error)
         }
