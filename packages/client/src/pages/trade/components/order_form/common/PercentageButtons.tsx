@@ -1,51 +1,59 @@
 import { usePercentageBuy } from '@/hooks/usePercentageBuy';
 import { Dispatch, SetStateAction, useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
-type PercentageButtonsProps = {
+interface PercentageButtonsProps {
 	price: string;
 	setQuantity: Dispatch<SetStateAction<string>>;
-	type: 'buy' | 'sell';
-};
+	askType: 'bid' | 'ask';
+}
+
+const PERCENTAGE_OPTIONS = [
+	{ label: '10%', value: 10 },
+	{ label: '25%', value: 25 },
+	{ label: '50%', value: 50 },
+	{ label: '최대', value: 100 },
+] as const;
 
 function PercentageButtons({
 	price,
 	setQuantity,
-	type,
+	askType,
 }: PercentageButtonsProps) {
+	const { market } = useParams();
+	const [marketType, code] = market?.split('-') ?? [];
 	const [percent, setPercent] = useState<number>();
+
 	const { data, refetch } = usePercentageBuy({
-		moneyType: 'KRW',
-		percent: percent,
-		type,
+		askType,
+		moneyType: askType === 'bid' ? marketType : code,
+		percent,
 	});
 
-	const handlePercentClick = (text: string) => {
-		let selectedPercent: number;
-		if (text === '최대') {
-			selectedPercent = 100;
-		} else {
-			selectedPercent = parseInt(text);
+	useEffect(() => {
+		if (data && price) {
+			const calculatedQuantity = (data / Number(price)).toFixed(8);
+			if (askType === 'bid') setQuantity(calculatedQuantity);
+			else setQuantity(data.toFixed(8));
 		}
-		setPercent(selectedPercent);
+	}, [data, price, setQuantity]);
+
+	const handlePercentClick = (value: number) => {
+		setPercent(value);
 		refetch();
 	};
 
-	useEffect(() => {
-		if (data) {
-			setQuantity((data / Number(price)).toFixed(8));
-		}
-	}, [data]);
-
 	return (
 		<div className="grid grid-cols-4 gap-2">
-			{['10%', '25%', '50%', '최대'].map((text) => (
+			{PERCENTAGE_OPTIONS.map(({ label, value }) => (
 				<button
-					onClick={() => handlePercentClick(text)}
-					key={text}
+					key={label}
 					type="button"
-					className="px-2 py-1.5 border border-solid border-gray-400 rounded-md hover:bg-gray-200"
+					onClick={() => handlePercentClick(value)}
+					className="px-2 py-1.5 border border-solid border-gray-400 rounded-md 
+            hover:bg-gray-200 transition-colors duration-200"
 				>
-					{text}
+					{label}
 				</button>
 			))}
 		</div>
