@@ -1,4 +1,5 @@
 import {
+	BadRequestException,
 	Injectable,
 	OnModuleInit,
 	UnprocessableEntityException,
@@ -41,7 +42,7 @@ export class AskService implements OnModuleInit {
 			}
 		})
 		if(!asset) return 0;
-		return Number(asset.quantity) * (percent / 100);
+		return asset.quantity * (percent / 100);
 	}
 	async createAskTrade(user, askDto) {
 		if (this.transactionCreateAsk) await this.waitForTransactionCreate();
@@ -50,6 +51,7 @@ export class AskService implements OnModuleInit {
 		await queryRunner.connect();
 		await queryRunner.startTransaction('READ COMMITTED');
 		try {
+			if(askDto.receivedAmount) throw new BadRequestException();
 			const userAccount = await this.accountRepository.findOne({
 				where: {
 					user: { id: user.userId },
@@ -61,7 +63,7 @@ export class AskService implements OnModuleInit {
 					statusCode: 422,
 				});
 			}
-			const userAsset = await this.checkCurrency(user,askDto, userAccount, queryRunner)
+			const userAsset = await this.checkCurrency(askDto, userAccount, queryRunner)
 			const assetBalance = userAsset.quantity - askDto.receivedAmount;
 			if(assetBalance <= 0){
 				await this.assetRepository.delete({
@@ -69,7 +71,7 @@ export class AskService implements OnModuleInit {
 				})
 			}else{
 				userAsset.quantity = assetBalance
-				userAsset.price -= askDto.receivedPrice+ askDto.receivedAmount
+				userAsset.price -= Math.floor(askDto.receivedPrice + askDto.receivedAmount)
 				this.assetRepository.updateAssetPrice(userAsset, queryRunner);
 			}
 			await this.tradeRepository.createTrade(askDto, user.userId,'sell', queryRunner);
@@ -82,7 +84,7 @@ export class AskService implements OnModuleInit {
 		} catch (error) {
 			console.log(error);
 			await queryRunner.rollbackTransaction();
-			if (error instanceof UnprocessableEntityException) throw error;
+			if (error instanceof UnprocessableEntityException || BadRequestException) throw error;
 			return new UnprocessableEntityException({
 				statusCode: 422,
 				message: '거래 등록에 실패했습니다.',
@@ -92,7 +94,7 @@ export class AskService implements OnModuleInit {
 			this.transactionCreateAsk = false;
 		}
 	}
-	async checkCurrency(user, askDto,account,queryRunner) {
+	async checkCurrency(askDto,account,queryRunner) {
 		const { typeGiven, receivedAmount } = askDto;
 		const userAsset = await this.assetRepository.getAsset(account.id,typeGiven,queryRunner)
 		if(!userAsset){
@@ -173,7 +175,7 @@ export class AskService implements OnModuleInit {
 			const buyData = { ...tradeData };
 			buyData.quantity =
 				tradeData.quantity >= bid_size ? bid_size : tradeData.quantity;
-			buyData.price = bid_price * krw;
+			buyData.price = Math.floor(bid_price * krw);
 			await this.tradeHistoryRepository.createTradeHistory(
 				userId,
 				buyData,
@@ -181,8 +183,7 @@ export class AskService implements OnModuleInit {
 			);
 
 			if (!asset && tradeData.price > buyData.price) {
-				asset.price =
-					asset.price + (tradeData.price - buyData.price) * buyData.quantity;
+				asset.price = Math.floor(asset.price + (tradeData.price - buyData.price) * buyData.quantity);
 				
 				await this.assetRepository.updateAssetPrice(asset, queryRunner);
 			}
@@ -195,7 +196,7 @@ export class AskService implements OnModuleInit {
 				const BTC_QUANTITY = account.BTC - buyData.quantity
 				await this.accountRepository.updateAccountBTC(account.id, BTC_QUANTITY, queryRunner)
 			}
-			const change = account[typeReceived] + buyData.price * buyData.quantity
+			const change = Math.floor(account[typeReceived] + buyData.price * buyData.quantity)
 			await this.accountRepository.updateAccountCurrency(typeReceived, change, account.id, queryRunner)
 			
 
