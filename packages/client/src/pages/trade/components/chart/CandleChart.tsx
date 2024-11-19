@@ -1,6 +1,5 @@
-import { useRef } from 'react';
-import { useEffect } from 'react';
-import { Candle } from '@/types/chart';
+import { useRef, useEffect } from 'react';
+import { Candle, CandlePeriod } from '@/types/chart';
 import { IChartApi, ISeriesApi } from 'lightweight-charts';
 import {
 	initializeChart,
@@ -8,35 +7,32 @@ import {
 } from '@/pages/trade/components/chart/chartSetup';
 import { chartConfig } from '@/pages/trade/components/chart/config';
 import { formatCandleData } from '@/utility/format/formatCandleData';
+import {
+	handleResize,
+	handleScroll,
+} from '@/pages/trade/components/chart/chartEvent';
 
-function CandleChart({ data }: { data: Candle[] }) {
+type CandleChartProps = {
+	activePeriod: CandlePeriod;
+	data: Candle[];
+	fetchNextPage: () => Promise<unknown>;
+};
+
+function CandleChart({ activePeriod, data, fetchNextPage }: CandleChartProps) {
 	const chartRef = useRef<HTMLDivElement>(null);
 	const chartInstanceRef = useRef<IChartApi | null>(null);
 	const seriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
 
-	const handleResize = () => {
-		// resize 로직 추후 파일 분리 예정
-		if (chartRef.current && chartInstanceRef.current) {
-			const { width } =
-				chartRef.current.parentElement?.getBoundingClientRect() || { width: 0 };
-			chartInstanceRef.current.applyOptions({
-				width: width,
-			});
-		}
-	};
-
 	useEffect(() => {
 		if (!chartRef.current) return;
-
 		chartInstanceRef.current = initializeChart(chartRef.current, chartConfig);
 		seriesRef.current = setupCandlestickSeries(
 			chartInstanceRef.current,
 			[],
 			chartConfig,
 		);
-
 		const resizeObserver = new ResizeObserver(() => {
-			handleResize();
+			handleResize(chartRef, chartInstanceRef);
 		});
 
 		if (chartRef.current.parentElement) {
@@ -52,10 +48,22 @@ function CandleChart({ data }: { data: Candle[] }) {
 	}, []);
 
 	useEffect(() => {
-		if (!seriesRef.current) return;
+		if (!seriesRef.current || !chartInstanceRef.current) return;
 		const formattedData = formatCandleData(data);
 		seriesRef.current.setData(formattedData);
 	}, [data]);
+
+	useEffect(() => {
+		if (!chartInstanceRef.current) return;
+		chartInstanceRef.current.timeScale().scrollToPosition(0, false);
+	}, [activePeriod]);
+
+	useEffect(() => {
+		if (!chartRef.current || !chartInstanceRef.current) return;
+		chartInstanceRef.current
+			.timeScale()
+			.subscribeVisibleLogicalRangeChange(handleScroll(fetchNextPage));
+	}, []);
 
 	return <div ref={chartRef} />;
 }
