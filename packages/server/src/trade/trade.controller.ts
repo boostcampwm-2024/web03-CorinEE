@@ -10,8 +10,9 @@ import {
 } from '@nestjs/common';
 import { BidService } from './trade-bid.service';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiSecurity, ApiBody } from '@nestjs/swagger';
 import { AskService } from './trade-ask.service';
+import { TradeDto } from './dtos/trade.dto';
 
 @Controller('trade')
 export class TradeController {
@@ -23,8 +24,8 @@ export class TradeController {
   @ApiBearerAuth('access-token')
   @ApiSecurity('access-token')
   @UseGuards(AuthGuard)
-  @Get('calculate-percentage-buy/:moneyType')
-  calculatePercentBuy(
+  @Get('calculate-percentage-bid/:moneyType')
+  calculatePercentBid(
     @Request() req,
     @Param('moneyType') moneyType: string,
     @Query('percent') percent: number,
@@ -32,6 +33,7 @@ export class TradeController {
     return this.bidService.calculatePercentBuy(req.user, moneyType, percent);
   }
 
+  @ApiBody({ type: TradeDto })
   @ApiBearerAuth('access-token')
   @ApiSecurity('access-token')
   @UseGuards(AuthGuard)
@@ -44,6 +46,8 @@ export class TradeController {
       return error.response;
     }
   }
+
+  @ApiBody({ type: TradeDto })
   @ApiBearerAuth('access-token')
   @ApiSecurity('access-token')
   @UseGuards(AuthGuard)
@@ -55,5 +59,17 @@ export class TradeController {
     } catch (error) {
       return error.response;
     }
+  }
+
+  @ApiBearerAuth('access-token')
+  @ApiSecurity('access-token')
+  @UseGuards(AuthGuard)
+  @Get('calculate-percentage-ask/:moneyType')
+  calculatePercentAsk(
+    @Request() req,
+    @Param('moneyType') moneyType: string,
+    @Query('percent') percent: number,
+  ) {
+    return this.askService.calculatePercentBuy(req.user, moneyType, percent);
   }
 }

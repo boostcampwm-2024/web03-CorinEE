@@ -11,7 +11,7 @@ export class TradeRepository extends Repository<Trade> {
   ) {
     super(Trade, dataSource.createEntityManager());
   }
-  async createTrade(buyDto: any, userId, queryRunner): Promise<number> {
+  async createTrade(buyDto: any, userId, tradeType, queryRunner): Promise<number> {
     try {
       const { typeGiven, typeReceived, receivedPrice, receivedAmount } =
         buyDto;
@@ -27,7 +27,7 @@ export class TradeRepository extends Repository<Trade> {
         });
       }
       const trade = new Trade();
-      trade.tradeType = 'buy';
+      trade.tradeType = tradeType;
       trade.tradeCurrency = typeGiven;
       trade.assetName = typeReceived;
       trade.price = receivedPrice;
@@ -58,7 +58,7 @@ export class TradeRepository extends Repository<Trade> {
       throw e;
     }
   }
-  async searchTrade(coinPrice) {
+  async searchBuyTrade(coinPrice) {
     try {
       const queryBuilder = this.createQueryBuilder('trade').leftJoinAndSelect(
         'trade.user',
@@ -79,6 +79,37 @@ export class TradeRepository extends Repository<Trade> {
         } else {
           queryBuilder.orWhere(
             `trade.tradeCurrency = :give${index} AND trade.assetName = :receive${index} AND trade.price >= :price${index} AND trade.tradeType = :type${index}`,
+            params,
+          );
+        }
+      });
+      const trades = await queryBuilder.getMany();
+      return trades;
+    } catch (e) {
+      console.log(e);
+    } 
+  }
+  async searchSellTrade(coinPrice) {
+    try {
+      const queryBuilder = this.createQueryBuilder('trade').leftJoinAndSelect(
+        'trade.user',
+        'user',
+      );
+      coinPrice.forEach(({ give, receive, price }, index) => {
+        const params = {
+          [`give${index}`]: give,
+          [`receive${index}`]: receive,
+          [`price${index}`]: price,
+          [`type${index}`]: 'sell',
+        };
+        if (index === 0) {
+          queryBuilder.where(
+            'trade.tradeCurrency = :give0 AND trade.assetName = :receive0 AND trade.price <= :price0 AND trade.tradeType = :type0',
+            params,
+          );
+        } else {
+          queryBuilder.orWhere(
+            `trade.tradeCurrency = :give${index} AND trade.assetName = :receive${index} AND trade.price <= :price${index} AND trade.tradeType = :type${index}`,
             params,
           );
         }
