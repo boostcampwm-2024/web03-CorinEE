@@ -38,12 +38,14 @@ export class TradeService {
         if(coinData){
             return {
                 statusCode : 200,
-                message: "보유하고 계신 코인입니다."
+                message: "보유하고 계신 코인입니다.",
+                own : true
             }
         }else{
             return {
                 statusCode : 201,
-                message : "보유하지 않은 코인입니다."
+                message : "보유하지 않은 코인입니다.",
+                own : false
             }
         }
     }
