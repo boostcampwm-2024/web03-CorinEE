@@ -167,7 +167,7 @@ export class BidService implements OnModuleInit {
 			const asset = await this.assetRepository.findOne({
 				where: { account: {id: account.id}, assetName: typeReceived },
 			});
-
+			console.log("asset : "+asset)
 			if (asset) {
 				asset.price =
 					asset.price + buyData.price * buyData.quantity;
