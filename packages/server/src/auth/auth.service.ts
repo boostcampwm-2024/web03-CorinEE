@@ -88,15 +88,19 @@ export class AuthService {
 	}
 
 	async logout(userId: number): Promise<{ message: string }> {
-		const user = await this.userRepository.findOneBy({ id: userId });
+		try{
+			const user = await this.userRepository.findOneBy({ id: userId });
 
-		if (!user) {
-			throw new Error('User not found');
-		}
+			if (!user) {
+				throw new Error('User not found');
+			}
 
-		if (user.isGuest) {
-			await this.userRepository.delete({ id: userId });
-			return { message: 'Guest user data successfully deleted' };
+			if (user.isGuest) {
+				await this.userRepository.delete({ id: userId });
+				return { message: 'Guest user data successfully deleted' };
+			}
+		}catch(error){
+			console.error(error)
 		}
 	}
 
