@@ -1,13 +1,16 @@
-import { Controller, Sse, Query, Get } from '@nestjs/common';
+import { Controller, Sse, Query, Get, Param, Res } from '@nestjs/common';
 import { Observable, concat } from 'rxjs';
 import { SseService } from './sse.service';
 import { CoinListService } from './coin-list.service';
+import { ChartService } from './chart.service';
+import { Response } from 'express';
 
 @Controller('upbit')
 export class UpbitController {
   constructor(
     private readonly sseService: SseService,
     private readonly coinListService: CoinListService,
+    private readonly chartService : ChartService
   ) {}
 
   @Sse('price-updates')
@@ -59,5 +62,26 @@ export class UpbitController {
   getSomeKRW(@Query('market') market: string[]) {
     const marketList = market || [];
     return this.coinListService.getSimpleCoin(marketList);
+  }
+
+  @Get('candle/:type/:minute?')
+  async getCandle(
+    @Res() res: Response,
+    @Param('type') type : string,
+    @Query('market') market: string, 
+    @Query('to') to:string,
+    @Query('minute') minute? :number
+  ){
+    try{
+      const response = await this.chartService.upbitApiDoor(type, market, to, minute)
+      return res.status(response.statusCode).json(response)
+    }catch(error){
+      console.error(error)
+      return res.status(error.status)
+        .json({
+          message: error.message || '서버오류입니다.',
+          error: error?.response || null,
+        });;
+    }
   }
 }
