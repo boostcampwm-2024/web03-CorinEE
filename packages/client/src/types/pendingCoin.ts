@@ -1,7 +1,7 @@
 export type PendingCoinAPI = {
 	statusCode: number;
 	message: 'string';
-	tradeData: PendingCoin[];
+	result: PendingCoin[];
 };
 
 export type PendingCoin = {
@@ -10,7 +10,7 @@ export type PendingCoin = {
 	coin: string;
 	market: string;
 	tradeId: number;
-	tradeType: string;
+	tradeType: 'sell' | 'buy';
 	price: number;
 	quantity: number;
 	createdAt: string;
