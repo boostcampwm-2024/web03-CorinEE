@@ -1,6 +1,6 @@
 import Lottie from 'lottie-react';
 import Wallet from '@asset/lotties/Wallet.json';
-function NoCoin() {
+function NoCoin({ message }: { message: string }) {
 	return (
 		<div className="flex flex-col justify-center items-center">
 			<Lottie
@@ -13,7 +13,7 @@ function NoCoin() {
 					progressiveLoad: true,
 				}}
 			/>
-			<div className="text-gray-700">판매할 코인이 없어요</div>
+			<div className="text-gray-700">{message}</div>
 		</div>
 	);
 }
