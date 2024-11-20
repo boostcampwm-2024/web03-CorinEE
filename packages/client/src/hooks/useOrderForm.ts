@@ -40,7 +40,8 @@ export function useOrderForm({ currentPrice, askType }: UserOrderForm) {
 						receivedAmount: Number(quantity),
 					};
 
-		tradeMutation.mutate(tradeData);
+		tradeMutation.mutateAsync(tradeData);
+		setQuantity('');
 	};
 
 	useEffect(() => {
