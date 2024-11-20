@@ -20,9 +20,9 @@ export function useTrade(askType: 'bid' | 'ask') {
 		mutationFn: (params: TradeAPI) => trade(params, token),
 		onSuccess: () => {
 			if (askType == 'bid') {
-				toast.success('매수 주문을 등록했어요');
+				toast.success('매수 주문을 완료했어요');
 				queryClient.refetchQueries({ queryKey: ['MY_ACCOUNT'] });
-			} else toast.success('매도 주문을 등록했어요');
+			} else toast.success('매도 주문을 완료했어요');
 		},
 		onError: (error: AxiosError) => {
 			if (error.status === 422 && askType == 'bid') {
