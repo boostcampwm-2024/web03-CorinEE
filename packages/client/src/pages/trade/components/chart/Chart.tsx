@@ -22,6 +22,7 @@ function Chart({ market }: { market: string }) {
 			/>
 			<CandleChart
 				activePeriod={activePeriod}
+				minute={minute}
 				data={data.candles.flat()}
 				fetchNextPage={fetchNextPage}
 			/>
