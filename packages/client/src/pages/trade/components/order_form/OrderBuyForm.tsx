@@ -1,9 +1,9 @@
 import OrderInput from '@/pages/trade/components/order_form/common/OrderInput';
 import OrderSubmitButton from '@/pages/trade/components/order_form/common/OrderSubmitButton';
 import PercentageButtons from '@/pages/trade/components/order_form/common/PercentageButtons';
-import { calculateTotalPrice } from '@/utility/order';
 import { useMyAccount } from '@/hooks/useMyAccount';
 import { useOrderForm } from '@/hooks/useOrderForm';
+import OrderSummary from '@/pages/trade/components/order_form/common/OrderSummary';
 
 function OrderBuyForm({ currentPrice }: { currentPrice: number }) {
 	const {
@@ -16,6 +16,13 @@ function OrderBuyForm({ currentPrice }: { currentPrice: number }) {
 	} = useOrderForm({ currentPrice, askType: 'bid' });
 
 	const { data: balance } = useMyAccount();
+
+	const summaryItems = [
+		{
+			label: '매수 가능 금액',
+			value: `${Math.floor(balance.KRW).toLocaleString()}원`,
+		},
+	];
 
 	return (
 		<>
@@ -40,16 +47,11 @@ function OrderBuyForm({ currentPrice }: { currentPrice: number }) {
 							askType="bid"
 						/>
 					</div>
-					<div className="flex justify-between mt-5">
-						<span>매수 가능 금액</span>
-						<span>{Math.floor(balance.KRW).toLocaleString()}원</span>
-					</div>
-					<div className="flex justify-between mt-5">
-						<span>총 주문 금액</span>
-						<span>
-							{calculateTotalPrice(price, quantity).toLocaleString()}원
-						</span>
-					</div>
+					<OrderSummary
+						price={price}
+						quantity={quantity}
+						summaryItems={summaryItems}
+					/>
 					<OrderSubmitButton type="buy" />
 				</form>
 			</div>
