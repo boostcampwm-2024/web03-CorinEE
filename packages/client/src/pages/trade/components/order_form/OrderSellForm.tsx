@@ -2,10 +2,12 @@ import OrderInput from '@/pages/trade/components/order_form/common/OrderInput';
 import OrderSubmitButton from '@/pages/trade/components/order_form/common/OrderSubmitButton';
 import PercentageButtons from '@/pages/trade/components/order_form/common/PercentageButtons';
 import Wallet from '@/pages/trade/components/order_form/common/NoCoin';
-import { calculateTotalPrice } from '@/utility/order';
+import OrderSummary from '@/pages/trade/components/order_form/common/OrderSummary';
 import { useCheckCoin } from '@/hooks/useCheckCoin';
 import { useMarketParams } from '@/hooks/market/useMarketParams';
 import { useOrderForm } from '@/hooks/useOrderForm';
+import { useMyAccount } from '@/hooks/useMyAccount';
+import { calculateProfitInfo } from '@/utility/calculateProfit';
 
 function OrderSellForm({ currentPrice }: { currentPrice: number }) {
 	const {
@@ -18,6 +20,26 @@ function OrderSellForm({ currentPrice }: { currentPrice: number }) {
 	} = useOrderForm({ currentPrice, askType: 'ask' });
 	const { code } = useMarketParams();
 	const { data: checkCoin } = useCheckCoin(code);
+	const { data: balance } = useMyAccount();
+	const targetCoin = balance.coins.find((coin) => coin.market === code)!;
+
+	const { profitRate, expectedProfit, isProfitable } = calculateProfitInfo(
+		Number(price),
+		Number(quantity),
+		targetCoin,
+	);
+
+	const summaryItems = [
+		{
+			label: '예상 수익률',
+			value: `${profitRate}%`,
+			className: isProfitable ? 'text-red-500' : 'text-blue-600',
+		},
+		{
+			label: '예상 손익',
+			value: `${expectedProfit}원`,
+		},
+	];
 
 	return (
 		<>
@@ -38,7 +60,7 @@ function OrderSellForm({ currentPrice }: { currentPrice: number }) {
 								label="수량"
 								value={quantity}
 								onChange={setQuantity}
-								placeholder="0"
+								placeholder={`최대 ${targetCoin?.quantity}개 가능`}
 								errorMessage={quantityErrorMessage}
 							/>
 							<PercentageButtons
@@ -47,12 +69,11 @@ function OrderSellForm({ currentPrice }: { currentPrice: number }) {
 								askType="ask"
 							/>
 						</div>
-						<div className="flex justify-between mt-5">
-							<span>총 주문 금액</span>
-							<span>
-								{calculateTotalPrice(price, quantity).toLocaleString()}
-							</span>
-						</div>
+						<OrderSummary
+							price={price}
+							quantity={quantity}
+							summaryItems={summaryItems}
+						/>
 						<OrderSubmitButton type="sell" />
 					</form>
 				</div>
