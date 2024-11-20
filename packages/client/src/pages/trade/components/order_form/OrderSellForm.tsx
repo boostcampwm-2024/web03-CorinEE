@@ -23,7 +23,8 @@ function OrderSellForm({ currentPrice }: { currentPrice: number }) {
 	const { data: balance } = useMyAccount();
 	const targetCoin = balance.coins.find((coin) => coin.market === code)!;
 
-	if (!targetCoin || !checkCoin?.own) return <Wallet />;
+	if (!targetCoin || !checkCoin?.own)
+		return <Wallet message="판매할 코인이 없어요" />;
 
 	const { profitRate, expectedProfit, isProfitable } = calculateProfitInfo(
 		Number(price),
