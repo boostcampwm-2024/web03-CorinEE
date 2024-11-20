@@ -3,6 +3,7 @@ import { useTrade } from '@/hooks/useTrade';
 import { Market } from '@/types/market';
 import { FormEvent } from 'react';
 import { useMarketParams } from '@/hooks/market/useMarketParams';
+import { useToast } from '@/hooks/useToast';
 type UserOrderForm = {
 	currentPrice: number;
 	askType: 'bid' | 'ask';
@@ -14,6 +15,7 @@ export function useOrderForm({
 	askType,
 	selectPrice,
 }: UserOrderForm) {
+	const toast = useToast();
 	const [price, setPrice] = useState<string>('');
 	const [quantity, setQuantity] = useState<string>('');
 	const [quantityErrorMessage, setQuantityErrorMessage] = useState<string>('');
@@ -25,6 +27,11 @@ export function useOrderForm({
 		event.preventDefault();
 		if (quantity === '' || !quantity || !Number(quantity)) {
 			setQuantityErrorMessage('수량을 입력해주세요');
+			return;
+		}
+
+		if (Number(quantity) * Number(price) < 5000) {
+			toast.error('최소 주문 금액은 5000원 입니다!');
 			return;
 		}
 
