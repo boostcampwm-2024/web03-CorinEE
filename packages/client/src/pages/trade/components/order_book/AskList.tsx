@@ -1,6 +1,6 @@
 import OrderBookPrice from '@/pages/trade/components/order_book/OrderBookPrice';
 import { OrderBookUnit } from '@/types/orderbook';
-
+import VolumeBar from '@/pages/trade/components/order_book/VolumeBar';
 type AskListProps = {
 	asks: Pick<OrderBookUnit, 'ask_price' | 'ask_size' | 'ask_rate'>[];
 	currentPrice: number;
@@ -12,18 +12,12 @@ function AskList({ asks, currentPrice }: AskListProps) {
 		<ul className="flex flex-col w-full">
 			{asks.map((ask) => (
 				<li key={ask.ask_price} className="grid grid-cols-4 m-1">
-					<div className="relative">
-						<div
-							className="absolute right-0 top-0 h-full bg-blue-100 rounded-sm"
-							style={{
-								width: `${(ask.ask_size / maxSize) * 100}%`,
-								maxWidth: '25%', // span이 차지하는 영역까지만
-							}}
-						/>
-						<span className="relative text-xs text-left pl-2 text-blue-600">
-							{ask.ask_size.toFixed(3)}
-						</span>
-					</div>
+					<VolumeBar
+						size={ask.ask_size}
+						maxSize={maxSize}
+						color="text-blue-500"
+						volume_color="bg-blue-100"
+					/>
 					<OrderBookPrice
 						currentPrice={currentPrice}
 						price={ask.ask_price}
