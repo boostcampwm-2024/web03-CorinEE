@@ -14,11 +14,17 @@ import {
 
 type CandleChartProps = {
 	activePeriod: CandlePeriod;
+	minute: number | undefined;
 	data: Candle[];
 	fetchNextPage: () => Promise<unknown>;
 };
 
-function CandleChart({ activePeriod, data, fetchNextPage }: CandleChartProps) {
+function CandleChart({
+	activePeriod,
+	minute,
+	data,
+	fetchNextPage,
+}: CandleChartProps) {
 	const chartRef = useRef<HTMLDivElement>(null);
 	const chartInstanceRef = useRef<IChartApi | null>(null);
 	const seriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
@@ -56,7 +62,7 @@ function CandleChart({ activePeriod, data, fetchNextPage }: CandleChartProps) {
 	useEffect(() => {
 		if (!chartInstanceRef.current) return;
 		chartInstanceRef.current.timeScale().scrollToPosition(0, false);
-	}, [activePeriod]);
+	}, [activePeriod, minute]);
 
 	useEffect(() => {
 		if (!chartRef.current || !chartInstanceRef.current) return;
