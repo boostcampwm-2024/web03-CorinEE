@@ -29,6 +29,7 @@ export class TradeHistoryService {
                 return {
                     statusCode : 201,
                     message : "거래 내역이 없습니다.",
+                    tradeData : []
                 }
             }
             const coinNameData = await this.coinDataUpdaterService.getCoinNameList();
@@ -58,6 +59,7 @@ export class TradeHistoryService {
             })
             return {
                 statusCode : 200,
+                message : "거래 내역을 찾았습니다.",
                 tradeData: tradehistoryData
             }
         }catch(error){
