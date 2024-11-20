@@ -1,4 +1,4 @@
-import { myAccount } from '@/api/account';
+import { myAccount } from '@/api/acoount';
 import { getCookie } from '@/utility/cookies';
 import { useSuspenseQuery } from '@tanstack/react-query';
 
