@@ -19,16 +19,19 @@ export class TradeHistory {
   @Column()
   tradeType: string;
 
+  @Column()
+  tradeCurrency: string;
+
   @Column('double')
   price: number;
 
   @Column('double')
   quantity: number;
 
-  @CreateDateColumn({ type: 'timestamp' })
+  @Column({ type: 'timestamp' })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamp' })
   tradeDate: Date;
 
   @ManyToOne(() => User, (user) => user.tradeHistories)
