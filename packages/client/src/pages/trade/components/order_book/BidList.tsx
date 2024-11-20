@@ -1,4 +1,5 @@
 import OrderBookPrice from '@/pages/trade/components/order_book/OrderBookPrice';
+import VolumeBar from '@/pages/trade/components/order_book/VolumeBar';
 import { OrderBookUnit } from '@/types/orderbook';
 
 type BidListProps = {
@@ -19,17 +20,12 @@ function BidList({ bids, currentPrice }: BidListProps) {
 						price={bid.bid_price}
 						rate={bid.bid_rate}
 					/>
-					<div className="relative">
-						<div
-							className="absolute left-0 top-0 h-full bg-red-100 rounded-sm"
-							style={{
-								width: `${(bid.bid_size / maxSize) * 100}%`,
-							}}
-						/>
-						<span className="relative text-xs text-left pl-2 text-red-500">
-							{bid.bid_size.toFixed(3)}
-						</span>
-					</div>
+					<VolumeBar
+						size={bid.bid_size}
+						maxSize={maxSize}
+						color={'text-red-500'}
+						volume_color="bg-red-100"
+					/>
 				</li>
 			))}
 		</ul>
