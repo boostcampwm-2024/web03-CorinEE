@@ -93,6 +93,7 @@ export class TradeController {
   ) {
     return this.askService.calculatePercentBuy(req.user, moneyType, percent);
   }
+
   @ApiBearerAuth('access-token')
   @ApiSecurity('access-token')
   @UseGuards(AuthGuard)
@@ -103,6 +104,19 @@ export class TradeController {
     @Res() res: Response
   ) {
     const response = await this.tradeService.checkMyCoinData(req.user, coin)
+    return res.status(response.statusCode).json(response)
+  }
+
+  @ApiBearerAuth('access-token')
+  @ApiSecurity('access-token')
+  @UseGuards(AuthGuard)
+  @Get('tradeData/:coin?')
+  async getMyTradeData(
+    @Request() req,
+    @Res() res: Response,
+    @Param('coin') coin?: string,
+  ) {
+    const response = await this.tradeService.getMyTradeData(req.user, coin)
     return res.status(response.statusCode).json(response)
   }
 }
