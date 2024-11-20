@@ -9,14 +9,16 @@ import { AssetRepository } from 'src/asset/asset.repository';
 import { TradeRepository } from './trade.repository';
 import { CoinDataUpdaterService } from 'src/upbit/coin-data-updater.service';
 import { TradeHistoryRepository } from '../trade-history/trade-history.repository';
-import { UPBIT_UPDATED_COIN_INFO_TIME } from 'common/upbit';
-
+import { UPBIT_IMAGE_URL, UPBIT_UPDATED_COIN_INFO_TIME } from 'common/upbit';
+import { TradeDataDto } from './dtos/tradeData.dto'
 @Injectable()
 export class TradeService {
 
 	constructor(
 		private accountRepository: AccountRepository,
 		private assetRepository: AssetRepository,
+        private tradeRepository: TradeRepository,
+        private coinDataUpdaterService: CoinDataUpdaterService,
 		private readonly dataSource: DataSource,
 	) {}
     async checkMyCoinData(user,coin){
@@ -47,6 +49,50 @@ export class TradeService {
                 message : "보유하지 않은 코인입니다.",
                 own : false
             }
+        }
+    }
+    async getMyTradeData(user,coin){
+        try{
+            const result = [];
+            let tradeData = await this.tradeRepository.find({
+                where: {user : {id : user.userId}}
+            })
+            
+            if(tradeData.length === 0){
+                return {
+                    statusCode : 201,
+                    message : "미체결 데이터가 없습니다.",
+                }
+            }
+            const coinNameData = this.coinDataUpdaterService.getCoinNameList();
+            if(coin){
+                const [assetName, tradeCurrency] = coin.split("-")
+                tradeData = tradeData.filter(({ assetName: a, tradeCurrency: t }) => (a === assetName && t === tradeCurrency) || (a === tradeCurrency && t === assetName));
+            }
+            tradeData.forEach(trade=>{
+                const name = trade.tradeType === 'buy' ? trade.tradeCurrency : trade.assetName;
+                const tradeType = trade.tradeType
+                const tradedata: TradeDataDto = {
+                    img_url : `${UPBIT_IMAGE_URL}${name}.png`,
+                    koreanName : coinNameData.get(`${trade.assetName}-${trade.tradeCurrency}`) || coinNameData.get(`${trade.tradeCurrency}-${trade.assetName}`),
+                    market : tradeType === 'buy' ? `${trade.assetName}-${trade.tradeCurrency}` : `${trade.tradeCurrency}-${trade.assetName}`,
+                    tradeId : trade.tradeId,
+                    tradeType : tradeType,
+                    price : trade.price,
+                    quantity : trade.quantity,
+                    createdAt : trade.createdAt,
+                    userId : user.userId
+                };
+
+                result.push(tradedata)
+            })
+            return {
+                statusCode : 200,
+                tradeData
+            }
+        }catch(error){
+            console.error(error)
+            return error
         }
     }
 }
