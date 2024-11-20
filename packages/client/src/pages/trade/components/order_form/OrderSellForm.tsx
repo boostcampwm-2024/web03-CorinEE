@@ -23,6 +23,8 @@ function OrderSellForm({ currentPrice }: { currentPrice: number }) {
 	const { data: balance } = useMyAccount();
 	const targetCoin = balance.coins.find((coin) => coin.market === code)!;
 
+	if (!targetCoin || !checkCoin?.own) return <Wallet />;
+
 	const { profitRate, expectedProfit, isProfitable } = calculateProfitInfo(
 		Number(price),
 		Number(quantity),
@@ -43,41 +45,35 @@ function OrderSellForm({ currentPrice }: { currentPrice: number }) {
 
 	return (
 		<>
-			{!checkCoin?.own ? (
-				<div>
-					<Wallet />
-				</div>
-			) : (
-				<div className="text-black font-normal text-sm">
-					<form onSubmit={handleSubmit}>
-						<div className="flex flex-col gap-3">
-							<OrderInput
-								label="매도 가격(KRW)"
-								value={Number(price).toLocaleString()}
-								onChange={setPrice}
-							/>
-							<OrderInput
-								label="수량"
-								value={quantity}
-								onChange={setQuantity}
-								placeholder={`최대 ${targetCoin?.quantity}개 가능`}
-								errorMessage={quantityErrorMessage}
-							/>
-							<PercentageButtons
-								price={price}
-								setQuantity={setQuantity}
-								askType="ask"
-							/>
-						</div>
-						<OrderSummary
-							price={price}
-							quantity={quantity}
-							summaryItems={summaryItems}
+			<div className="text-black font-normal text-sm">
+				<form onSubmit={handleSubmit}>
+					<div className="flex flex-col gap-3">
+						<OrderInput
+							label="매도 가격(KRW)"
+							value={Number(price).toLocaleString()}
+							onChange={setPrice}
 						/>
-						<OrderSubmitButton type="sell" />
-					</form>
-				</div>
-			)}
+						<OrderInput
+							label="수량"
+							value={quantity}
+							onChange={setQuantity}
+							placeholder={`최대 ${targetCoin?.quantity}개 가능`}
+							errorMessage={quantityErrorMessage}
+						/>
+						<PercentageButtons
+							price={price}
+							setQuantity={setQuantity}
+							askType="ask"
+						/>
+					</div>
+					<OrderSummary
+						price={price}
+						quantity={quantity}
+						summaryItems={summaryItems}
+					/>
+					<OrderSubmitButton type="sell" />
+				</form>
+			</div>
 		</>
 	);
 }
