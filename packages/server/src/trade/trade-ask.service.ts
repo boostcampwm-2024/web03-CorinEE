@@ -11,6 +11,7 @@ import { TradeRepository } from './trade.repository';
 import { CoinDataUpdaterService } from 'src/upbit/coin-data-updater.service';
 import { TradeHistoryRepository } from '../trade-history/trade-history.repository';
 import { UPBIT_UPDATED_COIN_INFO_TIME } from 'common/upbit';
+import { UserRepository } from '@src/auth/user.repository';
 
 @Injectable()
 export class AskService implements OnModuleInit {
@@ -23,6 +24,7 @@ export class AskService implements OnModuleInit {
 		private assetRepository: AssetRepository,
 		private tradeRepository: TradeRepository,
 		private coinDataUpdaterService: CoinDataUpdaterService,
+		private userRepository : UserRepository,
 		private readonly dataSource: DataSource,
 		private tradeHistoryRepository: TradeHistoryRepository,
 	) {}
@@ -176,8 +178,11 @@ export class AskService implements OnModuleInit {
 			buyData.quantity =
 				tradeData.quantity >= bid_size ? bid_size : tradeData.quantity;
 			buyData.price = Math.floor(bid_price * krw);
+
+			const user = await this.userRepository.getUser(userId);
+
 			await this.tradeHistoryRepository.createTradeHistory(
-				userId,
+				user,
 				buyData,
 				queryRunner,
 			);

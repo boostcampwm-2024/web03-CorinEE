@@ -1,6 +1,6 @@
 import { IsDate, IsNumber, IsString } from "class-validator";
 
-export class TradeDataDto {
+export class TradeHistoryDataDto {
     @IsString()
     img_url: string;
   
@@ -11,22 +11,25 @@ export class TradeDataDto {
     coin: string;
   
     @IsString()
+    tradeType: string;
+  
+    @IsString()
     market: string;
 
-    @IsString()
-    tradeType: string;
-
-    @IsString()
-    tradeId: number;
-  
     @IsNumber()
     price: number;
   
+    @IsNumber()
+    averagePrice: number;
+
     @IsNumber()
     quantity: number;
 
     @IsDate()
     createdAt: Date;
+
+    @IsDate()
+    tradeDate: Date;
 
     @IsNumber()
     userId: number;
