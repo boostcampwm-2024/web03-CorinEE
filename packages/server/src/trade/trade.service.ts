@@ -75,7 +75,8 @@ export class TradeService {
                 const tradedata: TradeDataDto = {
                     img_url : `${UPBIT_IMAGE_URL}${name}.png`,
                     koreanName : coinNameData.get(`${trade.assetName}-${trade.tradeCurrency}`) || coinNameData.get(`${trade.tradeCurrency}-${trade.assetName}`),
-                    market : tradeType === 'buy' ? `${trade.assetName}-${trade.tradeCurrency}` : `${trade.tradeCurrency}-${trade.assetName}`,
+                    coin : tradeType === 'buy' ? trade.assetName : trade.tradeCurrency,
+                    market : tradeType === 'sell' ? trade.assetName : trade.tradeCurrency,
                     tradeId : trade.tradeId,
                     tradeType : tradeType,
                     price : trade.price,
@@ -88,7 +89,7 @@ export class TradeService {
             })
             return {
                 statusCode : 200,
-                tradeData
+                result
             }
         }catch(error){
             console.error(error)

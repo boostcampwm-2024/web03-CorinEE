@@ -7,20 +7,19 @@ import { UserRepository } from 'src/auth/user.repository';
 export class TradeHistoryRepository extends Repository<TradeHistory> {
   constructor(
     private dataSource: DataSource,
-    private userRepository: UserRepository,
   ) {
     super(TradeHistory, dataSource.createEntityManager());
   }
-  async createTradeHistory(userId, trade: any, queryRunner: QueryRunner) {
+  async createTradeHistory(user, trade: any, queryRunner: QueryRunner) {
     try {
-      const user = await this.userRepository.getUser(userId);
-
       const tradeHistory = new TradeHistory();
       tradeHistory.tradeType = trade.tradeType;
       tradeHistory.assetName = trade.assetName;
       tradeHistory.price = trade.price;
       tradeHistory.quantity = trade.quantity;
       tradeHistory.user = user;
+      tradeHistory.tradeCurrency = trade.tradeCurrency;
+      tradeHistory.createdAt = trade.createdAt;
 
       await queryRunner.manager.save(TradeHistory, tradeHistory);
     } catch (e) {
