@@ -9,7 +9,12 @@ import { useOrderForm } from '@/hooks/useOrderForm';
 import { useMyAccount } from '@/hooks/useMyAccount';
 import { calculateProfitInfo } from '@/utility/calculateProfit';
 
-function OrderSellForm({ currentPrice }: { currentPrice: number }) {
+type OrderSellFormProps = {
+	currentPrice: number;
+	selectPrice: number | null;
+};
+
+function OrderSellForm({ currentPrice, selectPrice }: OrderSellFormProps) {
 	const {
 		price,
 		setPrice,
@@ -17,7 +22,7 @@ function OrderSellForm({ currentPrice }: { currentPrice: number }) {
 		setQuantity,
 		quantityErrorMessage,
 		handleSubmit,
-	} = useOrderForm({ currentPrice, askType: 'ask' });
+	} = useOrderForm({ currentPrice, askType: 'ask', selectPrice });
 	const { code } = useMarketParams();
 	const { data: checkCoin } = useCheckCoin(code);
 	const { data: balance } = useMyAccount();

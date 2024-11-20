@@ -6,9 +6,14 @@ import { formatAsks, formatBids } from '@/utility/format/formatOrderBookData';
 type OrderBookProps = {
 	orderBook: OrderBookType;
 	currentPrice: number;
+	handleSelectPrice: (price: number) => void;
 };
 
-function OrderBook({ orderBook, currentPrice }: OrderBookProps) {
+function OrderBook({
+	orderBook,
+	currentPrice,
+	handleSelectPrice,
+}: OrderBookProps) {
 	if (!orderBook) return;
 	const asks = formatAsks(orderBook);
 	const bids = formatBids(orderBook);
@@ -19,9 +24,17 @@ function OrderBook({ orderBook, currentPrice }: OrderBookProps) {
 				호가
 			</div>
 			<div className="w-full flex flex-col">
-				<AskList asks={asks} currentPrice={currentPrice} />
+				<AskList
+					asks={asks}
+					currentPrice={currentPrice}
+					handleSelectPrice={handleSelectPrice}
+				/>
 				<div className="w-full h-[1px] bg-gray-300 my-2"></div>
-				<BidList bids={bids} currentPrice={currentPrice} />
+				<BidList
+					bids={bids}
+					currentPrice={currentPrice}
+					handleSelectPrice={handleSelectPrice}
+				/>
 			</div>
 		</div>
 	);
