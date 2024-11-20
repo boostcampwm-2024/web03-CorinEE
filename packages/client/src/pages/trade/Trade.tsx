@@ -5,8 +5,8 @@ import TradeHeader from '@/pages/trade/components/trade_header/TradeHeader';
 import { useParams } from 'react-router-dom';
 import { useSSETicker } from '@/hooks/SSE/useSSETicker';
 import { Suspense, useMemo, useState } from 'react';
-import ChartSkeleton from '@/pages/trade/components/chart/ChartSkeleton';
 import { useSSEOrderbook } from '@/hooks/SSE/useSSEOrderbook';
+import ChartSkeleton from '@/pages/trade/components/chart/ChartSkeleton';
 
 function Trade() {
 	const { market } = useParams();
@@ -14,8 +14,8 @@ function Trade() {
 	const { sseData } = useSSETicker(marketCode);
 	const { sseData: orderBook } = useSSEOrderbook(marketCode);
 	const [selectPrice, setSelectPrice] = useState<number | null>(null);
-	if (!market) return;
-	if (!sseData || !orderBook) return;
+
+	if (!market || !sseData || !orderBook) return;
 
 	const currentPrice = sseData[market]?.trade_price;
 	const handleSelectPrice = (price: number) => {
