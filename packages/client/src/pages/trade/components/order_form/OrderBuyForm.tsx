@@ -5,7 +5,12 @@ import { useMyAccount } from '@/hooks/useMyAccount';
 import { useOrderForm } from '@/hooks/useOrderForm';
 import OrderSummary from '@/pages/trade/components/order_form/common/OrderSummary';
 
-function OrderBuyForm({ currentPrice }: { currentPrice: number }) {
+type OrderBuyFormProsp = {
+	currentPrice: number;
+	selectPrice: number | null;
+};
+
+function OrderBuyForm({ currentPrice, selectPrice }: OrderBuyFormProsp) {
 	const {
 		price,
 		setPrice,
@@ -13,7 +18,7 @@ function OrderBuyForm({ currentPrice }: { currentPrice: number }) {
 		setQuantity,
 		quantityErrorMessage,
 		handleSubmit,
-	} = useOrderForm({ currentPrice, askType: 'bid' });
+	} = useOrderForm({ currentPrice, askType: 'bid', selectPrice });
 
 	const { data: balance } = useMyAccount();
 
