@@ -6,10 +6,15 @@ import { useMarketParams } from '@/hooks/market/useMarketParams';
 type UserOrderForm = {
 	currentPrice: number;
 	askType: 'bid' | 'ask';
+	selectPrice: number | null;
 };
 
-export function useOrderForm({ currentPrice, askType }: UserOrderForm) {
-	const [price, setPrice] = useState(String(currentPrice));
+export function useOrderForm({
+	currentPrice,
+	askType,
+	selectPrice,
+}: UserOrderForm) {
+	const [price, setPrice] = useState<string>('');
 	const [quantity, setQuantity] = useState<string>('');
 	const [quantityErrorMessage, setQuantityErrorMessage] = useState<string>('');
 
@@ -53,6 +58,14 @@ export function useOrderForm({ currentPrice, askType }: UserOrderForm) {
 			return () => clearTimeout(timer);
 		}
 	}, [quantityErrorMessage]);
+
+	useEffect(() => {
+		if (!selectPrice) {
+			setPrice(String(currentPrice));
+			return;
+		}
+		setPrice(String(selectPrice));
+	}, [selectPrice]);
 
 	return {
 		price,
