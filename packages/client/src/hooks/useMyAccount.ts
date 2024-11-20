@@ -8,6 +8,7 @@ export function useMyAccount() {
 	const { data } = useSuspenseQuery({
 		queryFn: () => myAccount(token),
 		queryKey: [QUERY_KEY],
+		refetchOnMount: 'always',
 	});
 
 	return { data };
