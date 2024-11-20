@@ -7,8 +7,6 @@ export function useCheckCoin(coin: string) {
 	const { data } = useSuspenseQuery({
 		queryFn: () => checkCoin(coin, token),
 		queryKey: ['checkCoin', coin],
-		staleTime: 0,
-		gcTime: 0,
 	});
 
 	return { data };
