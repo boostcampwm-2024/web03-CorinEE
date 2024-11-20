@@ -40,6 +40,7 @@ export class BidService implements OnModuleInit {
 		return Number(money) * (percent / 100);
 	}
 	async createBidTrade(user, bidDto) {
+		if(bidDto.receivedAmount * bidDto.receivedPrice < 5000) throw new BadRequestException();
 		if (this.transactionCreateBid) await this.waitForTransactionOrderBid();
 		this.transactionCreateBid = true;
 		const queryRunner = this.dataSource.createQueryRunner();
@@ -159,9 +160,9 @@ export class BidService implements OnModuleInit {
 		try {
 			const buyData = {...tradeData};
 			
-			buyData.quantity = buyData.quantity >= ask_size ? ask_size : buyData.quantity;
+			buyData.quantity = buyData.quantity >= ask_size ? Math.floor(ask_size * 1e8) / 1e8 : Math.floor(buyData.quantity * 1e8) / 1e8;
 			buyData.price = Math.floor(ask_price * krw);
-
+			
 			const user = await this.userRepository.getUser(userId);
 
 			await this.tradeHistoryRepository.createTradeHistory(
