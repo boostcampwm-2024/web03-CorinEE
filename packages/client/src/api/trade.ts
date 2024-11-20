@@ -1,5 +1,6 @@
 import { instance } from '@/api/instance';
 import { Market } from '@/types/market';
+import { PendingCoinAPI } from '@/types/pendingCoin';
 
 type CalculateAPI = {
 	askType: 'ask' | 'bid';
@@ -51,6 +52,18 @@ export async function trade(params: TradeAPI, token: string) {
 
 export async function checkCoin(coin: string, token: string) {
 	const response = await instance.get(`/trade/check-coinData/${coin}`, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	return response.data;
+}
+
+export async function pendingCoin(
+	coin: string,
+	token: string,
+): Promise<PendingCoinAPI> {
+	const response = await instance.get(`/trade/tradeData/${coin}`, {
 		headers: {
 			Authorization: `Bearer ${token}`,
 		},
