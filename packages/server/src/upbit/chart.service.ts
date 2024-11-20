@@ -1,25 +1,39 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, OnModuleInit } from "@nestjs/common";
 import { firstValueFrom } from "rxjs";
 import { HttpService } from '@nestjs/axios';
-import { UPBIT_CANDLE_URL } from "common/upbit";
+import { ONE_SECOND, UPBIT_CANDLE_URL, UPBIT_REQUEST_SIZE } from "common/upbit";
 import { CandleDto } from "./dtos/candle.dto";
 import { ChartRepository } from "./chart.repository";
 
 @Injectable()
-export class ChartService {
-    private upbitApiQueue = [];
+export class ChartService implements OnModuleInit{
+    private upbitApiQueue;
+    
     constructor(
         private readonly httpService: HttpService,
         private chartRepository: ChartRepository
     ){}
-
+    onModuleInit() {
+        this.upbitApiQueue = [];
+        this.cleanQueue()
+    }
     async upbitApiDoor(type,coin,to, minute){
+        console.log("type : "+type)
+        console.log("market : "+coin)
+        console.log("minute : "+minute)
+        console.log("to : "+to)
+        const validMinutes = ["1", "3", "5", "10", "15", "30", "60", "240"];
+        if (type === 'minutes') {
+            if (!minute || !validMinutes.includes(minute)) {
+                throw new BadRequestException();
+            }
+        }
         if(!to) {
             const now = new Date()
             now.setHours(now.getHours()+9)
             to = now.toISOString().slice(0, 19);
         }
-        const key = await this.getAllKeys(coin,to,type);
+        const key = await this.getAllKeys(coin,to,type,minute);
         const dbcheck = await this.chartRepository.getChartDate(key);
         if(dbcheck.length === 200) {
             return {
@@ -27,22 +41,27 @@ export class ChartService {
                 result : dbcheck
             }
         }
-        const size = this.upbitApiQueue.length;
-        if(size>1 || this.upbitApiQueue[size-26]-Date.now() > 1000){
-            const result = await this.waitForTransactionOrder(key);
-            if(result){
-                return {
-                    statusCode : 200,
-                    result : result
-                }
+
+        const result = await this.waitForTransactionOrder(key);
+        if(result){
+            return {
+                statusCode : 200,
+                result : result
             }
         }
         try{
-            const url = type === "minutes" ? 
-                `${UPBIT_CANDLE_URL}${type}/${minute}?market=${coin}&count=200&to=${to}` : `${UPBIT_CANDLE_URL}${type}?market=${coin}&count=200&to=${to}`
+            this.upbitApiQueue.push(Date.now())
+            console.log(this.upbitApiQueue.length)
+            const url = type === "minutes" 
+                ? `${UPBIT_CANDLE_URL}${type}/${minute}?market=${coin}&count=200&to=${to}` 
+                : `${UPBIT_CANDLE_URL}${type}?market=${coin}&count=200&to=${to}`;
             const response = await firstValueFrom(
                 this.httpService.get(url),
             );
+            if(response.data.error) console.log(response)
+            else{
+                console.log(response.headers["remaining-req"])
+            }
             const candle: CandleDto = response.data
             this.saveChartData(candle, type, minute)
             return {
@@ -50,128 +69,136 @@ export class ChartService {
                 result : candle
             }
         }catch(error){
-            console.error(error)
+            console.error("updateApiDoor Error : "+error)
             return error
+        }finally{
+            console.log(this.upbitApiQueue.length)
         }
     }
     async waitForTransactionOrder(key, maxRetries = 100) { // 10초 타임아웃
         return new Promise(async (resolve, reject) => {
             let retryCount = 0;
-    
             const check = async () => {
                 try {
-                    // DB 체크
                     const dbcheck = await this.chartRepository.getChartDate(key);
                     if (dbcheck.length === 200) {
                         return resolve(dbcheck); // reject 대신 resolve 사용
                     }
-    
-                    // 큐 사이즈 체크
                     const queueSize = this.upbitApiQueue.length;
-                    if (queueSize === 0) {
+                    if (queueSize < UPBIT_REQUEST_SIZE || this.upbitApiQueue[queueSize - 1] - Date.now() < -ONE_SECOND){
                         return resolve(false);
                     }
-    
-                    // API 호출 제한 체크
-                    if (queueSize > 26 || 
-                        (this.upbitApiQueue[queueSize - 26] && 
-                         this.upbitApiQueue[queueSize - 26] - Date.now() > 1000)) {
-                        return resolve(false);
-                    }
-    
-                    // 재시도 횟수 체크
                     if (retryCount++ >= maxRetries) {
                         return reject(new Error('Timeout waiting for transaction order'));
                     }
-    
-                    // 재귀 호출
                     setTimeout(check, 100);
                 } catch (error) {
                     reject(error);
                 }
             };
-    
-            // 초기 체크 시작
             check();
         });
     }
-    saveChartData(candles, type, minute){
-        candles.forEach((candle)=>{
-            const market = candle.market;
-            const kst = candle.candle_date_time_kst
-            const key = this.getRedisKey(market,kst,type)
-            this.chartRepository.setChartData(key,JSON.stringify(candle))
-        })
-    }
-
-    getRedisKey(market, kst, type){
-        const formattedDateTime = kst.replace(/[-T]/g, ':');
-        const parts = formattedDateTime.split(':'); 
-
-        switch (type) {
-            case 'years':
-                return `${market}:${parts[0]}`; 
-            case 'months':
-                return `${market}:${parts[0]}:${parts[1]}`; 
-            case 'days':
-                return `${market}:${parts[0]}:${parts[1]}:${parts[2]}`; 
-            case 'minutes':
-                return `${market}:${parts[0]}:${parts[1]}:${parts[2]}:${parts[3]}:${parts[4]}`; 
-            case 'seconds':
-                return `${market}:${parts[0]}:${parts[1]}:${parts[2]}:${parts[3]}:${parts[4]}:${parts[5]}`;
-            default:
-                throw new Error(`Invalid type: ${type}`);
+    async saveChartData(candles, type, minute) {
+        try {
+            const savePromises = candles.map(candle => {
+                const key = this.getRedisKey(candle.market, candle.candle_date_time_kst, type, minute);
+                return this.chartRepository.setChartData(key, JSON.stringify(candle));
+            });
+    
+            await Promise.all(savePromises);
+        } catch (error) {
+            console.error('saveChartData Error :', error);
+            throw error;
         }
+    }
+    
+    getRedisKey(market, kst, type, minute = null) {
+        const formattedDateTime = kst.replace(/[-T]/g, ':');
+        const parts = formattedDateTime.split(':');
+    
+        const keyFormats = {
+            years: () => `${market}:${parts[0]}`,
+            months: () => `${market}:${parts[0]}:${parts[1]}`,
+            days: () => `${market}:${parts[0]}:${parts[1]}:${parts[2]}`,
+            weeks: () => `${market}:${parts[0]}:${parts[1]}:${parts[2]}:W`,
+            minutes: () => {
+                return `${market}:${parts[0]}:${parts[1]}:${parts[2]}:${parts[3]}:${parts[4]}:${minute}M`;
+            },
+            seconds: () => `${market}:${parts[0]}:${parts[1]}:${parts[2]}:${parts[3]}:${parts[4]}:${parts[5]}`
+        };
+    
+        const formatFn = keyFormats[type];
+        if (!formatFn) {
+            throw new Error(`Invalid type: ${type}`);
+        }
+    
+        return formatFn();
     }
     
     formatNumber(num) {
         return String(num).padStart(2, '0');
     }
-
-    // 날짜를 문자열로 변환하는 함수
-    formatDate(date, type, market) {
+    
+    formatDate(date, type, market, minute = null) {
         const year = date.getFullYear();
-        const month = this.formatNumber(date.getMonth()+1);
+        const month = this.formatNumber(date.getMonth() + 1);
         const day = this.formatNumber(date.getDate());
         const hours = this.formatNumber(date.getHours());
         const minutes = this.formatNumber(date.getMinutes());
         const seconds = this.formatNumber(date.getSeconds());
-
+    
         const formats = {
-        years: () => `${year}`,
-        months: () => `${year}:${month}`,
-        days: () => `${year}:${month}:${day}`,
-        minutes: () => `${year}:${month}:${day}:${hours}:${minutes}`,
-        seconds: () => `${year}:${month}:${day}:${hours}:${minutes}:${seconds}`
+            years: () => `${year}`,
+            months: () => `${year}:${month}`,
+            days: () => `${year}:${month}:${day}`,
+            weeks: () => `${year}:${month}:${day}:W`,
+            minutes: () => {
+                return `${year}:${month}:${day}:${hours}:${minutes}:${minute}M`;
+            },
+            seconds: () => `${year}:${month}:${day}:${hours}:${minutes}:${seconds}`
         };
-
+    
+        if (!formats[type]) {
+            throw new Error(`Invalid type: ${type}`);
+        }
+    
         return `${market}:${formats[type]()}`;
     }
-
-    // 날짜 감소 함수
+    
     decrementDate(date, type) {
         const decrementFunctions = {
             years: () => date.setFullYear(date.getFullYear() - 1),
             months: () => date.setMonth(date.getMonth() - 1),
+            weeks: () => date.setDate(date.getDate() - 7),
             days: () => date.setDate(date.getDate() - 1),
             minutes: () => date.setMinutes(date.getMinutes() - 1),
             seconds: () => date.setSeconds(date.getSeconds() - 1)
         };
-
+    
+        if (!decrementFunctions[type]) {
+            throw new Error(`Invalid type: ${type}`);
+        }
+    
         decrementFunctions[type]();
         return date;
     }
-
-    // 메인 함수
-    getAllKeys(coin, to, type, count = 200) {
+    
+    getAllKeys(coin, to, type, minute = null, count = 200) {
         const result = [];
         const currentDate = new Date(to);
-        currentDate.setHours(currentDate.getHours()+9);
-
+        currentDate.setHours(currentDate.getHours() + 9);
+    
         for (let i = 0; i < count; i++) {
-            result.push(this.formatDate(currentDate, type, coin));
+            result.push(this.formatDate(currentDate, type, coin, minute));
             this.decrementDate(currentDate, type);
         }
         return result;
+    }
+    cleanQueue(){
+        while(this.upbitApiQueue.length > 0 && this.upbitApiQueue[0] - Date.now() < -ONE_SECOND){
+            this.upbitApiQueue.shift();
+        }
+        setTimeout(()=>this.cleanQueue(),100)
     }
 }

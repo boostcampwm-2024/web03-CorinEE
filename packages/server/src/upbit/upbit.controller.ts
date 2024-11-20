@@ -4,6 +4,7 @@ import { SseService } from './sse.service';
 import { CoinListService } from './coin-list.service';
 import { ChartService } from './chart.service';
 import { Response } from 'express';
+import { ApiQuery } from '@nestjs/swagger';
 
 @Controller('upbit')
 export class UpbitController {
@@ -65,18 +66,24 @@ export class UpbitController {
   }
 
   @Get('candle/:type/:minute?')
+  @ApiQuery({ name: 'minute', required: false, type: String })
   async getCandle(
     @Res() res: Response,
     @Param('type') type : string,
     @Query('market') market: string, 
     @Query('to') to:string,
-    @Query('minute') minute? :number
+    @Param('minute') minute? :string
   ){
     try{
+      console.log("type : "+type)
+      console.log("market : "+market)
+      console.log("minute : "+minute)
+      console.log("to : "+to)
       const response = await this.chartService.upbitApiDoor(type, market, to, minute)
+
       return res.status(response.statusCode).json(response)
     }catch(error){
-      console.error(error)
+      console.error("error"+error)
       return res.status(error.status)
         .json({
           message: error.message || '서버오류입니다.',
