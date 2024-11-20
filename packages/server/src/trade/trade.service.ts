@@ -62,7 +62,7 @@ export class TradeService {
                 return {
                     statusCode : 201,
                     message : "미체결 데이터가 없습니다.",
-                    tradeData : []
+                    result : []
                 }
             }
             const coinNameData = this.coinDataUpdaterService.getCoinNameList();
@@ -90,7 +90,7 @@ export class TradeService {
             })
             return {
                 statusCode : 200,
-                message : "체결 데이터가 있습니다.",
+                message : "미체결 데이터가 있습니다.",
                 result
             }
         }catch(error){
