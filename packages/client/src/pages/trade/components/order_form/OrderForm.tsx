@@ -2,11 +2,15 @@ import { useState, Suspense } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { createOrderTabs } from '@/constants/orderTabs';
 
-function OrderForm({ currentPrice }: { currentPrice: number }) {
+type OrderFormProps = {
+	currentPrice: number;
+	selectPrice: number | null;
+};
+
+function OrderForm({ currentPrice, selectPrice }: OrderFormProps) {
 	const [activeTab, setActiveTab] = useState('buy');
 	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-
-	const TABS = createOrderTabs(currentPrice);
+	const TABS = createOrderTabs({ currentPrice, selectPrice });
 
 	return (
 		<div className="bg-gray-50 flex-1 rounded-lg p-2 min-w-80">
