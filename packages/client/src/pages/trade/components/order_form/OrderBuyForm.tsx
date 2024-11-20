@@ -1,48 +1,21 @@
-import { useEffect, useState } from 'react';
 import OrderInput from '@/pages/trade/components/order_form/common/OrderInput';
 import OrderSubmitButton from '@/pages/trade/components/order_form/common/OrderSubmitButton';
 import PercentageButtons from '@/pages/trade/components/order_form/common/PercentageButtons';
 import { calculateTotalPrice } from '@/utility/order';
-import { FormEvent } from 'react';
-import { useTrade } from '@/hooks/useTrade';
-import { useParams } from 'react-router-dom';
-import { Market } from '@/types/market';
 import { useMyAccount } from '@/hooks/useMyAccount';
+import { useOrderForm } from '@/hooks/useOrderForm';
 
 function OrderBuyForm({ currentPrice }: { currentPrice: number }) {
-	const [price, setPrice] = useState(String(currentPrice));
-	const [quantity, setQuantity] = useState<string>('');
-	const tradeMutation = useTrade('bid');
+	const {
+		price,
+		setPrice,
+		quantity,
+		setQuantity,
+		quantityErrorMessage,
+		handleSubmit,
+	} = useOrderForm({ currentPrice, askType: 'bid' });
+
 	const { data: balance } = useMyAccount();
-	const { market } = useParams();
-	const [marketType, code] = market?.split('-') ?? [];
-	const [quantityErrorMessage, setQuantityErrorMessage] = useState<string>('');
-
-	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-		event.preventDefault();
-		if (quantity === '' || !quantity || !Number(quantity)) {
-			setQuantityErrorMessage('수량을 입력해주세요');
-			return;
-		}
-
-		tradeMutation.mutate({
-			askType: 'bid',
-			typeGiven: marketType as Market,
-			typeReceived: code,
-			receivedPrice: Number(price),
-			receivedAmount: Number(quantity),
-		});
-	};
-
-	useEffect(() => {
-		if (quantityErrorMessage) {
-			const timer = setTimeout(() => {
-				setQuantityErrorMessage('');
-			}, 1500);
-
-			return () => clearTimeout(timer);
-		}
-	}, [quantityErrorMessage]);
 
 	return (
 		<>
