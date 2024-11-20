@@ -47,6 +47,7 @@ export class AskService implements OnModuleInit {
 		return asset.quantity * (percent / 100);
 	}
 	async createAskTrade(user, askDto) {
+		if(askDto.receivedAmount * askDto.receivedPrice < 5000) throw new BadRequestException();
 		if (this.transactionCreateAsk) await this.waitForTransactionCreate();
 		this.transactionCreateAsk = true;
 		const queryRunner = this.dataSource.createQueryRunner();
@@ -176,7 +177,7 @@ export class AskService implements OnModuleInit {
 		try {
 			const buyData = { ...tradeData };
 			buyData.quantity =
-				tradeData.quantity >= bid_size ? bid_size : tradeData.quantity;
+				tradeData.quantity >= bid_size ? Math.floor(bid_size * 1e8) / 1e8 : Math.floor(tradeData.quantity * 1e8) * 1e8;
 			buyData.price = Math.floor(bid_price * krw);
 
 			const user = await this.userRepository.getUser(userId);

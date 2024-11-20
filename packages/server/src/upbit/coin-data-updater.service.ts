@@ -54,6 +54,7 @@ export class CoinDataUpdaterService {
           `${UPBIT_CURRENT_PRICE_URL}markets=${this.coinCodeList.join(',')}`,
         ),
       );
+      //console.log(response.headers['remaining-req'])
       this.coinLatestInfo = new Map(
         response.data.map((coin) => [coin.market, coin]),
       );
