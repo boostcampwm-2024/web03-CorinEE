@@ -5,9 +5,10 @@ import { OrderBookUnit } from '@/types/orderbook';
 type BidListProps = {
 	bids: Pick<OrderBookUnit, 'bid_price' | 'bid_size' | 'bid_rate'>[];
 	currentPrice: number;
+	handleSelectPrice: (price: number) => void;
 };
 
-function BidList({ bids, currentPrice }: BidListProps) {
+function BidList({ bids, currentPrice, handleSelectPrice }: BidListProps) {
 	const maxSize = Math.max(...bids.map((bid) => bid.bid_size));
 
 	return (
@@ -19,6 +20,7 @@ function BidList({ bids, currentPrice }: BidListProps) {
 						currentPrice={currentPrice}
 						price={bid.bid_price}
 						rate={bid.bid_rate}
+						handleSelectPrice={handleSelectPrice}
 					/>
 					<VolumeBar
 						size={bid.bid_size}

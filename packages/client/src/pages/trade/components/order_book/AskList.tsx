@@ -4,9 +4,10 @@ import VolumeBar from '@/pages/trade/components/order_book/VolumeBar';
 type AskListProps = {
 	asks: Pick<OrderBookUnit, 'ask_price' | 'ask_size' | 'ask_rate'>[];
 	currentPrice: number;
+	handleSelectPrice: (price: number) => void;
 };
 
-function AskList({ asks, currentPrice }: AskListProps) {
+function AskList({ asks, currentPrice, handleSelectPrice }: AskListProps) {
 	const maxSize = Math.max(...asks.map((ask) => ask.ask_size));
 	return (
 		<ul className="flex flex-col w-full">
@@ -22,6 +23,7 @@ function AskList({ asks, currentPrice }: AskListProps) {
 						currentPrice={currentPrice}
 						price={ask.ask_price}
 						rate={ask.ask_rate}
+						handleSelectPrice={handleSelectPrice}
 					/>
 					<span></span>
 				</li>
