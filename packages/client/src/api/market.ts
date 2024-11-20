@@ -1,4 +1,4 @@
-import { instance, upbitInstance } from '@/api/instance';
+import { instance } from '@/api/instance';
 import { Candle, CandlePeriod } from '@/types/chart';
 import { MarketData, SidebarMarketData } from '@/types/market';
 
@@ -29,10 +29,10 @@ export async function getCandleByPeriod(
 ): Promise<Candle[]> {
 	const url =
 		params === 'minutes'
-			? `/candles/${params}/${minutes}`
-			: `/candles/${params}`;
+			? `/upbit/candle/${params}/${minutes}`
+			: `/upbit/candle/${params}`;
 
-	const response = await upbitInstance.get(url, {
+	const response = await instance.get(url, {
 		params: {
 			market,
 			count: 200,
@@ -40,5 +40,5 @@ export async function getCandleByPeriod(
 		},
 	});
 
-	return response.data;
+	return response.data.result;
 }
