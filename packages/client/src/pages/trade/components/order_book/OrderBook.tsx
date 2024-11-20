@@ -20,6 +20,7 @@ function OrderBook({ orderBook, currentPrice }: OrderBookProps) {
 			</div>
 			<div className="w-full flex flex-col">
 				<AskList asks={asks} currentPrice={currentPrice} />
+				<div className="w-full h-[1px] bg-gray-300 my-2"></div>
 				<BidList bids={bids} currentPrice={currentPrice} />
 			</div>
 		</div>
