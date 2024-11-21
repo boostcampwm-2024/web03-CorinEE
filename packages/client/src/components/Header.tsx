@@ -3,6 +3,8 @@ import { Button, Navbar } from '@material-tailwind/react';
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
 import { useToast } from '@/hooks/useToast';
+import logoImage from '@asset/corineeLogo.png'
+
 function Header() {
 	const { login, logout } = useAuth();
 	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -17,7 +19,7 @@ function Header() {
 			>
 				<div>
 					<Link to={'/'} className="flex gap-2 items-center">
-						<img className="w-12 h-12" src="../asset/corineeLogo.png" />
+						<img className="w-12 h-12" src={logoImage} />
 						<h1 className="text-black text-xl font-semibold">Corinee</h1>
 					</Link>
 				</div>
