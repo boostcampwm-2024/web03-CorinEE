@@ -31,7 +31,7 @@ type TradeAPI = {
 	receivedPrice: number;
 	receivedAmount: number;
 };
-
+ 
 export async function trade(params: TradeAPI, token: string): Promise<Trade> {
 	const response = await instance.post(
 		`/trade/${params.askType}`,
