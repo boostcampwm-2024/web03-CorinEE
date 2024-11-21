@@ -191,7 +191,7 @@ export class AskService implements OnModuleInit {
 				queryRunner,
 			);
 
-			if (asset && tradeData.price > buyData.price) {
+			if (!asset && tradeData.price > buyData.price) {
 				asset.price = Math.floor(asset.price + (tradeData.price - buyData.price) * buyData.quantity);
 				
 				await this.assetRepository.updateAssetPrice(asset, queryRunner);
