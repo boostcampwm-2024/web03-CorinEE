@@ -217,6 +217,7 @@ export class ChartService implements OnModuleInit{
         const candle_acc_trade_price = price * candle_acc_trade_volume;
         const candle = {
             market : name,
+            candle_date_time_utc : kstDate.toISOString().slice(0,19),
             candle_date_time_kst : kstDate.toISOString().slice(0,19),
             opening_price : price,
             high_price : price,
@@ -224,8 +225,12 @@ export class ChartService implements OnModuleInit{
             trade_price : price,
             timestamp : timestamp,
             candle_acc_trade_price : candle_acc_trade_price,
-            candle_acc_trade_volume : candle_acc_trade_volume
+            candle_acc_trade_volume : candle_acc_trade_volume,
+            prev_closing_price : 0,
+            change_price : 0,
+            change_rate : 0,
         }
+
         const type = ['years','months','weeks','days','minutes','seconds'];
         const minute_type = ["1", "3", "5", "10", "15", "30", "60", "240"];
         type.forEach(async (key)=>{
