@@ -24,7 +24,7 @@ jobs:
         run: |
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server -f ./dockerfile-server .
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/corinee-client -f ./dockerfile-client .
+          docker build --build-arg VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }} -t ${{ secrets.DOCKERHUB_USERNAME }}/corinee-client -f ./dockerfile-client .
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/corinee-client
 
       - name: make deploy environment

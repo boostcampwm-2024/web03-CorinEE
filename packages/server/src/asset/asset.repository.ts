@@ -20,11 +20,7 @@ export class AssetRepository extends Repository<Asset> {
       console.log(e);
     }
   }
-<<<<<<< HEAD
   async updateAssetQuantityPrice(asset, queryRunner) {
-=======
-  async updateAsset(asset, queryRunner) {
->>>>>>> 55132d7 (feat: 매도 로직 작성)
     try {
       await queryRunner.manager
         .createQueryBuilder()
@@ -56,14 +52,10 @@ export class AssetRepository extends Repository<Asset> {
       await queryRunner.manager
         .createQueryBuilder()
         .update(Asset)
-<<<<<<< HEAD
         .set({ 
           price: asset.price,
           quantity: asset.quantity
         })
-=======
-        .set({ price: asset.price })
->>>>>>> 55132d7 (feat: 매도 로직 작성)
         .where('assetId = :assetId', { assetId: asset.assetId })
         .execute();
     } catch (e) {

@@ -34,7 +34,6 @@ export class AskService implements OnModuleInit {
 	}
 
 	async calculatePercentBuy(user, moneyType: string, percent: number) {
-<<<<<<< HEAD
 		const account = await this.accountRepository.findOne({
 			where : {user: {id: user.userId}}
 		})
@@ -51,24 +50,6 @@ export class AskService implements OnModuleInit {
 		if(askDto.receivedAmount * askDto.receivedPrice < 5000) throw new BadRequestException();
 		if (this.transactionCreateAsk) await this.waitForTransactionCreate();
 		this.transactionCreateAsk = true;
-=======
-		const asset = await this.assetRepository.findOne({
-			where:{
-				account: {id: user.userId},
-				assetName: moneyType
-			}
-		})
-
-		return Number(asset.quantity) * (percent / 100);
-	}
-	async createAskTrade(user, askDto) {
-		if (this.transactionCreateAsk) await this.waitForTransactionCreate();
-		this.transactionCreateAsk = true;
-		// const temp = await this.assetRepository.findOne({
-		// 	where: {assetId: 1}
-		// })
-		// console.log(temp.quantity)
->>>>>>> 55132d7 (feat: 매도 로직 작성)
 		const queryRunner = this.dataSource.createQueryRunner();
 		await queryRunner.connect();
 		await queryRunner.startTransaction('READ COMMITTED');
@@ -85,7 +66,6 @@ export class AskService implements OnModuleInit {
 					statusCode: 422,
 				});
 			}
-<<<<<<< HEAD
 			const userAsset = await this.checkCurrency(askDto, userAccount, queryRunner)
 			const assetBalance = userAsset.quantity - askDto.receivedAmount;
 			if(assetBalance <= 0){
@@ -100,26 +80,6 @@ export class AskService implements OnModuleInit {
 			await this.tradeRepository.createTrade(askDto, user.userId,'sell', queryRunner);
 			await queryRunner.commitTransaction();
 			
-=======
-			const userAsset = await this.checkCurrency(user, askDto, queryRunner);
-			userAsset.quantity -= askDto.receivedAmount
-			if(userAsset.quantity !==0){
-				await this.assetRepository.updateAssetQuantity(
-					userAsset,
-					queryRunner,
-				)
-			}else {
-				await this.assetRepository.delete({
-					assetId: userAsset.assetId
-				})
-			}
-			await this.tradeRepository.createTrade(askDto, user.userId,'sell', queryRunner);
-			await queryRunner.commitTransaction();
-			const temp = await this.assetRepository.findOne({
-				where: {assetId: userAsset.assetId}
-			})
-			console.log(temp.quantity)
->>>>>>> 55132d7 (feat: 매도 로직 작성)
 			return {
 				statusCode: 200,
 				message: '거래가 정상적으로 등록되었습니다.',
@@ -137,15 +97,9 @@ export class AskService implements OnModuleInit {
 			this.transactionCreateAsk = false;
 		}
 	}
-<<<<<<< HEAD
 	async checkCurrency(askDto,account,queryRunner) {
 		const { typeGiven, receivedAmount } = askDto;
 		const userAsset = await this.assetRepository.getAsset(account.id,typeGiven,queryRunner)
-=======
-	async checkCurrency(user, askDto,queryRunner) {
-		const { typeGiven, receivedAmount } = askDto;
-		const userAsset = await this.assetRepository.getAsset(user.userId, typeGiven,queryRunner)
->>>>>>> 55132d7 (feat: 매도 로직 작성)
 		if(!userAsset){
 			throw new UnprocessableEntityException({
 				message: '자산이 부족합니다.',
@@ -171,7 +125,6 @@ export class AskService implements OnModuleInit {
 			userId,
 		} = askDto;
 		try {
-<<<<<<< HEAD
 			const account = await this.accountRepository.findOne({
 				where: { user : { id : userId } }
 			})
@@ -185,16 +138,6 @@ export class AskService implements OnModuleInit {
 				askDto.assetBalance = userAsset.quantity;
 				askDto.asset = userAsset;
 			}
-=======
-			const userAsset = await this.assetRepository.findOne({
-				where: {
-					account: { id: userId },
-					assetName: typeGiven
-				},
-			});
-			askDto.assetBalance = userAsset.quantity;
-			askDto.asset = userAsset;
->>>>>>> 55132d7 (feat: 매도 로직 작성)
 			const currentCoinOrderbook =
 				this.coinDataUpdaterService.getCoinOrderbookByAsk(askDto);
 			for (const order of currentCoinOrderbook) {
@@ -228,19 +171,12 @@ export class AskService implements OnModuleInit {
 			asset,
 			typeGiven,
 			typeReceived,
-<<<<<<< HEAD
 			krw
-=======
-			tradeId,
-			asset,
-			assetBalance
->>>>>>> 55132d7 (feat: 매도 로직 작성)
 		} = askDto;
 		let result = false;
 		try {
 			const buyData = { ...tradeData };
 			buyData.quantity =
-<<<<<<< HEAD
 				tradeData.quantity >= bid_size ? bid_size.toFixed(8) : tradeData.quantity.toFixed(8)
 			buyData.price = (bid_price * krw).toFixed(8);
 			if(buyData.quantity<0.00000001){
@@ -249,28 +185,16 @@ export class AskService implements OnModuleInit {
 			}
 			const user = await this.userRepository.getUser(userId);
 
-=======
-				tradeData.quantity >= bid_size ? bid_size : tradeData.quantity;
-			buyData.price = bid_price;
->>>>>>> 55132d7 (feat: 매도 로직 작성)
 			await this.tradeHistoryRepository.createTradeHistory(
 				user,
 				buyData,
 				queryRunner,
 			);
 
-<<<<<<< HEAD
 			if (!asset && tradeData.price > buyData.price) {
 				asset.price = Math.floor(asset.price + (tradeData.price - buyData.price) * buyData.quantity);
 				
 				await this.assetRepository.updateAssetPrice(asset, queryRunner);
-=======
-			if (assetBalance !== 0) {
-				asset.price =
-					asset.price * asset.quantity - buyData.price * buyData.quantity;
-				await this.assetRepository.updateAssetPrice(asset, queryRunner);
-
->>>>>>> 55132d7 (feat: 매도 로직 작성)
 			}
 
 			const account = await this.accountRepository.findOne({
@@ -294,11 +218,7 @@ export class AskService implements OnModuleInit {
 					tradeData,
 					queryRunner,
 				);
-<<<<<<< HEAD
 			}
-=======
-
->>>>>>> 55132d7 (feat: 매도 로직 작성)
 			await queryRunner.commitTransaction();
 			result = true;
 		} catch (error) {

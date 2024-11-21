@@ -15,11 +15,8 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { ApiBearerAuth, ApiSecurity, ApiBody } from '@nestjs/swagger';
 import { AskService } from './trade-ask.service';
 import { TradeDto } from './dtos/trade.dto';
-<<<<<<< HEAD
 import { TradeService } from './trade.service';
 import {Response} from "express";
-=======
->>>>>>> 55132d7 (feat: 매도 로직 작성)
 
 @Controller('trade')
 export class TradeController {
@@ -96,7 +93,6 @@ export class TradeController {
   ) {
     return this.askService.calculatePercentBuy(req.user, moneyType, percent);
   }
-<<<<<<< HEAD
 
   @ApiBearerAuth('access-token')
   @ApiSecurity('access-token')
@@ -123,6 +119,4 @@ export class TradeController {
     const response = await this.tradeService.getMyTradeData(req.user, coin)
     return res.status(response.statusCode).json(response)
   }
-=======
->>>>>>> 55132d7 (feat: 매도 로직 작성)
 }
