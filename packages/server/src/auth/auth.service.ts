@@ -28,7 +28,7 @@ export class AuthService {
 		return {
 			access_token: await this.jwtService.signAsync(payload, {
 				secret: jwtConstants.secret,
-				expiresIn: '6000s',
+				expiresIn: '1d',
 			}),
 		};
 	}
@@ -51,7 +51,7 @@ export class AuthService {
 			return {
 				access_token: await this.jwtService.signAsync(payload, {
 					secret: jwtConstants.secret,
-					expiresIn: '6000s',
+					expiresIn: '1d',
 				}),
 			};
 		}catch(error){
