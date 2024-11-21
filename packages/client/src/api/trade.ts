@@ -13,7 +13,7 @@ export async function calculatePercentageBuy(
 	token: string,
 ): Promise<number> {
 	const response = await instance.get(
-		`/trade/calculate-percentage-${askType}/${moneyType}?percent=${percent}`,
+		`/api/trade/calculate-percentage-${askType}/${moneyType}?percent=${percent}`,
 		{
 			headers: {
 				Authorization: `Bearer ${token}`,
@@ -31,10 +31,10 @@ type TradeAPI = {
 	receivedPrice: number;
 	receivedAmount: number;
 };
- 
+
 export async function trade(params: TradeAPI, token: string): Promise<Trade> {
 	const response = await instance.post(
-		`/trade/${params.askType}`,
+		`/api/trade/${params.askType}`,
 		{
 			typeGiven: params.typeGiven,
 			typeReceived: params.typeReceived,
@@ -55,7 +55,7 @@ export async function checkCoin(
 	coin: string,
 	token: string,
 ): Promise<CheckCoin> {
-	const response = await instance.get(`/trade/check-coinData/${coin}`, {
+	const response = await instance.get(`/api/trade/check-coinData/${coin}`, {
 		headers: {
 			Authorization: `Bearer ${token}`,
 		},
@@ -67,7 +67,7 @@ export async function pendingCoin(
 	coin: string,
 	token: string,
 ): Promise<PendingCoinAPI> {
-	const response = await instance.get(`/trade/tradeData/${coin}`, {
+	const response = await instance.get(`/api/trade/tradeData/${coin}`, {
 		headers: {
 			Authorization: `Bearer ${token}`,
 		},
