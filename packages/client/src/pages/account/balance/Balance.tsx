@@ -23,8 +23,6 @@ function Balance() {
 
 	if (!sseData) return;
 
-	// console.log(sseData)
-
 	return (
 		<div className="flex flex-col">
 			<div className="flex p-3">
