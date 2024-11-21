@@ -2,6 +2,7 @@ import { Change, CoinTicker } from '@/types/ticker';
 import colorClasses from '@/constants/priceColor';
 import { AccountCoin } from '@/types/account';
 import PORTFOLIO_EVALUATOR from '@/utility/portfolioEvaluator';
+import { Link } from 'react-router-dom';
 
 type BalanceCoinProps = {
 	coin: AccountCoin;
@@ -18,7 +19,7 @@ function BalanceCoin({ coin, sseData }: BalanceCoinProps) {
 
 	if (!sseData) return;
 
-	const averagePrice = (coin.price / coin.quantity).toFixed(2);
+	const averagePrice = (coin.price / coin.quantity).toFixed(3);
 
 	const evaluationPerPrice = evaluatePerPrice(
 		coin.quantity,
@@ -31,11 +32,10 @@ function BalanceCoin({ coin, sseData }: BalanceCoinProps) {
 
 	const change: Change = getChangeStatus(profitRate);
 
-	// console.log(coin)
-
 	return (
 		<div className="flex border-b border-solid border-gray-300">
 			<div className="flex-[1]  pt-3 px-3">
+				<Link to={`/trade/${`KRW-${coin.market}`}`}>
 				<div className="flex items-center gap-3">
 					<img className="w-7 h-7" src={coin.img_url} />
 					<div className="flex flex-col">
@@ -43,6 +43,7 @@ function BalanceCoin({ coin, sseData }: BalanceCoinProps) {
 						<p className="text-gray-700 text-xs">{coin.market}</p>
 					</div>
 				</div>
+				</Link>
 			</div>
 			<div className="flex-[1] p-3 text-end">
 				<span className="text-base ">{coin.quantity.toLocaleString()}</span>
