@@ -18,7 +18,7 @@ services:
       dockerfile: dockerfile-client
     image: seunggwan/corinee-client
     ports:
-      - "80:80"
+      - "80"
     depends_on:
       - server
     networks:
