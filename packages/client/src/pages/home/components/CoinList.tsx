@@ -24,6 +24,8 @@ function CoinList({ markets, activeCategory }: CoinListProps) {
 		setCurrentScrollPage(1);
 	}, [activeCategory]);
 
+
+
 	const { sseData } = useSSETicker(markets);
 	const formatters = formatData(activeCategory);
 	const handleScrollPage = (pageNumber: number) => {

@@ -1,6 +1,6 @@
 export type Change = 'RISE' | 'FALL' | 'EVEN';
 
-type CoinTicker = {
+export type CoinTicker = {
 	korean_name: string;
 	image_url: string;
 	type: string;
