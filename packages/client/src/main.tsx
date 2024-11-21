@@ -5,9 +5,7 @@ import { CookiesProvider } from 'react-cookie';
 import './index.css';
 import App from '@/App';
 import { ToastContainer } from 'react-toastify';
-import { config } from 'dotenv'
 
-config();
 
 createRoot(document.getElementById('root')!).render(
 	<ThemeProvider>
