@@ -23,8 +23,8 @@ export function usePercentageBuy({
 		},
 		queryKey: [QUERY_KEY, percent, askType],
 		enabled: percent !== undefined,
-		staleTime: 1000 * 60,
-		gcTime: 1000 * 60 * 5,
+		staleTime: 0,
+		gcTime: 0,
 	});
 
 	return { data, isLoading, refetch };
