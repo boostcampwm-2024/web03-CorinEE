@@ -159,7 +159,7 @@ export class BidService implements OnModuleInit {
 		let result = false;
 		try {
 			const buyData = {...tradeData};
-			buyData.quantity = buyData.quantity >= ask_size ? ask_size.toFixed(8) : buyData.quantity.toFixed(8)
+			buyData.quantity = buyData.quantity >= ask_size ? parseFloat(ask_size.toFixed(8)) : parseFloat(buyData.quantity.toFixed(8))
 			if(buyData.quantity<0.00000001){
 				await queryRunner.commitTransaction();
 				return true;
