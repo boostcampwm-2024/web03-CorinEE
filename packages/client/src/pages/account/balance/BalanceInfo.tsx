@@ -6,11 +6,16 @@ type BalanceInfoProps = {
 	amount: number;
 	unit: string;
 	primary: boolean;
+	change: Change;
 };
 
-function BalanceInfo({ title, amount, unit, primary }: BalanceInfoProps) {
-	const change: Change = 'FALL';
-
+function BalanceInfo({
+	title,
+	amount,
+	unit,
+	primary,
+	change,
+}: BalanceInfoProps) {
 	return (
 		<div className="flex-[1] flex items-center justify-between">
 			<span className="font-semibold text-gray-700">{title}</span>

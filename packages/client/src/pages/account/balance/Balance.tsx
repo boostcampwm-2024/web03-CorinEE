@@ -1,13 +1,45 @@
+import { useSSETicker } from '@/hooks/SSE/useSSETicker';
+import { useMyAccount } from '@/hooks/useMyAccount';
 import BalanceChart from '@/pages/account/balance/BalanceChart';
 import BalanceCoin from '@/pages/account/balance/BalanceCoin';
 import BalanceTable from '@/pages/account/balance/BalanceTable';
+import { useMemo } from 'react';
 
 function Balance() {
+
+	const { data } = useMyAccount();
+
+	const balanceMarketList = useMemo(
+		() =>
+			data.coins.map((coin) => {
+				return {
+					market: `KRW-${coin.market}`,
+					quantity: Number(coin.quantity),
+				};
+			}),
+		[data.coins],
+	);
+
+	const { sseData } = useSSETicker(balanceMarketList);
+
+	if (!sseData) return;
+
+	const totalEvaluation = sseData
+		? balanceMarketList.reduce((acc, market) => {
+				const tradePrice = sseData[market.market]?.trade_price;
+
+				if (tradePrice && !isNaN(tradePrice)) {
+					return Math.floor(acc + market.quantity * tradePrice);
+				}
+				return acc;
+			}, 0)
+		: 0;
+
 	return (
 		<div className="flex flex-col">
 			<div className="flex p-3">
-				<BalanceTable />
-				<BalanceChart />
+				<BalanceTable {...data} totalEvaluation={totalEvaluation} />
+				<BalanceChart {...data} />
 			</div>
 
 			<div className=" w-full border-y border-solid border-gray-300 p-3">
@@ -24,9 +56,15 @@ function Balance() {
 					<div className="flex-[1]">손익</div>
 				</div>
 			</div>
-
-			<BalanceCoin />
-			<BalanceCoin />
+			{data.coins.map((coin) => {
+				return (
+					<BalanceCoin
+						key={coin.market}
+						coin={coin}
+						sseData={sseData && sseData[`KRW-${coin.market}`]}
+					/>
+				);
+			})}
 		</div>
 	);
 }

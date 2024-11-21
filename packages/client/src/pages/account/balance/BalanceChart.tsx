@@ -1,3 +1,4 @@
+import { AccountCoin } from '@/types/account';
 import {
 	Chart as ChartJS,
 	ArcElement,
@@ -11,50 +12,18 @@ import { Doughnut } from 'react-chartjs-2';
 // 필요한 컴포넌트들을 등록
 ChartJS.register(ArcElement, Tooltip, Legend, Colors);
 
-function BalanceChart() {
-	const balanceMarketList = [
-		{
-			market: 'DOGE',
-			value: 49.9,
-		},
-		{
-			market: 'XRP',
-			value: 51,
-		},
-		{
-			market: 'XRP',
-			value: 51,
-		},
-		{
-			market: 'XRP',
-			value: 51,
-		},
-		{
-			market: 'XRP',
-			value: 51,
-		},
-		{
-			market: 'XRP',
-			value: 51,
-		},
-		{
-			market: 'XRP',
-			value: 51,
-		},
-		{
-			market: 'XRP',
-			value: 51,
-		},
-		{
-			market: 'XRP',
-			value: 51,
-		},
-		{
-			market: 'XRP',
-			value: 51,
-		},
+type BalanceChartProps = {
+	total_bid: number;
+	coins: AccountCoin[];
+};
 
-	];
+function BalanceChart({ coins, total_bid }: BalanceChartProps) {
+	const balanceMarketList = coins.map((coin) => {
+		return {
+			market: coin.market,
+			value: Math.floor((Number(coin.price) / total_bid) * 100),
+		};
+	});
 
 	const sortedBalanceMarketList = [...balanceMarketList].sort(
 		(a, b) => b.value - a.value,
@@ -116,17 +85,18 @@ function BalanceChart() {
 
 	const getTranslateY = (length: number): string => {
 		const config = {
-			basePercentage: 80,    // 기본 퍼센트
+			basePercentage: 80, // 기본 퍼센트
 			incrementPerGroup: 30, // 그룹당 증가 퍼센트
-			itemsPerGroup: 4      // 그룹당 아이템 수
+			itemsPerGroup: 4, // 그룹당 아이템 수
 		};
-	
+
 		const groupIndex = Math.floor((length - 1) / config.itemsPerGroup);
-		const percentage = config.basePercentage + (groupIndex * config.incrementPerGroup);
-	
+		const percentage =
+			config.basePercentage + groupIndex * config.incrementPerGroup;
+
 		return `-translate-y-[${percentage}%]`;
 	};
-	
+
 	return (
 		<div className="w-2/5 relative flex justify-center">
 			<Doughnut data={data} options={options} />
