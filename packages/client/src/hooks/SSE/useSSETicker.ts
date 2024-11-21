@@ -2,7 +2,7 @@ import { SSEDataType } from '@/types/ticker';
 import { useEffect, useRef, useState } from 'react';
 
 export function useSSETicker(targetMarketCodes: { market: string }[]) {
-	const BASE_URL = `${!import.meta.env.VITE_API_BASE_URL ? 'https://www.corinee.site' : import.meta.env.VITE_API_BASE_URL}/api/upbit/price-updates`;
+	const BASE_URL = `${!import.meta.env.VITE_API_BASE_URL ? 'https://www.corinee.site/api/upbit/price-updates' : import.meta.env.VITE_API_BASE_URL}/api/upbit/price-updates`;
 	const eventSource = useRef<EventSource | null>(null);
 	const [isConnected, setIsConnected] = useState<boolean>(false);
 	const [sseData, setSSEData] = useState<SSEDataType | null>();
