@@ -1,7 +1,10 @@
 import axios from 'axios';
+import {config} from 'dotenv'
+
+config();
 
 export const instance = axios.create({
-	baseURL: import.meta.env.VITE_API_BASE_URL,
+	baseURL: process.env.VITE_API_BASE_URL,
 	withCredentials: true,
 	timeout: 2000,
 });
