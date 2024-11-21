@@ -177,9 +177,12 @@ export class AskService implements OnModuleInit {
 		try {
 			const buyData = { ...tradeData };
 			buyData.quantity =
-				tradeData.quantity >= bid_size ? Math.floor(bid_size * 1e8) / 1e8 : Math.floor(tradeData.quantity * 1e8) * 1e8;
+				tradeData.quantity >= bid_size ? bid_size.toFixed(8) : tradeData.quantity.toFixed(8)
 			buyData.price = Math.floor(bid_price * krw);
-
+			if(buyData.quantity<0.00000001){
+				await queryRunner.commitTransaction();
+				return true;
+			}
 			const user = await this.userRepository.getUser(userId);
 
 			await this.tradeHistoryRepository.createTradeHistory(
