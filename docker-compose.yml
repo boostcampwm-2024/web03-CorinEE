@@ -18,7 +18,7 @@ services:
       dockerfile: dockerfile-client
     image: seunggwan/corinee-client
     ports:
-      - "80"
+      - "80:80"
     depends_on:
       - server
     networks:
@@ -28,7 +28,6 @@ services:
     image: nginx:latest
     container_name: nginx
     ports:
-      - "80:80"
       - "443:443"
     volumes:
       - ./corinee/ssl/ca_bundle.crt:/etc/nginx/ssl/ca_bundle.crt
