@@ -6,7 +6,7 @@ import PORTFOLIO_EVALUATOR from '@/utility/portfolioEvaluator';
 type BalanceTableProps = {
 	KRW: number;
 	total_bid: number;
-	sseData: SSEDataType;
+	sseData: SSEDataType | null | undefined;
 	balanceMarketList: BalanceMarket[];
 };
 
@@ -20,7 +20,8 @@ function BalanceTable({
 		PORTFOLIO_EVALUATOR;
 
 	const totalEvaluation = evaluateTotalPrice(balanceMarketList, sseData);
-	const profitRate = calculateProfitRate(totalEvaluation, total_bid);
+
+	const profitRate = calculateProfitRate(totalEvaluation, total_bid) || 0;
 	const changeStatus = getChangeStatus(profitRate);
 
 	return (
@@ -53,7 +54,7 @@ function BalanceTable({
 				/>
 				<BalanceInfo
 					title="총평가손익"
-					amount={totalEvaluation - total_bid}
+					amount={Math.floor(totalEvaluation - total_bid)}
 					unit="KRW"
 					primary={false}
 					change={changeStatus}
