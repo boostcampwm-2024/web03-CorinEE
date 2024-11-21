@@ -74,7 +74,7 @@ export class AskService implements OnModuleInit {
 				})
 			}else{
 				userAsset.quantity = assetBalance
-				userAsset.price -= askDto.receivedPrice.toFixed(8) * askDto.receivedAmount.toFixed(8)
+				userAsset.price -= parseFloat(askDto.receivedPrice.toFixed(8)) * parseFloat(askDto.receivedAmount.toFixed(8))
 				this.assetRepository.updateAssetPrice(userAsset, queryRunner);
 			}
 			await this.tradeRepository.createTrade(askDto, user.userId,'sell', queryRunner);
@@ -177,8 +177,8 @@ export class AskService implements OnModuleInit {
 		try {
 			const buyData = { ...tradeData };
 			buyData.quantity =
-				tradeData.quantity >= bid_size ? bid_size.toFixed(8) : tradeData.quantity.toFixed(8)
-			buyData.price = Math.floor(bid_price * krw);
+				tradeData.quantity >= bid_size ? parseFloat(bid_size.toFixed(8)) : parseFloat(tradeData.quantity.toFixed(8))
+			buyData.price = parseFloat((bid_price * krw).toFixed(8));
 			if(buyData.quantity<0.00000001){
 				await queryRunner.commitTransaction();
 				return true;
