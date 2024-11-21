@@ -21,8 +21,6 @@ function Balance() {
 
 	const { sseData } = useSSETicker(balanceMarketList);
 
-	if (!sseData) return;
-
 	return (
 		<div className="flex flex-col">
 			<div className="flex p-3">
@@ -53,7 +51,7 @@ function Balance() {
 					<BalanceCoin
 						key={coin.market}
 						coin={coin}
-						sseData={sseData && sseData[`KRW-${coin.market}`]}
+						sseData={sseData ? sseData[`KRW-${coin.market}`] : null}
 					/>
 				);
 			})}

@@ -5,7 +5,7 @@ import PORTFOLIO_EVALUATOR from '@/utility/portfolioEvaluator';
 
 type BalanceCoinProps = {
 	coin: AccountCoin;
-	sseData: CoinTicker;
+	sseData: CoinTicker | null;
 };
 
 function BalanceCoin({ coin, sseData }: BalanceCoinProps) {
@@ -15,6 +15,8 @@ function BalanceCoin({ coin, sseData }: BalanceCoinProps) {
 		calculateProfitRate,
 		getChangeStatus,
 	} = PORTFOLIO_EVALUATOR;
+
+	if (!sseData) return;
 
 	const averagePrice = (coin.price / coin.quantity).toFixed(2);
 
@@ -28,6 +30,8 @@ function BalanceCoin({ coin, sseData }: BalanceCoinProps) {
 	const profitRate = calculateProfitRate(evaluationPerPrice, coin.price);
 
 	const change: Change = getChangeStatus(profitRate);
+
+	// console.log(coin)
 
 	return (
 		<div className="flex border-b border-solid border-gray-300">
@@ -62,13 +66,13 @@ function BalanceCoin({ coin, sseData }: BalanceCoinProps) {
 				<div className="flex flex-col text-end mr-12">
 					<div className="">
 						<span className={`text-base ${colorClasses[change]}`}>
-							{profitRate.toFixed(2)}
+							{profitRate}
 						</span>
 						<span className="text-xs ml-1 text-gray-500">%</span>
 					</div>
 					<div className="">
 						<span className={`text-base ${colorClasses[change]}`}>
-							{profitPrice.toLocaleString()}
+							{Math.floor(profitPrice).toLocaleString()}
 						</span>
 						<span className="text-xs ml-1 text-gray-500">KRW</span>
 					</div>
