@@ -164,7 +164,7 @@ export class BidService implements OnModuleInit {
 				await queryRunner.commitTransaction();
 				return true;
 			}
-			buyData.price = (ask_price * krw).toFixed(8);
+			buyData.price = Math.floor(ask_price * krw);
 			
 			const user = await this.userRepository.getUser(userId);
 
