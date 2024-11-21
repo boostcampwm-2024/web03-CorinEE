@@ -1,27 +1,33 @@
 import { Change, CoinTicker } from '@/types/ticker';
 import colorClasses from '@/constants/priceColor';
 import { AccountCoin } from '@/types/account';
-import { useEffect, useState } from 'react';
+import PORTFOLIO_EVALUATOR from '@/utility/portfolioEvaluator';
 
 type BalanceCoinProps = {
 	coin: AccountCoin;
-	sseData: CoinTicker | undefined | null;
+	sseData: CoinTicker;
 };
 
 function BalanceCoin({ coin, sseData }: BalanceCoinProps) {
+	const {
+		evaluatePerPrice,
+		calculateProfitPrice,
+		calculateProfitRate,
+		getChangeStatus,
+	} = PORTFOLIO_EVALUATOR;
+
 	const averagePrice = (coin.price / coin.quantity).toFixed(2);
 
-	if (!sseData) return;
+	const evaluationPerPrice = evaluatePerPrice(
+		coin.quantity,
+		sseData.trade_price,
+	);
 
-	const evaluationPrice = Math.floor(sseData.trade_price * coin.quantity);
+	const profitPrice = calculateProfitPrice(evaluationPerPrice, coin.price);
 
-	const profitPrice = evaluationPrice - coin.price;
-	const profitRate = (
-		((evaluationPrice - coin.price) / coin.price) *
-		100
-	).toFixed(2);
-	const change: Change =
-		profitPrice > 0 ? 'RISE' : profitPrice < 0 ? 'FALL' : 'EVEN';
+	const profitRate = calculateProfitRate(evaluationPerPrice, coin.price);
+
+	const change: Change = getChangeStatus(profitRate);
 
 	return (
 		<div className="flex border-b border-solid border-gray-300">
@@ -48,7 +54,7 @@ function BalanceCoin({ coin, sseData }: BalanceCoinProps) {
 			</div>
 			<div className="flex-[1] p-3 text-end">
 				<span className="text-base font-bold">
-					{evaluationPrice.toLocaleString()}
+					{evaluationPerPrice.toLocaleString()}
 				</span>
 				<span className="text-xs ml-1 text-gray-500">KRW</span>
 			</div>
@@ -56,13 +62,13 @@ function BalanceCoin({ coin, sseData }: BalanceCoinProps) {
 				<div className="flex flex-col text-end mr-12">
 					<div className="">
 						<span className={`text-base ${colorClasses[change]}`}>
-							{profitRate}
+							{profitRate.toFixed(2)}
 						</span>
 						<span className="text-xs ml-1 text-gray-500">%</span>
 					</div>
 					<div className="">
 						<span className={`text-base ${colorClasses[change]}`}>
-							{Math.floor(profitPrice)}
+							{profitPrice.toLocaleString()}
 						</span>
 						<span className="text-xs ml-1 text-gray-500">KRW</span>
 					</div>
