@@ -17,6 +17,8 @@ services:
       context: .
       dockerfile: dockerfile-client
     image: seunggwan/corinee-client
+    environment:
+      - VITE_API_BASE_URL=/api
     ports:
       - "80:80"
     depends_on:
