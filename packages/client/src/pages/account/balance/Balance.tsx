@@ -6,7 +6,6 @@ import BalanceTable from '@/pages/account/balance/BalanceTable';
 import { useMemo } from 'react';
 
 function Balance() {
-
 	const { data } = useMyAccount();
 
 	const balanceMarketList = useMemo(
@@ -24,21 +23,16 @@ function Balance() {
 
 	if (!sseData) return;
 
-	const totalEvaluation = sseData
-		? balanceMarketList.reduce((acc, market) => {
-				const tradePrice = sseData[market.market]?.trade_price;
-
-				if (tradePrice && !isNaN(tradePrice)) {
-					return Math.floor(acc + market.quantity * tradePrice);
-				}
-				return acc;
-			}, 0)
-		: 0;
+	// console.log(sseData)
 
 	return (
 		<div className="flex flex-col">
 			<div className="flex p-3">
-				<BalanceTable {...data} totalEvaluation={totalEvaluation} />
+				<BalanceTable
+					{...data}
+					sseData={sseData}
+					balanceMarketList={balanceMarketList}
+				/>
 				<BalanceChart {...data} />
 			</div>
 
