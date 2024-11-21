@@ -19,26 +19,18 @@ services:
     image: seunggwan/corinee-client
     ports:
       - "80:80"
-    env_file:
-      - .env
+      - "443:443"
     depends_on:
       - server
-    networks:
-      - app-network
-
-  nginx:
-    image: nginx:latest
-    container_name: nginx
-    ports:
-      - "443:443"
     volumes:
-      - ./corinee/ssl/ca_bundle.crt:/etc/nginx/ssl/ca_bundle.crt
-      - ./corinee/ssl/certificate.crt:/etc/nginx/ssl/certificate.crt
-      - ./corinee/ssl/private.key:/etc/nginx/ssl/private.key
-    depends_on:
-      - client
+      - /etc/letsencrypt/live/corinee.site:/etc/letsencrypt/live/corinee.site
+      - /etc/letsencrypt/live/corinee.site/fullchain.pem:/etc/letsencrypt/live/corinee.site/fullchain.pem
+      - /etc/letsencrypt/live/corinee.site/privkey.pem:/etc/letsencrypt/live/corinee.site/privkey.pem
+      - /etc/letsencrypt/archive:/etc/letsencrypt/archive
+      - /etc/letsencrypt/live:/etc/letsencrypt/live
     networks:
       - app-network
 
 networks:
   app-network:
+    driver: bridge
