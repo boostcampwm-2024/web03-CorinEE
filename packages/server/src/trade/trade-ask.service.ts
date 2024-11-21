@@ -4,7 +4,7 @@ import {
 	OnModuleInit,
 	UnprocessableEntityException,
 } from '@nestjs/common';
-import { DataSource, QueryRunner } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { AccountRepository } from 'src/account/account.repository';
 import { AssetRepository } from 'src/asset/asset.repository';
 import { TradeRepository } from './trade.repository';
@@ -178,7 +178,7 @@ export class AskService implements OnModuleInit {
 			const buyData = { ...tradeData };
 			buyData.quantity =
 				tradeData.quantity >= bid_size ? bid_size.toFixed(8) : tradeData.quantity.toFixed(8)
-			buyData.price = (bid_price * krw).toFixed(8);
+			buyData.price = Math.floor(bid_price * krw);
 			if(buyData.quantity<0.00000001){
 				await queryRunner.commitTransaction();
 				return true;
