@@ -19,5 +19,10 @@ export type MarketData = {
 export type SidebarMarketData = {
 	market: string;
 	korean_name: string;
-	image_url:string
-}
+	image_url: string;
+};
+
+export type BalanceMarket = {
+	market: string;
+	quantity: number;
+};
