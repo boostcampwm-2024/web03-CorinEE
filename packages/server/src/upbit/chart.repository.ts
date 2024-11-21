@@ -30,4 +30,10 @@ export class ChartRepository {
             console.error("DB Searching Error : "+error)
         }
     }
+    async getSimpleChartData(key){
+        const data = await this.chartRedis.get(key);
+        if(!data){
+            return false;
+        }else return JSON.parse(data)
+    }
 }

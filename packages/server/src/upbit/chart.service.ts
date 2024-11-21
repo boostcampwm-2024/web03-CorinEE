@@ -18,10 +18,6 @@ export class ChartService implements OnModuleInit{
         this.cleanQueue()
     }
     async upbitApiDoor(type,coin,to, minute){
-        console.log("type : "+type)
-        console.log("market : "+coin)
-        console.log("minute : "+minute)
-        console.log("to : "+to)
         const validMinutes = ["1", "3", "5", "10", "15", "30", "60", "240"];
         if (type === 'minutes') {
             if (!minute || !validMinutes.includes(minute)) {
@@ -200,5 +196,75 @@ export class ChartService implements OnModuleInit{
             this.upbitApiQueue.shift();
         }
         setTimeout(()=>this.cleanQueue(),100)
+    }
+    makeCandle(coinData){
+        const name = coinData.code;
+        // date와 time을 각각 파싱
+        const year = coinData.trade_date.slice(0, 4);
+        const month = coinData.trade_date.slice(4, 6);
+        const day = coinData.trade_date.slice(6, 8);
+
+        const hour = coinData.trade_time.slice(0, 2);
+        const minute = coinData.trade_time.slice(2, 4);
+        const second = coinData.trade_time.slice(4, 6);
+
+        const tradeDate = new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}`);
+        const kstDate = new Date(tradeDate.getTime() + 9 * 60 * 60 * 1000 * 2);
+
+        const price = coinData.trade_price;
+        const timestamp = coinData.trade_timestamp;
+        const candle_acc_trade_volume = coinData.trade_volume
+        const candle_acc_trade_price = price * candle_acc_trade_volume;
+        const candle = {
+            market : name,
+            candle_date_time_kst : kstDate.toISOString().slice(0,19),
+            opening_price : price,
+            high_price : price,
+            low_price : price,
+            trade_price : price,
+            timestamp : timestamp,
+            candle_acc_trade_price : candle_acc_trade_price,
+            candle_acc_trade_volume : candle_acc_trade_volume
+        }
+        const type = ['years','months','weeks','days','minutes','seconds'];
+        const minute_type = ["1", "3", "5", "10", "15", "30", "60", "240"];
+        type.forEach(async (key)=>{
+            if(key === 'minutes'){
+                const keys = [];
+                minute_type.forEach((min)=>{
+                    keys.push(this.formatDate(kstDate, key, name, min));
+                })
+                keys.forEach(async (min)=>{
+                    const candleData = await this.chartRepository.getSimpleChartData(min);
+                    if(!candleData){
+                        this.chartRepository.setChartData(min,JSON.stringify(candle))
+                    }else{
+                        candleData.trade_price = price;
+                        candleData.high_price = candleData.high_price < price ? price : candleData.high_price;
+                        candleData.low_price = candleData.low_price > price ? price : candleData.low_price;
+                        candleData.timestamp = timestamp;
+                        candleData.candle_acc_trade_price = candle_acc_trade_price;
+                        candleData.candle_acc_trade_volume += candle_acc_trade_volume;
+                        
+                        this.chartRepository.setChartData(min,JSON.stringify(candleData))
+                    }
+                })
+            }else{
+                const redisKey = this.formatDate(kstDate, key, name, null);
+                const candleData = await this.chartRepository.getSimpleChartData(redisKey);
+                if(!candleData){
+                    this.chartRepository.setChartData(redisKey,JSON.stringify(candle))
+                }else{
+                    candleData.trade_price = price;
+                    candleData.high_price = candleData.high_price < price ? price : candleData.high_price;
+                    candleData.low_price = candleData.low_price > price ? price : candleData.low_price;
+                    candleData.timestamp = timestamp;
+                    candleData.candle_acc_trade_price = candle_acc_trade_price;
+                    candleData.candle_acc_trade_volume += candle_acc_trade_volume;
+                    
+                    this.chartRepository.setChartData(redisKey,JSON.stringify(candleData))
+                }
+            }
+        })
     }
 }
