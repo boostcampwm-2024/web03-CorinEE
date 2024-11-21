@@ -74,7 +74,7 @@ export class AskService implements OnModuleInit {
 				})
 			}else{
 				userAsset.quantity = assetBalance
-				userAsset.price -= Math.floor(askDto.receivedPrice + askDto.receivedAmount)
+				userAsset.price -= askDto.receivedPrice.toFixed(8) * askDto.receivedAmount.toFixed(8)
 				this.assetRepository.updateAssetPrice(userAsset, queryRunner);
 			}
 			await this.tradeRepository.createTrade(askDto, user.userId,'sell', queryRunner);
