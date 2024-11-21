@@ -83,25 +83,11 @@ function BalanceChart({ coins, total_bid }: BalanceChartProps) {
 		maintainAspectRatio: false,
 	};
 
-	const getTranslateY = (length: number): string => {
-		const config = {
-			basePercentage: 80, // 기본 퍼센트
-			incrementPerGroup: 30, // 그룹당 증가 퍼센트
-			itemsPerGroup: 4, // 그룹당 아이템 수
-		};
-
-		const groupIndex = Math.floor((length - 1) / config.itemsPerGroup);
-		const percentage =
-			config.basePercentage + groupIndex * config.incrementPerGroup;
-
-		return `-translate-y-[${percentage}%]`;
-	};
-
 	return (
 		<div className="w-2/5 relative flex justify-center">
 			<Doughnut data={data} options={options} />
 			<div
-				className={`absolute flex flex-col text-center top-1/2 left-1/2 transform -translate-x-1/2 ${getTranslateY(balanceMarketList.length)} text-sm text-gray-700 font-semibold`}
+				className={`absolute flex flex-col text-center top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-[90%] text-sm text-gray-700 font-semibold`}
 			>
 				<span>보유 비중</span>
 				<span>(%)</span>

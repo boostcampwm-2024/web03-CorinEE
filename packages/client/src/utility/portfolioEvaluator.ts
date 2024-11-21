@@ -16,7 +16,7 @@ const PORTFOLIO_EVALUATOR = {
 	},
 
 	evaluatePerPrice(coinQuantity: number, tradePrice: number) {
-		return tradePrice * coinQuantity;
+		return Math.floor(tradePrice * coinQuantity);
 	},
 
 	calculateProfitPrice(evaluationPrice: number, bid: number) {
