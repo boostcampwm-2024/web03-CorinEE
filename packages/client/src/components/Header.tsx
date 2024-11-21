@@ -13,10 +13,12 @@ function Header() {
 			<Navbar
 				fullWidth={true}
 				className=" flex justify-between items-center sticky top-0"
+				shadow={false}
 			>
 				<div>
-					<Link to={'/'} className="text-black">
-						코린이
+					<Link to={'/'} className="flex gap-2 items-center">
+						<img className="w-12 h-12" src="../asset/corineeLogo.png" />
+						<h1 className="text-black text-xl font-semibold">Corinee</h1>
 					</Link>
 				</div>
 				<div className="flex gap-4">
