@@ -3,6 +3,7 @@ name: Build and Deploy
 on:
   push:
     branches:
+      - main
       - dev
       - dev-be
       - feature-be-#51
@@ -23,6 +24,8 @@ jobs:
         run: |
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server -f ./dockerfile-server .
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/corinee-client -f ./dockerfile-client .
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/corinee-client
 
       - name: make deploy environment
         run: |
@@ -35,7 +38,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
-          source: ${{ secrets.BE_DEPLOY_FILES }}
+          source: ${{ secrets.DEPLOY_FILES }}
           target: /corinee
           overwrite: true
 
@@ -48,11 +51,13 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             docker image rm -f ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server || true
+            docker image rm -f ${{ secrets.DOCKERHUB_USERNAME }}/corinee-client || true
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-client
             cd /corinee
-            docker-compose -f docker-compose.server.yml down --rmi all
-            docker-compose -f docker-compose.server.yml up -d
-            rm -rf .env docker-compose.server.yml
+            docker-compose down --rmi all
+            docker-compose up -d
+            rm -rf .env docker-compose.yml
 
       - name: Generate Error Report
         if: failure()
