@@ -7,6 +7,7 @@ import {
   UPBIT_WEBSOCKET_CONNECTION_TIME,
   UPBIT_WEBSOCKET_URL,
 } from 'common/upbit';
+import { ChartService } from './chart.service';
 
 @Injectable()
 export class CoinTickerService implements OnModuleInit {
@@ -16,6 +17,7 @@ export class CoinTickerService implements OnModuleInit {
   constructor(
     private readonly coinListService: CoinListService,
     private readonly sseService: SseService,
+    private readonly chartService: ChartService
   ) {}
 
   onModuleInit() {
@@ -38,6 +40,7 @@ export class CoinTickerService implements OnModuleInit {
         const message = JSON.parse(data.toString());
         if (message.error) throw new Error(JSON.stringify(message));
         this.sseService.coinTickerSendEvent(message);
+        this.chartService.makeCandle(message);
       } catch (error) {
         console.error('CoinTickerWebSocket 오류:', error);
       }
