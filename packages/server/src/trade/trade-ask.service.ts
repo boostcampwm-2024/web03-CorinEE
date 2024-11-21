@@ -178,7 +178,7 @@ export class AskService implements OnModuleInit {
 			const buyData = { ...tradeData };
 			buyData.quantity =
 				tradeData.quantity >= bid_size ? bid_size.toFixed(8) : tradeData.quantity.toFixed(8)
-			buyData.price = Math.floor(bid_price * krw);
+			buyData.price = (bid_price * krw).toFixed(8);
 			if(buyData.quantity<0.00000001){
 				await queryRunner.commitTransaction();
 				return true;
