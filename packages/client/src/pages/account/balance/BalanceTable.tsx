@@ -79,7 +79,7 @@ function BalanceTable({
 			<div className="flex h-10 gap-8 items-center">
 				<BalanceInfo
 					title="주문가능"
-					amount={0}
+					amount={KRW}
 					unit="KRW"
 					primary={false}
 					change={changeStatus}
