@@ -2,7 +2,7 @@ import { SSEOrderBook } from '@/types/orderbook';
 import { useRef, useState, useEffect } from 'react';
 
 export function useSSEOrderbook(targetMarketCodes: { market: string }[]) {
-	const BASE_URL = `${!import.meta.env.VITE_API_BASE_URL ? 'https://www.corinee.site/api/upbit/orderbook' : import.meta.env.VITE_API_BASE_URL}/api/upbit/orderbook`;
+	const BASE_URL = `${!import.meta.env.VITE_API_BASE_URL ? 'https://www.corinee.site' : import.meta.env.VITE_API_BASE_URL}/api/upbit/orderbook`;
 	const eventSource = useRef<EventSource | null>(null);
 	const [isConnected, setIsConnected] = useState<boolean>(false);
 	const [sseData, setSSEData] = useState<SSEOrderBook | null>();
