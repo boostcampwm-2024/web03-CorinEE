@@ -21,7 +21,7 @@ function BalanceChart({ coins, total_bid }: BalanceChartProps) {
 	const balanceMarketList = coins.map((coin) => {
 		return {
 			market: coin.market,
-			value: Math.floor((Number(coin.price) / total_bid) * 100),
+			value: Math.floor((coin.price / total_bid) * 100),
 		};
 	});
 
