@@ -30,6 +30,8 @@ export class Trade {
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
-  @ManyToOne(() => User, (user) => user.trades)
+  @ManyToOne(() => User, (user) => user.trades, {
+    onDelete: 'CASCADE',
+  })
   user: User;
 }
