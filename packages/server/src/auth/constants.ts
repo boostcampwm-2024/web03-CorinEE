@@ -1,9 +1,15 @@
 export const jwtConstants = {
   secret:
-    'DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX SECRET AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE.',
+    'superSecureAccessTokenSecret',
+  refreshSecret:
+  'superSecureAccessTokenSecret_superSecureAccessTokenSecret',
 };
 
 export const DEFAULT_KRW = 30000000;
 export const DEFAULT_USDT = 300000;
 export const DEFAULT_BTC = 0;
-export const GUEST_ID_TTL = 86400;
+
+export const GUEST_ID_TTL = 24 * 3600;
+
+export const REFRESH_TOKEN_TTL = 7 * 24 * 3600;
+export const ACCESS_TOKEN_TTL = '1d';
