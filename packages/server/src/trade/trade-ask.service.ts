@@ -44,7 +44,7 @@ export class AskService implements OnModuleInit {
 			}
 		})
 		if(!asset) return 0;
-		return asset.quantity * (percent / 100);
+		return parseFloat((asset.quantity * (percent / 100)).toFixed(8));
 	}
 	async createAskTrade(user, askDto) {
 		if(askDto.receivedAmount * askDto.receivedPrice < 5000) throw new BadRequestException();
