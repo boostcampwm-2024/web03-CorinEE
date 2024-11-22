@@ -5,6 +5,7 @@ import {
 	DEFAULT_BTC,
 	DEFAULT_KRW,
 	DEFAULT_USDT,
+	GUEST_ID_TTL,
 	jwtConstants,
 } from './constants';
 import { v4 as uuidv4 } from 'uuid';
@@ -44,7 +45,7 @@ export class AuthService {
 			await this.redisRepository.setAuthData(
 				`guest:${guestUser.id}`,
 				JSON.stringify({ userId: guestUser.id }),
-				6000,
+				GUEST_ID_TTL,
 			);
 
 			const payload = { userId: guestUser.id, userName: guestUser.username };
