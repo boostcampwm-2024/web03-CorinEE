@@ -7,10 +7,12 @@ import {
 import { UserRepository } from './user.repository';
 import { JwtService } from '@nestjs/jwt';
 import {
+	ACCESS_TOKEN_TTL,
 	DEFAULT_BTC,
 	DEFAULT_KRW,
 	DEFAULT_USDT,
 	GUEST_ID_TTL,
+	REFRESH_TOKEN_TTL,
 	jwtConstants,
 } from './constants';
 import { v4 as uuidv4 } from 'uuid';
@@ -35,18 +37,46 @@ export class AuthService {
 		if (!user) {
 			throw new UnauthorizedException('Invalid credentials');
 		}
+		return this.generateTokens(user.id, user.username);
+	}
 
-		const payload = { userId: user.id, userName: user.username };
+	async guestSignIn(): Promise<{
+		access_token: string;
+		refresh_token: string;
+	}> {
+		const username = `guest_${uuidv4()}`;
+		await this.signUp(username, true);
+
+		const guestUser = await this.userRepository.findOneBy({ username });
+		if (!guestUser) {
+			throw new UnauthorizedException('Guest user creation failed');
+		}
+		return this.generateTokens(guestUser.id, guestUser.username);
+	}
+
+	private async generateTokens(
+		userId: number,
+		username: string,
+	): Promise<{ access_token: string; refresh_token: string }> {
+		const payload = { userId, userName: username };
+
 		const accessToken = await this.jwtService.signAsync(payload, {
 			secret: jwtConstants.secret,
-			expiresIn: '1d',
+			expiresIn: ACCESS_TOKEN_TTL,
 		});
-		const refreshToken = uuidv4();
+
+		const refreshToken = await this.jwtService.signAsync(
+			{ userId },
+			{
+				secret: jwtConstants.refreshSecret,
+				expiresIn: REFRESH_TOKEN_TTL,
+			},
+		);
 
 		await this.redisRepository.setAuthData(
-			`refresh:${user.id}`,
+			`refresh:${userId}`,
 			refreshToken,
-			GUEST_ID_TTL,
+			REFRESH_TOKEN_TTL,
 		);
 
 		return {
@@ -55,88 +85,44 @@ export class AuthService {
 		};
 	}
 
-	async guestSignIn(): Promise<{ access_token: string; refresh_token: string }> {
-		try {
-			const username = `guest_${uuidv4()}`;
-
-			await this.signUp(username, true);
-
-			const guestUser = await this.userRepository.findOneBy({ username });
-
-			await this.redisRepository.setAuthData(
-				`guest:${guestUser.id}`,
-				JSON.stringify({ userId: guestUser.id }),
-				GUEST_ID_TTL,
-			);
-
-			const payload = { userId: guestUser.id, userName: guestUser.username };
-			const accessToken = await this.jwtService.signAsync(payload, {
-				secret: jwtConstants.secret,
-				expiresIn: '1d',
-			});
-
-			const refreshToken = uuidv4();
-
-			await this.redisRepository.setAuthData(
-				`refresh:${guestUser.id}`,
-				refreshToken,
-				GUEST_ID_TTL,
-			);
-
-			return {
-				access_token: accessToken,
-				refresh_token: refreshToken,
-			};
-			
-		} catch (error) {
-			console.error(error);
-		}
-	}
-
 	async refreshTokens(
-		userId: number,
 		refreshToken: string,
 	): Promise<{ access_token: string; refresh_token: string }> {
-		const storedToken = await this.redisRepository.getAuthData(
-			`refresh:${userId}`,
-		);
-
-		if (!storedToken) {
-			throw new ForbiddenException({
-				message: 'Refresh token has expired',
-				errorCode: 'REFRESH_TOKEN_EXPIRED',
+		try {
+			const payload = await this.jwtService.verifyAsync(refreshToken, {
+				secret: jwtConstants.refreshSecret,
 			});
-		}
+			const userId = payload.userId;
 
-		if (storedToken !== refreshToken) {
+			const storedToken = await this.redisRepository.getAuthData(
+				`refresh:${userId}`,
+			);
+
+			if (!storedToken) {
+				throw new ForbiddenException({
+					message: 'Refresh token has expired',
+					errorCode: 'REFRESH_TOKEN_EXPIRED',
+				});
+			}
+
+			if (storedToken !== refreshToken) {
+				throw new UnauthorizedException({
+					message: 'Invalid refresh token',
+					errorCode: 'INVALID_REFRESH_TOKEN',
+				});
+			}
+
+			const user = await this.userRepository.findOneBy({ id: userId });
+			if (!user) {
+				throw new UnauthorizedException('User not found');
+			}
+			return this.generateTokens(user.id, user.username);
+		} catch (error) {
 			throw new UnauthorizedException({
-				message: 'Invalid refresh token',
-				errorCode: 'INVALID_REFRESH_TOKEN',
+				message: 'Failed to refresh tokens',
+				errorCode: 'TOKEN_REFRESH_FAILED',
 			});
 		}
-
-		const user = await this.userRepository.findOneBy({ id: userId });
-		if (!user) {
-			throw new UnauthorizedException('User not found');
-		}
-
-		const payload = { userId: user.id, userName: user.username };
-		const newAccessToken = await this.jwtService.signAsync(payload, {
-			secret: jwtConstants.secret,
-			expiresIn: '1d',
-		});
-		const newRefreshToken = uuidv4();
-
-		await this.redisRepository.setAuthData(
-			`refresh:${user.id}`,
-			newRefreshToken,
-			GUEST_ID_TTL,
-		);
-
-		return {
-			access_token: newAccessToken,
-			refresh_token: newRefreshToken,
-		};
 	}
 
 	async signUp(
