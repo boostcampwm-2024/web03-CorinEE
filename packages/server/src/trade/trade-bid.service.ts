@@ -62,7 +62,7 @@ export class BidService implements OnModuleInit {
 			const accountBalance = await this.checkCurrency(user, bidDto);
 			await this.accountRepository.updateAccountCurrency(
 				bidDto.typeGiven,
-				Math.floor(accountBalance),
+				parseFloat(accountBalance.toFixed(8)),
 				userAccount.id,
 				queryRunner,
 			);
@@ -87,7 +87,7 @@ export class BidService implements OnModuleInit {
 	}
 	async checkCurrency(user, bidDto) {
 		const { typeGiven, receivedPrice, receivedAmount } = bidDto;
-		const givenAmount = Math.floor(receivedPrice * receivedAmount);
+		const givenAmount = parseFloat((receivedPrice * receivedAmount).toFixed(8));
 		const userAccount = await this.accountRepository.findOne({
 			where: {
 				user: { id: user.userId },
@@ -164,8 +164,7 @@ export class BidService implements OnModuleInit {
 				await queryRunner.commitTransaction();
 				return true;
 			}
-			buyData.price = Math.floor(ask_price * krw);
-			
+			buyData.price = parseFloat((ask_price * krw).toFixed(8));
 			const user = await this.userRepository.getUser(userId);
 
 			await this.tradeHistoryRepository.createTradeHistory(
@@ -179,27 +178,26 @@ export class BidService implements OnModuleInit {
 			});
 			
 			if (asset) {
-				asset.price = Math.floor(asset.price + buyData.price * buyData.quantity);
-				asset.quantity += buyData.quantity;
-				
+				asset.price = parseFloat((asset.price + buyData.price * buyData.quantity).toFixed(8));
+				asset.quantity += parseFloat(buyData.quantity.toFixed(8));
 				await this.assetRepository.updateAssetQuantityPrice(asset, queryRunner);
 			} else {
 				await this.assetRepository.createAsset(
 					bidDto,
-					Math.floor(buyData.price * buyData.quantity),
+					parseFloat((buyData.price * buyData.quantity).toFixed(8)),
 					buyData.quantity,
 					queryRunner,
 				);
 			}
 			
-			tradeData.quantity -= buyData.quantity;
+			tradeData.quantity -= parseFloat(buyData.quantity.toFixed(8));
 			
 			if (tradeData.quantity === 0) {
 				await this.tradeRepository.deleteTrade(tradeId, queryRunner);
 			} else await this.tradeRepository.updateTradeTransaction(tradeData, queryRunner);
 
 			const change = (tradeData.price - buyData.price) * buyData.quantity;
-			const returnChange = Math.floor(change + account[typeGiven])
+			const returnChange = parseFloat((change + account[typeGiven]).toFixed(8))
 			const new_asset = await this.assetRepository.findOne({
 				where: {account:{id:account.id}, assetName: "BTC"}
 			})
