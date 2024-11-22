@@ -211,7 +211,7 @@ export class AskService implements OnModuleInit {
 
 			tradeData.quantity -= buyData.quantity;
 
-			if (tradeData.quantity === 0) {
+			if (tradeData.quantity <= 0.00000001) {
 				await this.tradeRepository.deleteTrade(tradeId, queryRunner);
 			} else{
 				await this.tradeRepository.updateTradeTransaction(
