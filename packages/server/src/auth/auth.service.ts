@@ -59,7 +59,7 @@ export class AuthService {
 			JSON.stringify({ userId: guestUser.id }),
 			GUEST_ID_TTL,
 		);
-		
+
 		return this.generateTokens(guestUser.id, guestUser.username);
 	}
 
@@ -114,9 +114,7 @@ export class AuthService {
 		});
 
 		if (!user) {
-			await this.signUp(
-				{ name, email, provider, providerId, isGuest: false },
-			);
+			await this.signUp({ name, email, provider, providerId, isGuest: false });
 			user = await this.userRepository.findOne({
 				where: { provider, providerId },
 			});
