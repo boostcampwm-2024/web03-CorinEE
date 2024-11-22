@@ -1,22 +1,32 @@
+import Loading from '@/components/Loading';
+import { useSSEOrderbook } from '@/hooks/SSE/useSSEOrderbook';
 import AskList from '@/pages/trade/components/order_book/AskList';
 import BidList from '@/pages/trade/components/order_book/BidList';
-import { OrderBook as OrderBookType } from '@/types/orderbook';
 import { formatAsks, formatBids } from '@/utility/format/formatOrderBookData';
-
 type OrderBookProps = {
-	orderBook: OrderBookType;
 	currentPrice: number;
+	marketCode: { market: string }[];
 	handleSelectPrice: (price: number) => void;
 };
 
 function OrderBook({
-	orderBook,
 	currentPrice,
+	marketCode,
 	handleSelectPrice,
 }: OrderBookProps) {
-	if (!orderBook) return;
-	const asks = formatAsks(orderBook);
-	const bids = formatBids(orderBook);
+	const { sseData: orderBook } = useSSEOrderbook(marketCode);
+	const market = marketCode[0].market;
+
+	if (!orderBook || !orderBook[market]) {
+		return (
+			<div className="bg-gray-50 flex-1 min-w-80 rounded-lg p-2 overflow-y-scroll overflow-x-hidden">
+				<Loading />
+			</div>
+		);
+	}
+
+	const asks = formatAsks(orderBook[market]);
+	const bids = formatBids(orderBook[market]);
 
 	return (
 		<div className="bg-gray-50 flex-1 min-w-80 rounded-lg p-2 overflow-y-scroll overflow-x-hidden">
