@@ -4,7 +4,7 @@ import ScrollPageButton from '@/pages/home/components/ScrollPageButton';
 import { MarketData } from '@/types/market';
 import { MarketCategory } from '@/types/category';
 import { formatData } from '@/utility/format/formatSSEData';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 type CoinListProps = {
 	markets: MarketData[];
@@ -15,18 +15,20 @@ function CoinList({ markets, activeCategory }: CoinListProps) {
 	const [currentScrollPage, setCurrentScrollPage] = useState(1);
 	const COINS_PER_PAGE = 10;
 	const maxScrollPage = Math.ceil(markets.length / COINS_PER_PAGE);
-	const currentPageMarkets = markets.slice(
-		COINS_PER_PAGE * (currentScrollPage - 1),
-		COINS_PER_PAGE * currentScrollPage,
+	const currentPageMarkets = useMemo(
+		() =>
+			markets.slice(
+				COINS_PER_PAGE * (currentScrollPage - 1),
+				COINS_PER_PAGE * currentScrollPage,
+			),
+		[currentScrollPage],
 	);
 
 	useEffect(() => {
 		setCurrentScrollPage(1);
 	}, [activeCategory]);
 
-
-
-	const { sseData } = useSSETicker(markets);
+	const { sseData } = useSSETicker(currentPageMarkets);
 	const formatters = formatData(activeCategory);
 	const handleScrollPage = (pageNumber: number) => {
 		setCurrentScrollPage(pageNumber);
