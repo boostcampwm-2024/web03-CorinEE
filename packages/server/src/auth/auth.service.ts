@@ -19,6 +19,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { AccountRepository } from 'src/account/account.repository';
 import { RedisRepository } from 'src/redis/redis.repository';
 import { User } from './user.entity';
+import { SignUpDto } from './dtos/sign-up.dto';
 @Injectable()
 export class AuthService {
 	constructor(
@@ -44,14 +45,84 @@ export class AuthService {
 		access_token: string;
 		refresh_token: string;
 	}> {
-		const username = `guest_${uuidv4()}`;
-		await this.signUp(username, true);
+		const guestName = `guest_${uuidv4()}`;
+		const user = { name: guestName, isGuest: true };
 
-		const guestUser = await this.userRepository.findOneBy({ username });
+		await this.signUp(user);
+
+		const guestUser = await this.userRepository.findOneBy({
+			username: guestName,
+		});
 		if (!guestUser) {
 			throw new UnauthorizedException('Guest user creation failed');
 		}
 		return this.generateTokens(guestUser.id, guestUser.username);
+	}
+
+	async signUp(user: {
+		name: string;
+		email?: string;
+		provider?: string;
+		providerId?: string;
+		isGuest?: boolean;
+	}): Promise<{ message: string }> {
+		const { name, email, provider, providerId, isGuest } = user;
+
+		const existingUser = isGuest
+			? await this.userRepository.findOneBy({ username: name })
+			: await this.userRepository.findOne({
+					where: { provider, providerId },
+				});
+
+		if (existingUser) {
+			throw new ConflictException('User already exists');
+		}
+
+		const newUser = await this.userRepository.save({
+			username: name,
+			email,
+			provider,
+			providerId,
+			isGuest,
+		});
+
+		await this.accountRepository.save({
+			user: newUser,
+			KRW: DEFAULT_KRW,
+			USDT: DEFAULT_USDT,
+			BTC: DEFAULT_BTC,
+		});
+
+		return {
+			message: isGuest
+				? 'Guest user successfully registered'
+				: 'User successfully registered',
+		};
+	}
+
+	async validateOAuthLogin(
+		signUpDto: SignUpDto,
+	): Promise<{ access_token: string; refresh_token: string }> {
+		const { name, email, provider, providerId, isGuest } = signUpDto;
+
+		let user = await this.userRepository.findOne({
+			where: { provider, providerId },
+		});
+
+		if (!user) {
+			await this.signUp(
+				{ name, email, provider, providerId, isGuest: false },
+			);
+			user = await this.userRepository.findOne({
+				where: { provider, providerId },
+			});
+		}
+
+		if (!user) {
+			throw new UnauthorizedException('OAuth user creation failed');
+		}
+
+		return this.generateTokens(user.id, user.username);
 	}
 
 	private async generateTokens(
@@ -123,34 +194,6 @@ export class AuthService {
 				errorCode: 'TOKEN_REFRESH_FAILED',
 			});
 		}
-	}
-
-	async signUp(
-		username: string,
-		isGuest = false,
-	): Promise<{ message: string }> {
-		const existingUser = await this.userRepository.findOneBy({ username });
-		if (existingUser) {
-			throw new ConflictException('Username already exists');
-		}
-
-		const newUser = await this.userRepository.save({
-			username,
-			isGuest,
-		});
-
-		await this.accountRepository.save({
-			user: newUser,
-			KRW: DEFAULT_KRW,
-			USDT: DEFAULT_USDT,
-			BTC: DEFAULT_BTC,
-		});
-
-		return {
-			message: isGuest
-				? 'Guest user successfully registered'
-				: 'User successfully registered',
-		};
 	}
 
 	async logout(userId: number): Promise<{ message: string }> {

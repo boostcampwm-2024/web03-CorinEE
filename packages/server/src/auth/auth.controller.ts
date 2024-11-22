@@ -10,6 +10,7 @@ import {
 	UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from './auth.guard';
+import { AuthGuard as PassportAuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import {
 	ApiBody,
@@ -37,6 +38,44 @@ export class AuthController {
 		return this.authService.guestSignIn();
 	}
 
+  @Get('google')
+  @UseGuards(PassportAuthGuard('google'))
+  async googleLogin() {
+  }
+
+  @Get('google/callback')
+  @UseGuards(PassportAuthGuard('google'))
+  async googleLoginCallback(@Request() req): Promise<any> {
+    const googleUser = req.user; // Passport가 주입한 사용자 정보
+
+    const signUpDto: SignUpDto = {
+      name: googleUser.name,
+      email: googleUser.email,
+      provider: googleUser.provider,
+      providerId: googleUser.id,
+      isGuest: false,
+    };
+
+    // 사용자 정보를 기반으로 토큰 생성
+    const tokens = await this.authService.validateOAuthLogin(signUpDto);
+    return {
+      message: 'Google login successful',
+      access_token: tokens.access_token,
+      refresh_token: tokens.refresh_token,
+    };
+  }
+
+  @Get('kakao')
+  @UseGuards(PassportAuthGuard('kakao'))
+  async kakaoLogin() {
+  }
+
+  @Get('kakao/callback')
+  @UseGuards(PassportAuthGuard('kakao'))
+  kakaoLoginCallback(@Request() req) {
+    return req.user; 
+  }
+
 	@ApiResponse({
 		status: HttpStatus.OK,
 		description: 'New user successfully registered',
@@ -48,7 +87,7 @@ export class AuthController {
 	@HttpCode(HttpStatus.CREATED)
 	@Post('signup')
 	async signUp(@Body() signUpDto: SignUpDto) {
-		return this.authService.signUp(signUpDto.username);
+		return this.authService.signUp(signUpDto);
 	}
 
 	@ApiBearerAuth('access-token')
