@@ -67,7 +67,7 @@ export class AskService implements OnModuleInit {
 				});
 			}
 			const userAsset = await this.checkCurrency(askDto, userAccount, queryRunner)
-			const assetBalance = userAsset.quantity - askDto.receivedAmount;
+			const assetBalance = parseFloat((userAsset.quantity - askDto.receivedAmount).toFixed(8));
 			if(assetBalance <= 0){
 				await this.assetRepository.delete({
 					assetId: userAsset.assetId
@@ -192,7 +192,7 @@ export class AskService implements OnModuleInit {
 			);
 
 			if (!asset && tradeData.price > buyData.price) {
-				asset.price = Math.floor(asset.price + (tradeData.price - buyData.price) * buyData.quantity);
+				asset.price = parseFloat((asset.price + (tradeData.price - buyData.price) * buyData.quantity).toFixed(8));
 				
 				await this.assetRepository.updateAssetPrice(asset, queryRunner);
 			}
@@ -205,7 +205,7 @@ export class AskService implements OnModuleInit {
 				const BTC_QUANTITY = account.BTC - buyData.quantity
 				await this.accountRepository.updateAccountBTC(account.id, BTC_QUANTITY, queryRunner)
 			}
-			const change = Math.floor(account[typeReceived] + buyData.price * buyData.quantity)
+			const change = parseFloat((account[typeReceived] + buyData.price * buyData.quantity).toFixed(8))
 			await this.accountRepository.updateAccountCurrency(typeReceived, change, account.id, queryRunner)
 			
 
