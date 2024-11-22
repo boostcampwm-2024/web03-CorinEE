@@ -1,4 +1,9 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+	ConflictException,
+	ForbiddenException,
+	Injectable,
+	UnauthorizedException,
+} from '@nestjs/common';
 import { UserRepository } from './user.repository';
 import { JwtService } from '@nestjs/jwt';
 import {
@@ -23,19 +28,35 @@ export class AuthService {
 		this.createAdminUser();
 	}
 
-	async signIn(username: string): Promise<{ access_token: string }> {
+	async signIn(
+		username: string,
+	): Promise<{ access_token: string; refresh_token: string }> {
 		const user = await this.userRepository.findOneBy({ username });
+		if (!user) {
+			throw new UnauthorizedException('Invalid credentials');
+		}
+
 		const payload = { userId: user.id, userName: user.username };
+		const accessToken = await this.jwtService.signAsync(payload, {
+			secret: jwtConstants.secret,
+			expiresIn: '1d',
+		});
+		const refreshToken = uuidv4();
+
+		await this.redisRepository.setAuthData(
+			`refresh:${user.id}`,
+			refreshToken,
+			GUEST_ID_TTL,
+		);
+
 		return {
-			access_token: await this.jwtService.signAsync(payload, {
-				secret: jwtConstants.secret,
-				expiresIn: '1d',
-			}),
+			access_token: accessToken,
+			refresh_token: refreshToken,
 		};
 	}
 
-	async guestSignIn(): Promise<{ access_token: string }> {
-		try{
+	async guestSignIn(): Promise<{ access_token: string; refresh_token: string }> {
+		try {
 			const username = `guest_${uuidv4()}`;
 
 			await this.signUp(username, true);
@@ -49,15 +70,73 @@ export class AuthService {
 			);
 
 			const payload = { userId: guestUser.id, userName: guestUser.username };
+			const accessToken = await this.jwtService.signAsync(payload, {
+				secret: jwtConstants.secret,
+				expiresIn: '1d',
+			});
+
+			const refreshToken = uuidv4();
+
+			await this.redisRepository.setAuthData(
+				`refresh:${guestUser.id}`,
+				refreshToken,
+				GUEST_ID_TTL,
+			);
+
 			return {
-				access_token: await this.jwtService.signAsync(payload, {
-					secret: jwtConstants.secret,
-					expiresIn: '1d',
-				}),
+				access_token: accessToken,
+				refresh_token: refreshToken,
 			};
-		}catch(error){
-			console.error(error)
+			
+		} catch (error) {
+			console.error(error);
 		}
+	}
+
+	async refreshTokens(
+		userId: number,
+		refreshToken: string,
+	): Promise<{ access_token: string; refresh_token: string }> {
+		const storedToken = await this.redisRepository.getAuthData(
+			`refresh:${userId}`,
+		);
+
+		if (!storedToken) {
+			throw new ForbiddenException({
+				message: 'Refresh token has expired',
+				errorCode: 'REFRESH_TOKEN_EXPIRED',
+			});
+		}
+
+		if (storedToken !== refreshToken) {
+			throw new UnauthorizedException({
+				message: 'Invalid refresh token',
+				errorCode: 'INVALID_REFRESH_TOKEN',
+			});
+		}
+
+		const user = await this.userRepository.findOneBy({ id: userId });
+		if (!user) {
+			throw new UnauthorizedException('User not found');
+		}
+
+		const payload = { userId: user.id, userName: user.username };
+		const newAccessToken = await this.jwtService.signAsync(payload, {
+			secret: jwtConstants.secret,
+			expiresIn: '1d',
+		});
+		const newRefreshToken = uuidv4();
+
+		await this.redisRepository.setAuthData(
+			`refresh:${user.id}`,
+			newRefreshToken,
+			GUEST_ID_TTL,
+		);
+
+		return {
+			access_token: newAccessToken,
+			refresh_token: newRefreshToken,
+		};
 	}
 
 	async signUp(
@@ -89,19 +168,21 @@ export class AuthService {
 	}
 
 	async logout(userId: number): Promise<{ message: string }> {
-		try{
+		try {
 			const user = await this.userRepository.findOneBy({ id: userId });
 
 			if (!user) {
 				throw new Error('User not found');
 			}
 
+			await this.redisRepository.deleteAuthData(`refresh:${userId}`);
+
 			if (user.isGuest) {
 				await this.userRepository.delete({ id: userId });
 				return { message: 'Guest user data successfully deleted' };
 			}
-		}catch(error){
-			console.error(error)
+		} catch (error) {
+			console.error(error);
 		}
 	}
 
