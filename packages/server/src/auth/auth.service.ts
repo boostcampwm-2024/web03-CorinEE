@@ -59,7 +59,6 @@ export class AuthService {
 			JSON.stringify({ userId: guestUser.id }),
 			GUEST_ID_TTL,
 		);
-
 		return this.generateTokens(guestUser.id, guestUser.username);
 	}
 
