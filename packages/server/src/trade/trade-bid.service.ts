@@ -37,7 +37,7 @@ export class BidService implements OnModuleInit {
 	async calculatePercentBuy(user, moneyType: string, percent: number) {
 		const money = await this.accountRepository.getMyMoney(user, moneyType);
 
-		return Number(money) * (percent / 100);
+		return parseFloat((money * (percent / 100)).toFixed(8));
 	}
 	async createBidTrade(user, bidDto) {
 		if(bidDto.receivedAmount * bidDto.receivedPrice < 5000) throw new BadRequestException();
