@@ -67,11 +67,21 @@ export class AuthController {
 		return req.user;
 	}
 
-	@ApiBearerAuth('refresh-token')
-	@ApiSecurity('refresh-token')
+	@ApiBody({
+		schema: {
+			type: 'object',
+			properties: {
+				refreshToken: {
+					type: 'string',
+					description: 'Refresh token used for renewing access token',
+					example: 'your-refresh-token',
+				},
+			},
+		},
+	})
 	@HttpCode(HttpStatus.OK)
 	@Post('refresh')
-	refreshTokens(@Body() body: { userId: number; refreshToken: string }) {
-		return this.authService.refreshTokens(body.userId, body.refreshToken);
+	refreshTokens(@Body() body: { refreshToken: string }) {
+		return this.authService.refreshTokens(body.refreshToken);
 	}
 }
