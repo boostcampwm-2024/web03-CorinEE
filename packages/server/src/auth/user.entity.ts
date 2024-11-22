@@ -22,7 +22,16 @@ export class User extends BaseEntity {
 
   @Column()
   username: string;
+
+  @Column({ nullable: true })
+  email: string;
+
+  @Column({ nullable: true })
+  provider: string;
 	
+  @Column({ nullable: true })
+  providerId: string;
+
   @OneToOne(() => Account, (account) => account.user, {
     cascade: true,
     onDelete: 'CASCADE',
