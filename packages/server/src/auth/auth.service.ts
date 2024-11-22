@@ -53,9 +53,13 @@ export class AuthService {
 		const guestUser = await this.userRepository.findOneBy({
 			username: guestName,
 		});
-		if (!guestUser) {
-			throw new UnauthorizedException('Guest user creation failed');
-		}
+
+		await this.redisRepository.setAuthData(
+			`guest:${guestUser.id}`,
+			JSON.stringify({ userId: guestUser.id }),
+			GUEST_ID_TTL,
+		);
+		
 		return this.generateTokens(guestUser.id, guestUser.username);
 	}
 
