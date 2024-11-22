@@ -63,6 +63,7 @@ export class AuthService {
 		return this.generateTokens(guestUser.id, guestUser.username);
 	}
 
+<<<<<<< HEAD
 	async signUp(user: {
 		name: string;
 		email?: string;
@@ -78,6 +79,53 @@ export class AuthService {
 					where: { provider, providerId },
 				});
 
+=======
+	async refreshTokens(
+		refreshToken: string,
+	): Promise<{ access_token: string; refresh_token: string }> {
+		try {
+			const payload = await this.jwtService.verifyAsync(refreshToken, {
+				secret: jwtConstants.refreshSecret,
+			});
+			const userId = payload.userId;
+
+			const storedToken = await this.redisRepository.getAuthData(
+				`refresh:${userId}`,
+			);
+
+			if (!storedToken) {
+				throw new ForbiddenException({
+					message: 'Refresh token has expired',
+					errorCode: 'REFRESH_TOKEN_EXPIRED',
+				});
+			}
+
+			if (storedToken !== refreshToken) {
+				throw new UnauthorizedException({
+					message: 'Invalid refresh token',
+					errorCode: 'INVALID_REFRESH_TOKEN',
+				});
+			}
+
+			const user = await this.userRepository.findOneBy({ id: userId });
+			if (!user) {
+				throw new UnauthorizedException('User not found');
+			}
+			return this.generateTokens(user.id, user.username);
+		} catch (error) {
+			throw new UnauthorizedException({
+				message: 'Failed to refresh tokens',
+				errorCode: 'TOKEN_REFRESH_FAILED',
+			});
+		}
+	}
+
+	async signUp(
+		username: string,
+		isGuest = false,
+	): Promise<{ message: string }> {
+		const existingUser = await this.userRepository.findOneBy({ username });
+>>>>>>> 38f072f (feat: refresh 토큰 컨트롤러 및 구조 개선)
 		if (existingUser) {
 			throw new ConflictException('User already exists');
 		}

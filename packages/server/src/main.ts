@@ -33,7 +33,8 @@ async function bootstrap() {
 				description: 'Access token used for authentication',
 			},
 			'access-token',
-		).build();
+		)
+		.build();
 	const customOptions: SwaggerCustomOptions = {
 		swaggerOptions: {
 			persistAuthorization: true,
