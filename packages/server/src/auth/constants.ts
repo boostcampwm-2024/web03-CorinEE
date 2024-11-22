@@ -6,3 +6,4 @@ export const jwtConstants = {
 export const DEFAULT_KRW = 30000000;
 export const DEFAULT_USDT = 300000;
 export const DEFAULT_BTC = 0;
+export const GUEST_ID_TTL = 86400;
