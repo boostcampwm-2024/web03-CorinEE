@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsBoolean, IsString } from 'class-validator';
 
 export class SignUpDto {
   @ApiProperty({
@@ -8,5 +8,17 @@ export class SignUpDto {
     required: true,
   })
   @IsString()
-  username: string;
+  name: string;
+
+  @IsString()
+  email: string;
+
+  @IsBoolean()
+  isGuest: boolean;
+  
+  @IsString()
+  provider: string;
+
+  @IsString()
+  providerId: string;
 }
