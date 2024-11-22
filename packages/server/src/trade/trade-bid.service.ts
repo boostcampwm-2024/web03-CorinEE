@@ -192,7 +192,7 @@ export class BidService implements OnModuleInit {
 			
 			tradeData.quantity -= parseFloat(buyData.quantity.toFixed(8));
 			
-			if (tradeData.quantity === 0) {
+			if (tradeData.quantity <= 0.00000001) {
 				await this.tradeRepository.deleteTrade(tradeId, queryRunner);
 			} else await this.tradeRepository.updateTradeTransaction(tradeData, queryRunner);
 
