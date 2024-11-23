@@ -46,7 +46,7 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(PassportAuthGuard('google'))
   async googleLoginCallback(@Request() req): Promise<any> {
-    const googleUser = req.user; // Passport가 주입한 사용자 정보
+    const googleUser = req.user;
 
     const signUpDto: SignUpDto = {
       name: googleUser.name,
@@ -56,7 +56,6 @@ export class AuthController {
       isGuest: false,
     };
 
-    // 사용자 정보를 기반으로 토큰 생성
     const tokens = await this.authService.validateOAuthLogin(signUpDto);
     return {
       message: 'Google login successful',
@@ -72,8 +71,23 @@ export class AuthController {
 
   @Get('kakao/callback')
   @UseGuards(PassportAuthGuard('kakao'))
-  kakaoLoginCallback(@Request() req) {
-    return req.user; 
+  async kakaoLoginCallback(@Request() req) {
+		const kakaoUser = req.user; 
+
+    const signUpDto: SignUpDto = {
+      name: kakaoUser.name,
+      email: kakaoUser.email,
+      provider: kakaoUser.provider,
+      providerId: kakaoUser.id,
+      isGuest: false,
+    };
+
+    const tokens = await this.authService.validateOAuthLogin(signUpDto);
+    return {
+      message: 'kakao login successful',
+      access_token: tokens.access_token,
+      refresh_token: tokens.refresh_token,
+    };
   }
 
 	@ApiResponse({
