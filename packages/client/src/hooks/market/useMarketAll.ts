@@ -1,13 +1,12 @@
 import { getMarketAll } from '@/api/market';
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 
 export function useMarketAll() {
-	const { isPending, error, data } = useQuery({
+	const { data } = useSuspenseQuery({
 		queryKey: ['markets'],
 		queryFn: getMarketAll,
-		staleTime: 1000 * 60, // 1분
-		gcTime: 1000 * 60 * 5, // 5분
+		staleTime: 1000 * 60,
+		gcTime: 1000 * 60 * 5,
 	});
-
-	return { isPending, error, data };
+	return { data };
 }
