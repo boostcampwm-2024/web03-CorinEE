@@ -1,8 +1,8 @@
 import OrderInput from '@/pages/trade/components/order_form/common/OrderInput';
 import OrderSubmitButton from '@/pages/trade/components/order_form/common/OrderSubmitButton';
 import PercentageButtons from '@/pages/trade/components/order_form/common/PercentageButtons';
-import { useMyAccount } from '@/hooks/useMyAccount';
-import { useOrderForm } from '@/hooks/useOrderForm';
+import { useMyAccount } from '@/hooks/auth/useMyAccount';
+import { useOrderForm } from '@/hooks/trade/useOrderForm';
 import OrderSummary from '@/pages/trade/components/order_form/common/OrderSummary';
 
 type OrderBuyFormProsp = {

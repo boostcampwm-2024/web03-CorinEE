@@ -1,5 +1,5 @@
 import { useSSETicker } from '@/hooks/SSE/useSSETicker';
-import { useMyAccount } from '@/hooks/useMyAccount';
+import { useMyAccount } from '@/hooks/auth/useMyAccount';
 import BalanceChart from '@/pages/account/balance/BalanceChart';
 import BalanceCoin from '@/pages/account/balance/BalanceCoin';
 import BalanceTable from '@/pages/account/balance/BalanceTable';

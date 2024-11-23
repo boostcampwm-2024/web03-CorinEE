@@ -1,4 +1,4 @@
-import { usePeriodChart } from '@/hooks/usePeriodChart';
+import { usePeriodChart } from '@/hooks/market/usePeriodChart';
 import { useState } from 'react';
 import ChartSelector from '@/pages/trade/components/chart/ChartSelector';
 import { CandlePeriod } from '@/types/chart';

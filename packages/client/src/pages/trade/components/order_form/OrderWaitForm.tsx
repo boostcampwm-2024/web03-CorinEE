@@ -1,6 +1,6 @@
 import { useMarketParams } from '@/hooks/market/useMarketParams';
-import { usePendingCoin } from '@/hooks/usePendingCoin';
-import { useToast } from '@/hooks/useToast';
+import { usePendingCoin } from '@/hooks/trade/usePendingCoin';
+import { useToast } from '@/hooks/ui/useToast';
 import NoCoin from '@/pages/trade/components/order_form/common/NoCoin';
 import { PendingCoin } from '@/pages/trade/components/order_form/common/PendingCoin';
 

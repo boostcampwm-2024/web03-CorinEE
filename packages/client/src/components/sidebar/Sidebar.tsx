@@ -4,7 +4,7 @@ import Heart from '@asset/heart.svg?react';
 import Invest from '@asset/invest.svg?react';
 import Fire from '@asset/fire.svg?react';
 import SideBarButton from '@/components/sidebar/SidebarButton';
-import useSideDraw from '@/hooks/useSideDraw';
+import useSideDraw from '@/hooks/ui/useSideDraw';
 import { SideBarCategory } from '@/types/category';
 
 function Sidebar() {

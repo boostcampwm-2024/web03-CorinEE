@@ -3,10 +3,10 @@ import OrderSubmitButton from '@/pages/trade/components/order_form/common/OrderS
 import PercentageButtons from '@/pages/trade/components/order_form/common/PercentageButtons';
 import Wallet from '@/pages/trade/components/order_form/common/NoCoin';
 import OrderSummary from '@/pages/trade/components/order_form/common/OrderSummary';
-import { useCheckCoin } from '@/hooks/useCheckCoin';
+import { useCheckCoin } from '@/hooks/trade/useCheckCoin';
 import { useMarketParams } from '@/hooks/market/useMarketParams';
-import { useOrderForm } from '@/hooks/useOrderForm';
-import { useMyAccount } from '@/hooks/useMyAccount';
+import { useOrderForm } from '@/hooks/trade/useOrderForm';
+import { useMyAccount } from '@/hooks/auth/useMyAccount';
 import { calculateProfitInfo } from '@/utility/calculateProfit';
 
 type OrderSellFormProps = {

@@ -9,6 +9,7 @@ export function useMyAccount() {
 		queryFn: () => myAccount(token),
 		queryKey: [QUERY_KEY],
 		refetchOnMount: 'always',
+		retry: 0,
 	});
 
 	return { data };

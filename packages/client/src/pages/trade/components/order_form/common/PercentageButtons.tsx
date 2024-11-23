@@ -1,4 +1,4 @@
-import { usePercentageBuy } from '@/hooks/usePercentageBuy';
+import { usePercentageBuy } from '@/hooks/trade/usePercentageBuy';
 import { Dispatch, SetStateAction, useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 

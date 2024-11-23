@@ -1,7 +1,7 @@
 import Lottie from 'lottie-react';
 import BitcoinLottie from '@asset/lotties/BitcoinLottie.json';
-import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/useToast';
+import { useAuth } from '@/hooks/auth/useAuth';
+import { useToast } from '@/hooks/ui/useToast';
 
 type Size = 'sm' | 'md' | 'lg';
 
