@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useTrade } from '@/hooks/useTrade';
+import { useTrade } from '@/hooks/trade/useTrade';
 import { Market } from '@/types/market';
 import { FormEvent } from 'react';
 import { useMarketParams } from '@/hooks/market/useMarketParams';
-import { useToast } from '@/hooks/useToast';
+import { useToast } from '@/hooks/ui/useToast';
 type UserOrderForm = {
 	currentPrice: number;
 	askType: 'bid' | 'ask';
