@@ -1,9 +1,9 @@
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/hooks/auth/useAuth';
 import { Button, Navbar } from '@material-tailwind/react';
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
-import { useToast } from '@/hooks/useToast';
-import logoImage from '@asset/corineeLogo.png'
+import { useToast } from '@/hooks/ui/useToast';
+import logoImage from '@asset/corineeLogo.png';
 
 function Header() {
 	const { login, logout } = useAuth();

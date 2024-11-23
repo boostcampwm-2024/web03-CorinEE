@@ -2,7 +2,7 @@ import { trade } from '@/api/trade';
 import { getCookie } from '@/utility/cookies';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Market } from '@/types/market';
-import { useToast } from '@/hooks/useToast';
+import { useToast } from '@/hooks/ui/useToast';
 import { AxiosError } from 'axios';
 type TradeAPI = {
 	askType: 'bid' | 'ask';

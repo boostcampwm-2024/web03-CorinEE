@@ -1,9 +1,11 @@
-import { toast, ToastOptions } from 'react-toastify';
+import { toast, ToastOptions, Zoom } from 'react-toastify';
 export function useToast() {
 	const defaultOptions: ToastOptions = {
 		position: 'top-center',
 		autoClose: 1500,
 		pauseOnHover: false,
+		hideProgressBar: true,
+		transition: Zoom,
 	};
 
 	const showToast = {
