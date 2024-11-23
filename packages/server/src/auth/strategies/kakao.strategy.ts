@@ -7,10 +7,8 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
   constructor() {
     super({
       clientID: process.env.KAKAO_CLIENT_ID,
-      clientSecret: process.env.KAKAO_CLIENT_SECRET,
-      callbackURL: process.env.NODE_ENV === 'development'
-      ? 'http://localhost:3000/api/auth/google/callback'
-      : 'https://www.corinee.site/api/auth/google/callback',
+      clientSecret: '',
+      callbackURL: `${process.env.CALLBACK_URL}/api/auth/kakao/callback`
     });
   }
 
@@ -26,7 +24,6 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
       id,
       name: username,
       email: _json.kakao_account?.email,
-      photo: _json.properties?.profile_image,
       accessToken,
       refreshToken,
     };
