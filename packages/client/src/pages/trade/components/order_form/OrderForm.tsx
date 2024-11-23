@@ -1,6 +1,10 @@
 import { useState, Suspense } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { createOrderTabs } from '@/constants/orderTabs';
+import {
+	ApiErrorBoundary,
+	DefaultErrorFallback,
+} from '@/components/error/ApiErrorBoundary';
 
 type OrderFormProps = {
 	currentPrice: number;
@@ -35,7 +39,13 @@ function OrderForm({ currentPrice, selectPrice }: OrderFormProps) {
 						activeTab === tab.id && (
 							<div key={tab.id} className="animate-fadeIn">
 								{isAuthenticated ? (
-									<Suspense>{tab.component}</Suspense>
+									<ApiErrorBoundary
+										fallback={({ error }) => (
+											<DefaultErrorFallback error={error} />
+										)}
+									>
+										<Suspense>{tab.component}</Suspense>
+									</ApiErrorBoundary>
 								) : (
 									tab.notLogin
 								)}
