@@ -12,7 +12,6 @@ import { Trade } from 'src/trade/trade.entity';
 import { TradeHistory } from 'src/trade-history/trade-history.entity';
 
 @Entity()
-@Unique(['username'])
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
