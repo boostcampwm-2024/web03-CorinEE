@@ -8,15 +8,13 @@ import { isMarket } from '@/utility/typeGuard';
 import { useState } from 'react';
 
 function CoinView() {
-	const { data, isPending } = useMarketAll();
+	const { data } = useMarketAll();
 	const [activeCategory, setActiveCategory] = useState<MarketCategory>('KRW');
 	let filterData: MarketData[] = [];
 
 	const handleCategory = (category: MarketCategory) => {
 		setActiveCategory(category);
 	};
-
-	if (isPending) return;
 
 	if (data) {
 		if (isMarket(activeCategory)) {
