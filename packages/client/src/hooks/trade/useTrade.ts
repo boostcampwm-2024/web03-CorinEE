@@ -1,5 +1,4 @@
 import { trade } from '@/api/trade';
-import { getCookie } from '@/utility/cookies';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Market } from '@/types/market';
 import { useToast } from '@/hooks/ui/useToast';
@@ -13,11 +12,10 @@ type TradeAPI = {
 };
 
 export function useTrade(askType: 'bid' | 'ask') {
-	const token = getCookie('access_token');
 	const toast = useToast();
 	const queryClient = useQueryClient();
 	const tradeMutation = useMutation({
-		mutationFn: (params: TradeAPI) => trade(params, token),
+		mutationFn: (params: TradeAPI) => trade(params),
 		onSuccess: () => {
 			if (askType == 'bid') {
 				toast.success('매수 주문을 완료했어요');
