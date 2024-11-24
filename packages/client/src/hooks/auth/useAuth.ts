@@ -1,19 +1,19 @@
-import { guestLogin, logout } from '@/api/auth';
+import { guestLogin, logout, socialLogin } from '@/api/auth';
 import { useAuthStore } from '@/store/authStore';
-import { getCookie, setCookie } from '@/utility/cookies';
-import { useMutation } from '@tanstack/react-query';
+import { Login } from '@/types/auth';
+import { removeCookie, setCookie } from '@/utility/cookies';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 export function useAuth() {
 	const checkAuth = useAuthStore((state) => state.checkAuth);
 	const logoutAuth = useAuthStore((state) => state.logout);
-
 	const useGuestLogin = useMutation({
 		mutationFn: guestLogin,
-		onSuccess: ({ access_token }: { access_token: string }) => {
-			setCookie('access_token', access_token, {
+		onSuccess: ({ access_token, refresh_token }: Login) => {
+			setCookie('refresh_token', refresh_token, {
 				path: '/',
-				maxAge: 24 * 60 * 60,
 			});
+			localStorage.setItem('access_token', access_token);
 			checkAuth();
 		},
 		onError: (error) => {
@@ -22,18 +22,31 @@ export function useAuth() {
 		},
 	});
 
+	const useSocialLogin = (social: 'kakao' | 'google') => {
+		const { data, refetch } = useQuery({
+			queryFn: () => socialLogin(social),
+			queryKey: ['SOCIAL_LOGIN', social],
+			enabled: false,
+		});
+		return { data, refetch };
+	};
+
 	const useLogout = useMutation({
 		mutationFn: async () => {
-			const token = getCookie('access_token');
-			if (!token) return;
-			return logout(token);
+			return logout();
 		},
 		onSuccess: () => {
+			localStorage.removeItem('access_token');
+			removeCookie('refresh_token');
 			logoutAuth();
 		},
 		onError: (error: Error) => {
 			console.error('Logout error:', error);
 		},
 	});
-	return { login: useGuestLogin, logout: useLogout };
+	return {
+		guestLogin: useGuestLogin,
+		socialLogin: useSocialLogin,
+		logout: useLogout,
+	};
 }
