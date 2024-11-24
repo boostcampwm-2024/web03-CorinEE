@@ -1,6 +1,7 @@
-import { instance } from '@/api/instance';
+import { authInstance } from '@/api/instance';
 import { Market } from '@/types/market';
 import { CheckCoin, PendingCoinAPI, Trade } from '@/types/trade';
+import '@/api/interceptors';
 
 type CalculateAPI = {
 	askType: 'ask' | 'bid';
@@ -8,17 +9,13 @@ type CalculateAPI = {
 	percent: number;
 };
 
-export async function calculatePercentageBuy(
-	{ askType, moneyType, percent }: CalculateAPI,
-	token: string,
-): Promise<number> {
-	const response = await instance.get(
+export async function calculatePercentageBuy({
+	askType,
+	moneyType,
+	percent,
+}: CalculateAPI): Promise<number> {
+	const response = await authInstance.get(
 		`/trade/calculate-percentage-${askType}/${moneyType}?percent=${percent}`,
-		{
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		},
 	);
 
 	return response.data;
@@ -32,45 +29,23 @@ type TradeAPI = {
 	receivedAmount: number;
 };
 
-export async function trade(params: TradeAPI, token: string): Promise<Trade> {
-	const response = await instance.post(
-		`/trade/${params.askType}`,
-		{
-			typeGiven: params.typeGiven,
-			typeReceived: params.typeReceived,
-			receivedPrice: params.receivedPrice,
-			receivedAmount: params.receivedAmount,
-		},
-		{
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		},
-	);
+export async function trade(params: TradeAPI): Promise<Trade> {
+	const response = await authInstance.post(`/trade/${params.askType}`, {
+		typeGiven: params.typeGiven,
+		typeReceived: params.typeReceived,
+		receivedPrice: params.receivedPrice,
+		receivedAmount: params.receivedAmount,
+	});
 
 	return response.data;
 }
 
-export async function checkCoin(
-	coin: string,
-	token: string,
-): Promise<CheckCoin> {
-	const response = await instance.get(`/trade/check-coinData/${coin}`, {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	});
+export async function checkCoin(coin: string): Promise<CheckCoin> {
+	const response = await authInstance.get(`/trade/check-coinData/${coin}`);
 	return response.data;
 }
 
-export async function pendingCoin(
-	coin: string,
-	token: string,
-): Promise<PendingCoinAPI> {
-	const response = await instance.get(`/trade/tradeData/${coin}`, {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	});
+export async function pendingCoin(coin: string): Promise<PendingCoinAPI> {
+	const response = await authInstance.get(`/trade/tradeData/${coin}`);
 	return response.data;
 }
