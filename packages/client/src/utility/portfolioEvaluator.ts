@@ -9,9 +9,8 @@ const PORTFOLIO_EVALUATOR = {
 		if (!sseData) return 0;
 		const totalEvaluation = balanceMarketList.reduce((acc, market) => {
 			if (!sseData[market.market]) return 0;
-			return Math.floor(
-				acc + market.quantity * sseData[market.market].trade_price,
-			);
+
+			return acc + market.quantity * sseData[market.market].trade_price;
 		}, 0);
 		return totalEvaluation;
 	},
@@ -25,7 +24,7 @@ const PORTFOLIO_EVALUATOR = {
 	},
 
 	calculateProfitRate(evaluationPrice: number, bid: number) {
-		return Number((((evaluationPrice - bid) / bid) * 100).toFixed(3));
+		return ((evaluationPrice - bid) / bid) * 100;
 	},
 
 	getChangeStatus(profitRate: number): Change {
