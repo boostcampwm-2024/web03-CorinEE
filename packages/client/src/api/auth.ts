@@ -1,4 +1,5 @@
-import { instance } from '@/api/instance';
+import '@/api/interceptors';
+import { authInstance, instance } from '@/api/instance';
 import { LogOut, Login } from '@/types/auth';
 
 export async function guestLogin(): Promise<Login> {
@@ -6,11 +7,12 @@ export async function guestLogin(): Promise<Login> {
 	return response.data;
 }
 
-export async function logout(token: string): Promise<LogOut> {
-	const response = await instance.delete('/auth/logout', {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	});
+export async function logout(): Promise<LogOut> {
+	const response = await authInstance.delete('/auth/logout');
+	return response.data;
+}
+
+export async function socialLogin(social: 'kakao' | 'google') {
+	const response = await instance.get(`/auth/${social}`);
 	return response.data;
 }
