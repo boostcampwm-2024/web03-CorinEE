@@ -3,10 +3,12 @@ import { Button, Navbar } from '@material-tailwind/react';
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
 import { useToast } from '@/hooks/ui/useToast';
-import logoImage from '@asset/corineeLogo.png';
+import logoImage from '@asset/logo/corineeLogo.png';
+import kakaLogo from '@asset/logo/kakao.png';
+import googleLogo from '@asset/logo/google.png';
 
 function Header() {
-	const { login, logout } = useAuth();
+	const { guestLogin, logout } = useAuth();
 	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 	const toast = useToast();
 
@@ -42,17 +44,26 @@ function Header() {
 							로그아웃
 						</Button>
 					) : (
-						<>
+						<div className="flex gap-3">
 							<Button
 								onClick={() => {
-									login.mutateAsync();
+									guestLogin.mutateAsync();
 									toast.success('안녕하세요');
 								}}
 							>
 								체험하기
 							</Button>
-							<Button className="mx-2">로그인</Button>
-						</>
+							<button>
+								<img alt="kakao_image" src={kakaLogo} className="w-10 h-10" />
+							</button>
+							<button>
+								<img
+									alt="google_image"
+									src={googleLogo}
+									className="w-10 h-10"
+								/>
+							</button>
+						</div>
 					)}
 				</div>
 			</Navbar>
