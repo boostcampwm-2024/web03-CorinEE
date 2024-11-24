@@ -29,14 +29,14 @@ function BalanceTable({
 			<div className="flex h-20 gap-8 items-center">
 				<BalanceInfo
 					title="보유 KRW"
-					amount={KRW}
+					amount={Math.floor(KRW)}
 					unit="KRW"
 					primary={true}
 					change={changeStatus}
 				/>
 				<BalanceInfo
 					title="총 보유자산"
-					amount={totalEvaluation + KRW}
+					amount={Math.floor(totalEvaluation + KRW)}
 					unit="KRW"
 					primary={true}
 					change={changeStatus}
@@ -47,7 +47,7 @@ function BalanceTable({
 			<div className="flex h-10 gap-8 items-center">
 				<BalanceInfo
 					title="총 매수"
-					amount={total_bid}
+					amount={Math.floor(total_bid)}
 					unit="KRW"
 					primary={false}
 					change={changeStatus}
@@ -63,14 +63,14 @@ function BalanceTable({
 			<div className="flex h-10 gap-8 items-center">
 				<BalanceInfo
 					title="총 평가"
-					amount={totalEvaluation}
+					amount={Math.floor(totalEvaluation)}
 					unit="KRW"
 					primary={false}
 					change={changeStatus}
 				/>
 				<BalanceInfo
 					title="총평가수익률"
-					amount={profitRate}
+					amount={Math.round(profitRate * 1000) / 1000}
 					unit="%"
 					primary={false}
 					change={changeStatus}
@@ -79,7 +79,7 @@ function BalanceTable({
 			<div className="flex h-10 gap-8 items-center">
 				<BalanceInfo
 					title="주문가능"
-					amount={KRW}
+					amount={Math.floor(KRW)}
 					unit="KRW"
 					primary={false}
 					change={changeStatus}
