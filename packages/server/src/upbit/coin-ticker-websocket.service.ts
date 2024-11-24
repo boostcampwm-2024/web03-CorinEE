@@ -40,7 +40,7 @@ export class CoinTickerService implements OnModuleInit {
         const message = JSON.parse(data.toString());
         if (message.error) throw new Error(JSON.stringify(message));
         this.sseService.coinTickerSendEvent(message);
-        this.chartService.makeCandle(message);
+        //this.chartService.makeCandle(message);
       } catch (error) {
         console.error('CoinTickerWebSocket 오류:', error);
       }
