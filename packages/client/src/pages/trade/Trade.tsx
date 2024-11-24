@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import { useSSETicker } from '@/hooks/SSE/useSSETicker';
 import { Suspense, useMemo, useState } from 'react';
 import ChartSkeleton from '@/pages/trade/components/chart/ChartSkeleton';
+import TradeFooter from '@/pages/trade/components/trade_footer/TradeFooter';
 
 function Trade() {
 	const { market } = useParams();
@@ -22,7 +23,7 @@ function Trade() {
 	return (
 		<div className="w-full gap-2">
 			<TradeHeader market={market} sseData={price} />
-			<div className="flex gap-2 max-h-[75vh] overflow-y-hidden">
+			<div className="flex gap-2 min-w-[1300px] max-h-[72vh] overflow-y-hidden">
 				<Suspense fallback={<ChartSkeleton />}>
 					<Chart market={market} />
 				</Suspense>
@@ -33,6 +34,7 @@ function Trade() {
 				/>
 				<OrderForm currentPrice={currentPrice} selectPrice={selectPrice} />
 			</div>
+			<TradeFooter />
 		</div>
 	);
 }
