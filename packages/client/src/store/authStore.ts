@@ -9,16 +9,16 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
-	isAuthenticated: !!getCookie('access_token'),
+	isAuthenticated: !!localStorage.getItem('access_token'),
 	isLoading: false,
 
 	checkAuth: () => {
-		const hasToken = !!getCookie('access_token');
+		const hasToken = !!localStorage.getItem('access_token');
 		set({ isAuthenticated: hasToken });
 	},
 
 	logout: () => {
-		removeCookie('access_token', { path: '/' });
+		removeCookie('access_token', { path: '/', httpOnly: true });
 		set({ isAuthenticated: false });
 	},
 
