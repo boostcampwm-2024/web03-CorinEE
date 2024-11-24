@@ -11,6 +11,15 @@ module.exports = withMT({
 			fontFamily: {
 				sans: ['Pretendard', 'sans-serif'],
 			},
+			animation: {
+				infiniteScroll: 'infiniteScroll 80s linear infinite',
+			},
+			keyframes: {
+				infiniteScroll: {
+					'0%': { transform: 'translateX(0)' },
+					'100%': { transform: 'translateX(-50%)' },
+				},
+			},
 		},
 	},
 	plugins: [],
