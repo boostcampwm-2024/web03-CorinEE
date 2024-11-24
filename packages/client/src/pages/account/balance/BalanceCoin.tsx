@@ -19,7 +19,7 @@ function BalanceCoin({ coin, sseData }: BalanceCoinProps) {
 
 	if (!sseData) return;
 
-	const averagePrice = (coin.price / coin.quantity).toFixed(3);
+	const averagePrice = coin.price / coin.quantity;
 
 	const evaluationPerPrice = evaluatePerPrice(
 		coin.quantity,
@@ -36,13 +36,13 @@ function BalanceCoin({ coin, sseData }: BalanceCoinProps) {
 		<div className="flex border-b border-solid border-gray-300">
 			<div className="flex-[1]  pt-3 px-3">
 				<Link to={`/trade/${`KRW-${coin.market}`}`}>
-				<div className="flex items-center gap-3">
-					<img className="w-7 h-7" src={coin.img_url} />
-					<div className="flex flex-col">
-						<p className="font-semibold">{coin.koreanName}</p>
-						<p className="text-gray-700 text-xs">{coin.market}</p>
+					<div className="flex items-center gap-3">
+						<img className="w-7 h-7" src={coin.img_url} />
+						<div className="flex flex-col">
+							<p className="font-semibold">{coin.koreanName}</p>
+							<p className="text-gray-700 text-xs">{coin.market}</p>
+						</div>
 					</div>
-				</div>
 				</Link>
 			</div>
 			<div className="flex-[1] p-3 text-end">
@@ -50,16 +50,20 @@ function BalanceCoin({ coin, sseData }: BalanceCoinProps) {
 				<span className="text-xs ml-1 text-gray-500">{coin.market}</span>
 			</div>
 			<div className="flex-[1] p-3 text-end">
-				<span className="text-base">{averagePrice}</span>
+				<span className="text-base">
+					{Math.floor(averagePrice).toLocaleString()}
+				</span>
 				<span className="text-xs ml-1 text-gray-500">KRW</span>
 			</div>
 			<div className="flex-[1] p-3 text-end">
-				<span className="text-base">{coin.price.toLocaleString()}</span>
+				<span className="text-base">
+					{Math.floor(coin.price).toLocaleString()}
+				</span>
 				<span className="text-xs ml-1 text-gray-500">KRW</span>
 			</div>
 			<div className="flex-[1] p-3 text-end">
 				<span className="text-base font-bold">
-					{evaluationPerPrice.toLocaleString()}
+					{Math.floor(evaluationPerPrice).toLocaleString()}
 				</span>
 				<span className="text-xs ml-1 text-gray-500">KRW</span>
 			</div>
@@ -67,7 +71,7 @@ function BalanceCoin({ coin, sseData }: BalanceCoinProps) {
 				<div className="flex flex-col text-end mr-12">
 					<div className="">
 						<span className={`text-base ${colorClasses[change]}`}>
-							{profitRate}
+							{(Math.round(profitRate * 1000) / 1000).toLocaleString()}
 						</span>
 						<span className="text-xs ml-1 text-gray-500">%</span>
 					</div>
