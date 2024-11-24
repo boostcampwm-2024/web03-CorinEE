@@ -59,17 +59,10 @@ function Header() {
 							>
 								체험하기
 							</Button>
-<<<<<<< HEAD
 							<button onClick={() => handleLogin('kakao')}>
 								<img alt="kakao_image" src={kakaLogo} className="w-10 h-10" />
 							</button>
 							<button onClick={() => handleLogin('google')}>
-=======
-							<button>
-								<img alt="kakao_image" src={kakaLogo} className="w-10 h-10" />
-							</button>
-							<button>
->>>>>>> 4b4ef0e (feat: social login 이미지 추가)
 								<img
 									alt="google_image"
 									src={googleLogo}
