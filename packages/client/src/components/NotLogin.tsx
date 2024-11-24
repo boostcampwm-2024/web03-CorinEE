@@ -44,7 +44,7 @@ function NotLogin({ size }: NotLoginProps) {
 		},
 	};
 
-	const { login } = useAuth();
+	const { guestLogin } = useAuth();
 	const toast = useToast();
 	return (
 		<div className="w-full min-h-[50vh] flex flex-col justify-center items-center gap-6 p-6">
@@ -63,7 +63,7 @@ function NotLogin({ size }: NotLoginProps) {
 				</p>
 				<p
 					onClick={() => {
-						login.mutate();
+						guestLogin.mutate();
 						toast.success('안녕하세요');
 					}}
 					className={sizeTable[size].highlightText}
