@@ -11,8 +11,3 @@ export async function logout(): Promise<LogOut> {
 	const response = await authInstance.delete('/auth/logout');
 	return response.data;
 }
-
-export async function socialLogin(social: 'kakao' | 'google') {
-	const response = await instance.get(`/auth/${social}`);
-	return response.data;
-}
