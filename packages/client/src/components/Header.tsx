@@ -1,6 +1,6 @@
 import { useAuth } from '@/hooks/auth/useAuth';
 import { Button, Navbar } from '@material-tailwind/react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
 import { useToast } from '@/hooks/ui/useToast';
 import logoImage from '@asset/logo/corineeLogo.png';
@@ -32,12 +32,22 @@ function Header() {
 					</Link>
 				</div>
 				<div className="flex gap-4">
-					<Link to={'/'} className="text-gray-600 hover:text-black">
+					<NavLink
+						to={'/'}
+						className={({ isActive }) =>
+							`${isActive ? 'text-black' : 'text-gray-600'} hover:text-black`
+						}
+					>
 						홈
-					</Link>
-					<Link to={'/account'} className="text-gray-600 hover:text-black">
+					</NavLink>
+					<NavLink
+						to={'/account'}
+						className={({ isActive }) =>
+							`${isActive ? 'text-black' : 'text-gray-600'} hover:text-black`
+						}
+					>
 						내 계좌
-					</Link>
+					</NavLink>
 				</div>
 				<div>
 					{isAuthenticated ? (
