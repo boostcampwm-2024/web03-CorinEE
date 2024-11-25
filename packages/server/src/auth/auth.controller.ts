@@ -39,67 +39,67 @@ export class AuthController {
 		return this.authService.guestSignIn();
 	}
 
-  @Get('google')
-  @UseGuards(PassportAuthGuard('google'))
-  async googleLogin() {
-  }
+	@Get('google')
+	@UseGuards(PassportAuthGuard('google'))
+	async googleLogin() {}
 
-  @Get('google/callback')
-  @UseGuards(PassportAuthGuard('google'))
-  async googleLoginCallback(
-    @Request() req,
-    @Res() res,
-  ): Promise<any> {
-    const googleUser = req.user;
+	@Get('google/callback')
+	@UseGuards(PassportAuthGuard('google'))
+	async googleLoginCallback(@Request() req, @Res() res): Promise<any> {
+		const googleUser = req.user;
 
-    const signUpDto: SignUpDto = {
-      name: googleUser.name,
-      email: googleUser.email,
-      provider: googleUser.provider,
-      providerId: googleUser.id,
-      isGuest: false,
-    };
+		const signUpDto: SignUpDto = {
+			name: googleUser.name,
+			email: googleUser.email,
+			provider: googleUser.provider,
+			providerId: googleUser.id,
+			isGuest: false,
+		};
 
-    const tokens = await this.authService.validateOAuthLogin(signUpDto);
-    //const frontendURL = 'http://localhost:5173';
-		const frontendURL = `${req.protocol}://${req.get('host')}`;
-    const redirectURL = new URL('/auth/callback', frontendURL);
+		const tokens = await this.authService.validateOAuthLogin(signUpDto);
+		// 요청 Origin 기반으로 리다이렉트 URL 결정
+		const origin = req.headers['origin'];
+		const frontendURL =
+			origin && origin.includes('localhost')
+				? 'http://localhost:5173'
+				: 'https://www.corinee.site';
+		const redirectURL = new URL('/auth/callback', frontendURL);
 
-    redirectURL.searchParams.append('access_token', tokens.access_token);
-    redirectURL.searchParams.append('refresh_token', tokens.refresh_token);
+		redirectURL.searchParams.append('access_token', tokens.access_token);
+		redirectURL.searchParams.append('refresh_token', tokens.refresh_token);
 		console.log(redirectURL);
-    return res.redirect(redirectURL.toString());
-  }
+		return res.redirect(redirectURL.toString());
+	}
 
-  @Get('kakao')
-  @UseGuards(PassportAuthGuard('kakao'))
-  async kakaoLogin() {
-  }
+	@Get('kakao')
+	@UseGuards(PassportAuthGuard('kakao'))
+	async kakaoLogin() {}
 
-  @Get('kakao/callback')
-  @UseGuards(PassportAuthGuard('kakao'))
-  async kakaoLoginCallback(
-    @Request() req,
-    @Res() res
-  ){
-		const kakaoUser = req.user; 
+	@Get('kakao/callback')
+	@UseGuards(PassportAuthGuard('kakao'))
+	async kakaoLoginCallback(@Request() req, @Res() res) {
+		const kakaoUser = req.user;
 
-    const signUpDto: SignUpDto = {
-      name: kakaoUser.name,
-      email: kakaoUser.email,
-      provider: kakaoUser.provider,
-      providerId: kakaoUser.id,
-      isGuest: false,
-    };
+		const signUpDto: SignUpDto = {
+			name: kakaoUser.name,
+			email: kakaoUser.email,
+			provider: kakaoUser.provider,
+			providerId: kakaoUser.id,
+			isGuest: false,
+		};
 
-    const tokens = await this.authService.validateOAuthLogin(signUpDto);
-    //const frontendURL = 'http://localhost:5173';
-		const frontendURL = `${req.protocol}://${req.get('host')}`;
-    const redirectURL = new URL('/auth/callback', frontendURL);
-    redirectURL.searchParams.append('access_token', tokens.access_token);
-    redirectURL.searchParams.append('refresh_token', tokens.refresh_token);
-    return res.redirect(redirectURL.toString());
-  }
+		const tokens = await this.authService.validateOAuthLogin(signUpDto);
+
+		const origin = req.headers['origin'];
+		const frontendURL =
+			origin && origin.includes('localhost')
+				? 'http://localhost:5173'
+				: 'https://www.corinee.site';
+		const redirectURL = new URL('/auth/callback', frontendURL);
+		redirectURL.searchParams.append('access_token', tokens.access_token);
+		redirectURL.searchParams.append('refresh_token', tokens.refresh_token);
+		return res.redirect(redirectURL.toString());
+	}
 
 	@ApiResponse({
 		status: HttpStatus.OK,
