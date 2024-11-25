@@ -29,7 +29,7 @@ function OrderBook({
 	const bids = formatBids(orderBook[market]);
 
 	return (
-		<div className="bg-gray-50 flex-1 min-w-80 rounded-lg p-2 overflow-y-scroll overflow-x-hidden">
+		<div className="bg-gray-50 flex-1 min-w-96 rounded-lg p-2 overflow-y-scroll overflow-x-hidden">
 			<div className="text-sm font-semibold border-b border-solid border-gray-300 pb-2">
 				호가
 			</div>
