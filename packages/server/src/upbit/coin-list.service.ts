@@ -34,15 +34,15 @@ export class CoinListService implements OnModuleInit {
 			});
 	}
 	async getSimpleCoin(coins) {
-    console.log(coins);
+		console.log(coins);
 		let krwCoinInfo = this.coinDataUpdaterService.getKrwCoinInfo();
 		while (!krwCoinInfo) {
 			await new Promise((resolve) => setTimeout(resolve, 100));
 			krwCoinInfo = this.coinDataUpdaterService.getKrwCoinInfo();
 		}
 
-    if (!coins.length) return [];
-    
+		if (!coins.length) return [];
+
 		return krwCoinInfo
 			.filter((coin) => coins.includes(coin.market))
 			.map((coin) => {
@@ -80,6 +80,19 @@ export class CoinListService implements OnModuleInit {
 		return this.coinDataUpdaterService
 			.getAllCoinList()
 			.filter((coin) => coin.market.startsWith('USDT'));
+	}
+
+	getCoinTickers(coins) {
+		const coinData = this.coinDataUpdaterService.getCoinLatestInfo();
+
+		const filteredData = Array.from(coinData.entries())
+			.filter(([symbol]) => !coins || coins.includes(symbol))
+			.map(([symbol, details]) => ({
+				code: symbol,
+				...details,
+			}));
+
+		return filteredData;
 	}
 
 	convertToCodeCoinDto = (coin) => {
