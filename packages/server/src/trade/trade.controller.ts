@@ -7,11 +7,12 @@ import {
   Param,
   Request,
   UseGuards,
+  Delete,
   Res,
 } from '@nestjs/common';
 import { BidService } from './trade-bid.service';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { ApiBearerAuth, ApiSecurity, ApiBody } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiSecurity, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { AskService } from './trade-ask.service';
 import { TradeDto } from './dtos/trade.dto';
 import { TradeService } from './trade.service';
@@ -106,6 +107,7 @@ export class TradeController {
 
   @ApiBearerAuth('access-token')
   @ApiSecurity('access-token')
+  @ApiQuery({ name: 'coin', required: false, type: String })
   @UseGuards(AuthGuard)
   @Get('tradeData/:coin?')
   async getMyTradeData(
@@ -115,5 +117,31 @@ export class TradeController {
   ) {
     const response = await this.tradeService.getMyTradeData(req.user, coin);
     return res.status(response.statusCode).json(response);
+  }
+
+  @ApiBearerAuth('access-token')
+  @ApiSecurity('access-token')
+  @UseGuards(AuthGuard)
+  @Delete('tradeData')
+  async deleteMyTrade(
+    @Request() req,
+    @Res() res: Response,
+    @Query('tradeId') tradeId: Number,
+    @Query('tradeType') tradeType: string,
+  ){
+    try {
+      console.log("tradeId : "+tradeId)
+      console.log("tradeType : "+tradeType)
+      let response;
+      if(tradeType === 'buy') response = await this.tradeService.deleteMyBidTrade(req.user, tradeId);
+      else response = await this.tradeService.deleteMyAskTrade(req.user, tradeId);
+
+      return res.status(response.statusCode).json(response);
+    } catch (error) {
+      return res.status(error.status).json({
+        message: error.message || '서버오류입니다.',
+        error: error?.response || null,
+      });
+    }
   }
 }
