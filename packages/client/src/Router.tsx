@@ -4,6 +4,7 @@ import Home from '@/pages/home/Home';
 import Account from '@/pages/account/Account';
 import Trade from '@/pages/trade/Trade';
 import NotFound from '@/pages/not-found/NotFound';
+import Redricet from '@/pages/auth/Redirect';
 
 function Router() {
 	return (
@@ -13,6 +14,7 @@ function Router() {
 				<Route path="/account" element={<Account />} />
 				<Route path="/trade/:market" element={<Trade />} />
 			</Route>
+			<Route path="/auth/callback" element={<Redricet />} />
 			<Route path="*" element={<NotFound />} />
 		</Routes>
 	);
