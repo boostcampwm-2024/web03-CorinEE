@@ -12,6 +12,7 @@ import { RedisModule } from './redis/redis.module';
 import { ScheduleModule as NestScheduleModule } from '@nestjs/schedule';
 import { ScheduleModule } from './schedule/schedule.module';
 import { TradehistoryModule } from './trade-history/trade-history.module';
+import { FavoriteModule } from './favorite/favorite.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { TradehistoryModule } from './trade-history/trade-history.module';
     NestScheduleModule.forRoot(),
     ScheduleModule,
     TradehistoryModule,
+    FavoriteModule,
   ],
   controllers: [AppController],
   providers: [AppService],

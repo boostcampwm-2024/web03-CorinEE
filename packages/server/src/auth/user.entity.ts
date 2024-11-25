@@ -10,6 +10,7 @@ import {
 import { Account } from 'src/account/account.entity';
 import { Trade } from 'src/trade/trade.entity';
 import { TradeHistory } from 'src/trade-history/trade-history.entity';
+import { Favorite } from '@src/favorite/favorite.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -48,4 +49,10 @@ export class User extends BaseEntity {
     onDelete: 'CASCADE',
   })
   tradeHistories: TradeHistory[];
+
+  @OneToMany(() => Favorite, (favorite) => favorite.user, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  favorites: Favorite[];
 }
