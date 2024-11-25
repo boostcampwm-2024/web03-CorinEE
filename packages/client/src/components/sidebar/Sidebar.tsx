@@ -45,7 +45,7 @@ function Sidebar() {
 	];
 
 	return (
-		<div className="absolute sm:flex xl:sticky xl:z-0 top-0 right-0 bg-gray-100 h-screen z-50">
+		<div className="fixed right-0 flex  xl:sticky xl:top-0 z-50 h-screen bg-gray-100">
 			<SideDrawer isOpen={isOpen} activeMenu={activeMenu} />
 			<div className="w-14 flex flex-col gap-3 items-center border-l border-gray-400 border-solid">
 				{SIDEBAR_BUTTONS.map((button) => (
