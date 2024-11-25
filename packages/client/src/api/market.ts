@@ -1,6 +1,7 @@
 import { instance } from '@/api/instance';
 import { Candle, CandlePeriod } from '@/types/chart';
 import { MarketData, SidebarMarketData } from '@/types/market';
+import { CoinTicker } from '@/types/ticker';
 
 export async function getMarketAll(): Promise<MarketData[]> {
 	const response = await instance.get('/upbit/market/all');
@@ -18,6 +19,13 @@ export async function getRecentlyMarketList(
 	const response = await instance.get(
 		`/upbit/market/simplelist/krw?${queryString}`,
 	);
+	return response.data;
+}
+
+export async function getMarketTicker(
+	queryString: string,
+): Promise<CoinTicker[]> {
+	const response = await instance.get(`/upbit/market/tickers?${queryString}`);
 	return response.data;
 }
 
