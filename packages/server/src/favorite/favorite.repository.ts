@@ -4,10 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class FavoriteRepository extends Repository<Favorite> {
-  constructor(
-    private dataSource: DataSource,
-  ) {
+  constructor(private dataSource: DataSource) {
     super(Favorite, dataSource.createEntityManager());
   }
-
 }

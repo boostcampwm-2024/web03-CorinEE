@@ -54,7 +54,6 @@ export class CoinDataUpdaterService {
           `${UPBIT_CURRENT_PRICE_URL}markets=${this.coinCodeList.join(',')}`,
         ),
       );
-      //console.log(response.headers['remaining-req'])
       this.coinLatestInfo = new Map(
         response.data.map((coin) => [coin.market, coin]),
       );
@@ -74,7 +73,6 @@ export class CoinDataUpdaterService {
     }
   }
 
-  
   async updateCurrentOrderBook() {
     try {
       while (this.coinCodeList.length === 1)
@@ -87,7 +85,6 @@ export class CoinDataUpdaterService {
       this.orderbookLatestInfo = new Map(
         response.data.map((coin) => [coin.market, coin]),
       );
-
     } catch (error) {
       console.error('getCoinListFromUpbit error:', error);
     } finally {

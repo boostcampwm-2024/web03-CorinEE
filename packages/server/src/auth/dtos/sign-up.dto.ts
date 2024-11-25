@@ -15,7 +15,7 @@ export class SignUpDto {
 
   @IsBoolean()
   isGuest: boolean;
-  
+
   @IsString()
   provider: string;
 

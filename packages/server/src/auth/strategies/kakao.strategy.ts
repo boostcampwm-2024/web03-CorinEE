@@ -8,7 +8,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
     super({
       clientID: process.env.KAKAO_CLIENT_ID,
       clientSecret: '',
-      callbackURL: `${process.env.CALLBACK_URL}/api/auth/kakao/callback`
+      callbackURL: `${process.env.CALLBACK_URL}/api/auth/kakao/callback`,
     });
   }
 
@@ -16,7 +16,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
     accessToken: string,
     refreshToken: string,
     profile: Profile,
-    done: Function,
+    done,
   ): Promise<any> {
     const { id, username, _json } = profile;
     const user = {

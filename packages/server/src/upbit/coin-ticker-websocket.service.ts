@@ -17,7 +17,7 @@ export class CoinTickerService implements OnModuleInit {
   constructor(
     private readonly coinListService: CoinListService,
     private readonly sseService: SseService,
-    private readonly chartService: ChartService
+    private readonly chartService: ChartService,
   ) {}
 
   onModuleInit() {

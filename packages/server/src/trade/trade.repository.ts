@@ -11,10 +11,14 @@ export class TradeRepository extends Repository<Trade> {
   ) {
     super(Trade, dataSource.createEntityManager());
   }
-  async createTrade(buyDto: any, userId, tradeType, queryRunner): Promise<number> {
+  async createTrade(
+    buyDto: any,
+    userId,
+    tradeType,
+    queryRunner,
+  ): Promise<number> {
     try {
-      const { typeGiven, typeReceived, receivedPrice, receivedAmount } =
-        buyDto;
+      const { typeGiven, typeReceived, receivedPrice, receivedAmount } = buyDto;
 
       const user = await this.userRepository.getUser(userId);
 
@@ -41,11 +45,11 @@ export class TradeRepository extends Repository<Trade> {
       console.log(e);
     }
   }
-  async updateTradeTransaction(tradeData, queryRunner){
+  async updateTradeTransaction(tradeData, queryRunner) {
     await queryRunner.manager
       .createQueryBuilder()
       .update(Trade)
-      .set({ 
+      .set({
         quantity: tradeData.quantity,
       })
       .where('tradeId = :tradeId', { tradeId: tradeData.tradeId })
@@ -94,7 +98,7 @@ export class TradeRepository extends Repository<Trade> {
       return trades;
     } catch (e) {
       console.log(e);
-    } 
+    }
   }
   async searchSellTrade(coinPrice) {
     try {
@@ -125,6 +129,6 @@ export class TradeRepository extends Repository<Trade> {
       return trades;
     } catch (e) {
       console.log(e);
-    } 
+    }
   }
 }
