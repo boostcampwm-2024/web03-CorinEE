@@ -47,7 +47,7 @@ export class AskService implements OnModuleInit {
     return parseFloat((asset.quantity * (percent / 100)).toFixed(8));
   }
   async createAskTrade(user, askDto) {
-    if (askDto.receivedAmount * askDto.receivedPrice < 5000)
+    if (askDto.receivedAmount * askDto.receivedPrice < 0.00000001)
       throw new BadRequestException();
     if (this.transactionCreateAsk) await this.waitForTransactionCreate();
     this.transactionCreateAsk = true;
@@ -302,7 +302,7 @@ export class AskService implements OnModuleInit {
           receivedPrice: trade.price, //건네받을 통화 가격
           receivedAmount: trade.quantity, //건네 받을 통화 갯수
           tradeId: trade.tradeId,
-          krw: another / krw,
+          krw: krw / another,
         };
         this.askTradeService(askDto);
       });
