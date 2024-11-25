@@ -7,8 +7,7 @@ import {
   Param,
   Request,
   UseGuards,
-  UnauthorizedException,
-  Res
+  Res,
 } from '@nestjs/common';
 import { BidService } from './trade-bid.service';
 import { AuthGuard } from 'src/auth/auth.guard';
@@ -16,14 +15,14 @@ import { ApiBearerAuth, ApiSecurity, ApiBody } from '@nestjs/swagger';
 import { AskService } from './trade-ask.service';
 import { TradeDto } from './dtos/trade.dto';
 import { TradeService } from './trade.service';
-import {Response} from "express";
+import { Response } from 'express';
 
 @Controller('trade')
 export class TradeController {
   constructor(
     private bidService: BidService,
     private askService: AskService,
-    private tradeService: TradeService
+    private tradeService: TradeService,
   ) {}
 
   @ApiBearerAuth('access-token')
@@ -44,19 +43,18 @@ export class TradeController {
   @UseGuards(AuthGuard)
   @Post('bid')
   async bidTrade(
-    @Request() req, 
+    @Request() req,
     @Body() bidDto: Record<string, any>,
-    @Res() res: Response
+    @Res() res: Response,
   ) {
     try {
       const response = await this.bidService.createBidTrade(req.user, bidDto);
       return res.status(200).json(response);
     } catch (error) {
-      return res.status(error.status)
-        .json({
-          message: error.message || '서버오류입니다.',
-          error: error?.response || null,
-        });;
+      return res.status(error.status).json({
+        message: error.message || '서버오류입니다.',
+        error: error?.response || null,
+      });
     }
   }
 
@@ -66,19 +64,18 @@ export class TradeController {
   @UseGuards(AuthGuard)
   @Post('ask')
   async askTrade(
-    @Request() req, 
+    @Request() req,
     @Body() askDto: Record<string, any>,
-    @Res() res: Response
+    @Res() res: Response,
   ) {
     try {
       const response = await this.askService.createAskTrade(req.user, askDto);
       return res.status(200).json(response);
     } catch (error) {
-      return res.status(error.status)
-        .json({
-          message: error.message || '서버오류입니다.',
-          error: error?.response || null,
-        });;
+      return res.status(error.status).json({
+        message: error.message || '서버오류입니다.',
+        error: error?.response || null,
+      });
     }
   }
 
@@ -101,10 +98,10 @@ export class TradeController {
   async getMyCoinData(
     @Request() req,
     @Param('coin') coin: string,
-    @Res() res: Response
+    @Res() res: Response,
   ) {
-    const response = await this.tradeService.checkMyCoinData(req.user, coin)
-    return res.status(response.statusCode).json(response)
+    const response = await this.tradeService.checkMyCoinData(req.user, coin);
+    return res.status(response.statusCode).json(response);
   }
 
   @ApiBearerAuth('access-token')
@@ -116,7 +113,7 @@ export class TradeController {
     @Res() res: Response,
     @Param('coin') coin?: string,
   ) {
-    const response = await this.tradeService.getMyTradeData(req.user, coin)
-    return res.status(response.statusCode).json(response)
+    const response = await this.tradeService.getMyTradeData(req.user, coin);
+    return res.status(response.statusCode).json(response);
   }
 }

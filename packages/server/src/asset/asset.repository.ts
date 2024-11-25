@@ -1,4 +1,4 @@
-import { DataSource, Repository, QueryRunner } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Asset } from './asset.entity';
 import { Injectable } from '@nestjs/common';
 
@@ -25,9 +25,9 @@ export class AssetRepository extends Repository<Asset> {
       await queryRunner.manager
         .createQueryBuilder()
         .update(Asset)
-        .set({ 
+        .set({
           quantity: asset.quantity,
-          price: asset.price
+          price: asset.price,
         })
         .where('assetId = :assetId', { assetId: asset.assetId })
         .execute();
@@ -52,9 +52,9 @@ export class AssetRepository extends Repository<Asset> {
       await queryRunner.manager
         .createQueryBuilder()
         .update(Asset)
-        .set({ 
+        .set({
           price: asset.price,
-          quantity: asset.quantity
+          quantity: asset.quantity,
         })
         .where('assetId = :assetId', { assetId: asset.assetId })
         .execute();
@@ -62,17 +62,17 @@ export class AssetRepository extends Repository<Asset> {
       console.log(e);
     }
   }
-  async getAsset(id,assetName, queryRunner){
+  async getAsset(id, assetName, queryRunner) {
     try {
-      return await queryRunner.manager.findOne(Asset,{
+      return await queryRunner.manager.findOne(Asset, {
         where: {
-          account: {id: id},
-          assetName: assetName
+          account: { id: id },
+          assetName: assetName,
         },
-      })
+      });
     } catch (error) {
       console.error('Error fetching asset:', error);
       throw new Error('Failed to fetch asset');
-    }    
+    }
   }
 }

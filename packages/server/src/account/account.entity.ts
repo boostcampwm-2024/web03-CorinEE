@@ -24,10 +24,10 @@ export class Account {
   BTC: number;
 
   @OneToOne(() => User, (user) => user.account, {
-		nullable: true,
-		onDelete: 'CASCADE',
-	})
-	@JoinColumn()
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
   user: User;
 
   @OneToMany(() => Asset, (asset) => asset.account, {

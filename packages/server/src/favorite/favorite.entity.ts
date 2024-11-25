@@ -5,7 +5,6 @@ import {
   ManyToOne,
   JoinColumn,
   Column,
-  Unique
 } from 'typeorm';
 
 import { User } from '@src/auth/user.entity';
@@ -19,9 +18,9 @@ export class Favorite extends BaseEntity {
   assetName: string;
 
   @ManyToOne(() => User, (user) => user.favorites, {
-		nullable: true,
-		onDelete: 'CASCADE',
-	})
-	@JoinColumn()
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
   user: User;
 }
