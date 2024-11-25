@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/ui/useToast';
 import logoImage from '@asset/logo/corineeLogo.png';
 import kakaLogo from '@asset/logo/kakao.png';
 import googleLogo from '@asset/logo/google.png';
+import { GOOGLE_AUTH_URL, KAKAO_AUTH_URL } from '@/constants/authAddress';
 
 function Header() {
 	const { guestLogin, logout } = useAuth();
@@ -13,10 +14,8 @@ function Header() {
 	const toast = useToast();
 
 	const handleLogin = (param: 'kakao' | 'google') => {
-		if (param === 'google')
-			window.location.href = `https://corinee.site/api/auth/google`;
-		else if (param === 'kakao')
-			window.location.href = `https://corinee.site/api/auth/kakao`;
+		if (param === 'google') window.location.href = GOOGLE_AUTH_URL;
+		else if (param === 'kakao') window.location.href = KAKAO_AUTH_URL;
 	};
 
 	return (
