@@ -23,7 +23,7 @@ import { TradeService } from './trade.service';
     AssetRepository,
     UserRepository,
     TradeHistoryRepository,
-    TradeService
+    TradeService,
   ],
   controllers: [TradeController],
 })

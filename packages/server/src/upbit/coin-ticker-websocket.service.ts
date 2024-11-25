@@ -11,14 +11,14 @@ import { ChartService } from './chart.service';
 
 @Injectable()
 export class CoinTickerService implements OnModuleInit {
-	private websocket: WebSocket;
-	private sending: boolean = false;
-	private timeoutId: NodeJS.Timeout | null = null;
-	constructor(
-		private readonly coinListService: CoinListService,
-		private readonly sseService: SseService,
-		private readonly chartService: ChartService,
-	) {}
+  private websocket: WebSocket;
+  private sending: boolean = false;
+  private timeoutId: NodeJS.Timeout | null = null;
+  constructor(
+    private readonly coinListService: CoinListService,
+    private readonly sseService: SseService,
+    private readonly chartService: ChartService,
+  ) {}
 
 	onModuleInit() {
 		this.connectWebSocket();

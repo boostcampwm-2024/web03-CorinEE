@@ -9,11 +9,8 @@ import { TradeHistoryService } from './trade-history.service';
 import { UpbitModule } from '@src/upbit/upbit.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([TradeHistory]), HttpModule, UpbitModule],
-    providers: [
-        TradeHistoryRepository,
-        TradeHistoryService,
-    ],
-    controllers: [TradeHistoryController],
+  imports: [TypeOrmModule.forFeature([TradeHistory]), HttpModule, UpbitModule],
+  providers: [TradeHistoryRepository, TradeHistoryService],
+  controllers: [TradeHistoryController],
 })
 export class TradehistoryModule {}

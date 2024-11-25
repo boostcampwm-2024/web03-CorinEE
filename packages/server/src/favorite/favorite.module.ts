@@ -6,9 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Favorite } from './favorite.entity';
 
 @Module({
-    imports: [
-		TypeOrmModule.forFeature([Favorite]),
-	],
+  imports: [TypeOrmModule.forFeature([Favorite])],
   controllers: [FavoriteController],
   providers: [FavoriteService, FavoriteRepository],
   exports: [FavoriteRepository],
