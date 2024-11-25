@@ -11,7 +11,7 @@ import {
     Res
   } from '@nestjs/common';
   import { AuthGuard } from 'src/auth/auth.guard';
-  import { ApiBearerAuth, ApiSecurity, ApiBody } from '@nestjs/swagger';
+  import { ApiBearerAuth, ApiSecurity, ApiBody, ApiQuery } from '@nestjs/swagger';
   import {Response} from "express";
 import { TradeHistoryService } from './trade-history.service';
   
@@ -23,6 +23,7 @@ import { TradeHistoryService } from './trade-history.service';
   
     @ApiBearerAuth('access-token')
     @ApiSecurity('access-token')
+    @ApiQuery({ name: 'coins', required: false, type: String })
     @UseGuards(AuthGuard)
     @Get('tradehistoryData')
     async getMyTradeData(
