@@ -21,7 +21,7 @@ function CoinList({ markets, activeCategory }: CoinListProps) {
 				COINS_PER_PAGE * (currentScrollPage - 1),
 				COINS_PER_PAGE * currentScrollPage,
 			),
-		[currentScrollPage],
+		[currentScrollPage, activeCategory],
 	);
 
 	useEffect(() => {
