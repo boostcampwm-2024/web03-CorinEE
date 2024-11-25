@@ -34,7 +34,9 @@ function Trade() {
 				/>
 				<OrderForm currentPrice={currentPrice} selectPrice={selectPrice} />
 			</div>
-			<TradeFooter />
+			<Suspense>
+				<TradeFooter />
+			</Suspense>
 		</div>
 	);
 }
