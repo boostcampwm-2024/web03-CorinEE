@@ -62,7 +62,7 @@ export class AuthController {
 
     const tokens = await this.authService.validateOAuthLogin(signUpDto);
     const frontendURL = 'http://localhost:5173';
-    const redirectURL = new URL('/auth/callback', frontendURL);
+    const redirectURL = new URL('/auth/callback');
     redirectURL.searchParams.append('access_token', tokens.access_token);
     redirectURL.searchParams.append('refresh_token', tokens.refresh_token);
     return res.redirect(redirectURL.toString());
@@ -91,7 +91,7 @@ export class AuthController {
 
     const tokens = await this.authService.validateOAuthLogin(signUpDto);
     const frontendURL = 'http://localhost:5173';
-    const redirectURL = new URL('/auth/callback', frontendURL);
+    const redirectURL = new URL('/auth/callback');
     redirectURL.searchParams.append('access_token', tokens.access_token);
     redirectURL.searchParams.append('refresh_token', tokens.refresh_token);
     return res.redirect(redirectURL.toString());
