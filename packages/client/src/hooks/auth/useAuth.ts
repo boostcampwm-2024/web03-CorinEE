@@ -1,8 +1,8 @@
-import { guestLogin, logout, socialLogin } from '@/api/auth';
+import { guestLogin, logout } from '@/api/auth';
 import { useAuthStore } from '@/store/authStore';
 import { Login } from '@/types/auth';
 import { removeCookie, setCookie } from '@/utility/cookies';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 
 export function useAuth() {
 	const checkAuth = useAuthStore((state) => state.checkAuth);
@@ -22,15 +22,6 @@ export function useAuth() {
 		},
 	});
 
-	const useSocialLogin = (social: 'kakao' | 'google') => {
-		const { data, refetch } = useQuery({
-			queryFn: () => socialLogin(social),
-			queryKey: ['SOCIAL_LOGIN', social],
-			enabled: false,
-		});
-		return { data, refetch };
-	};
-
 	const useLogout = useMutation({
 		mutationFn: async () => {
 			return logout();
@@ -46,7 +37,6 @@ export function useAuth() {
 	});
 	return {
 		guestLogin: useGuestLogin,
-		socialLogin: useSocialLogin,
 		logout: useLogout,
 	};
 }
