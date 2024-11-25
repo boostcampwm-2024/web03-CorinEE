@@ -185,6 +185,10 @@ export class AskService implements OnModuleInit {
 			}
 			const user = await this.userRepository.getUser(userId);
 
+			const assetName = buyData.assetName;
+			buyData.assetName = buyData.tradeCurrency;
+			buyData.tradeCurrency = assetName;
+			
 			await this.tradeHistoryRepository.createTradeHistory(
 				user,
 				buyData,
