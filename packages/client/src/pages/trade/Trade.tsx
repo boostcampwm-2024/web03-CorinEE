@@ -2,30 +2,45 @@ import Chart from '@/pages/trade/components/chart/Chart';
 import OrderBook from '@/pages/trade/components/order_book/OrderBook';
 import OrderForm from '@/pages/trade/components/order_form/OrderForm';
 import TradeHeader from '@/pages/trade/components/trade_header/TradeHeader';
-import { useParams } from 'react-router-dom';
-import { useSSETicker } from '@/hooks/SSE/useSSETicker';
-import { Suspense, useMemo, useState } from 'react';
 import ChartSkeleton from '@/pages/trade/components/chart/ChartSkeleton';
 import TradeFooter from '@/pages/trade/components/trade_footer/TradeFooter';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useSSETicker } from '@/hooks/SSE/useSSETicker';
+import { Suspense, useMemo, useState, useCallback } from 'react';
+import { useToast } from '@/hooks/ui/useToast';
+import { useEffect } from 'react';
+import { useValidCoin } from '@/hooks/market/useValidCoin';
 
 function Trade() {
 	const { market } = useParams();
+	const toast = useToast();
+	const navigate = useNavigate();
+
 	const marketCode = useMemo(() => (market ? [{ market }] : []), [market]);
 	const { sseData: price } = useSSETicker(marketCode);
 	const [selectPrice, setSelectPrice] = useState<number | null>(null);
+	const { isValidCoin } = useValidCoin(market);
 
-	if (!market || !price) return;
+	useEffect(() => {
+		if (!isValidCoin) {
+			toast.error('원화로 거래 불가능한 코인이에요');
+			navigate('/');
+		}
+	}, [isValidCoin]);
 
-	const currentPrice = price[market]?.trade_price;
-	const handleSelectPrice = (price: number) => {
+	const handleSelectPrice = useCallback((price: number) => {
 		setSelectPrice(price);
-	};
+	}, []);
+
+	if (!market || !price) return null;
+	const currentPrice = price[market]?.trade_price;
+
 	return (
-		<div className="w-full gap-2">
+		<div className="w-full h-fit flex flex-col overflow-x-scroll">
 			<TradeHeader market={market} sseData={price} />
-			<div className="flex gap-2 min-w-[1300px] max-h-[72vh] overflow-y-hidden">
+			<div className="flex flex-nowrap gap-2 min-w-[1300px] max-h-[72vh]">
 				<Suspense fallback={<ChartSkeleton />}>
-					<Chart market={market} />
+					<Chart market={market} currentPrice={currentPrice} />
 				</Suspense>
 				<OrderBook
 					currentPrice={currentPrice}
