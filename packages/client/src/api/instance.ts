@@ -8,7 +8,6 @@ export const instance = axios.create({
 export const authInstance = axios.create({
 	baseURL: import.meta.env.VITE_API_BASE_URL,
 	timeout: 2000,
-	withCredentials: true,
 });
 
 export const upbitInstance = axios.create({
