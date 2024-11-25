@@ -63,11 +63,7 @@ function Header() {
 								<img alt="kakao_image" src={kakaLogo} className="w-10 h-10" />
 							</button>
 							<button onClick={() => handleLogin('google')}>
-								<img
-									alt="google_image"
-									src={googleLogo}
-									className="w-10 h-10"
-								/>
+								<img alt="google_image" src={googleLogo} className="w-9 h-9" />
 							</button>
 						</div>
 					)}
