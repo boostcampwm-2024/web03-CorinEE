@@ -9,7 +9,7 @@ function TradeFooter() {
 	const duplicatedCoins = coins ? [...coins, ...coins, ...coins, ...coins] : [];
 
 	return (
-		<div className="absolute bottom-1 w-full bg-white">
+		<div className="fixed bottom-0 w-full bg-white">
 			<div className="inline-flex relative">
 				<div className="flex items-center whitespace-nowrap animate-infiniteScroll">
 					{duplicatedCoins?.map((coin, index) => (
