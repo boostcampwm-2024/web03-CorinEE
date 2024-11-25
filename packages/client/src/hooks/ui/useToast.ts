@@ -6,6 +6,12 @@ export function useToast() {
 		pauseOnHover: false,
 		hideProgressBar: true,
 		transition: Zoom,
+		style: {
+			width: 'fit-content',
+			whiteSpace: 'nowrap',
+			display: 'inline-flex',
+			margin: '0 auto',
+		},
 	};
 
 	const showToast = {
