@@ -1,4 +1,4 @@
-import { guestLogin, logout, socialLogin } from '@/api/auth';
+import { guestLogin, logout } from '@/api/auth';
 import { useAuthStore } from '@/store/authStore';
 import { Login } from '@/types/auth';
 import { removeCookie, setCookie } from '@/utility/cookies';
@@ -21,15 +21,6 @@ export function useAuth() {
 			console.error(error);
 		},
 	});
-
-	const useSocialLogin = (social: 'kakao' | 'google') => {
-		const { data, refetch } = useQuery({
-			queryFn: () => socialLogin(social),
-			queryKey: ['SOCIAL_LOGIN', social],
-			enabled: false,
-		});
-		return { data, refetch };
-	};
 
 	const useLogout = useMutation({
 		mutationFn: async () => {
