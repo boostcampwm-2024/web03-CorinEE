@@ -5,18 +5,21 @@ import Account from '@/pages/account/Account';
 import Trade from '@/pages/trade/Trade';
 import NotFound from '@/pages/not-found/NotFound';
 import Redricet from '@/pages/auth/Redirect';
+import { Suspense } from 'react';
 
 function Router() {
 	return (
-		<Routes>
-			<Route element={<Layout />}>
-				<Route path="/" element={<Home />} />
-				<Route path="/account" element={<Account />} />
-				<Route path="/trade/:market" element={<Trade />} />
-			</Route>
-			<Route path="/auth/callback" element={<Redricet />} />
-			<Route path="*" element={<NotFound />} />
-		</Routes>
+		<Suspense>
+			<Routes>
+				<Route element={<Layout />}>
+					<Route path="/" element={<Home />} />
+					<Route path="/account" element={<Account />} />
+					<Route path="/trade/:market" element={<Trade />} />
+				</Route>
+				<Route path="/auth/callback" element={<Redricet />} />
+				<Route path="*" element={<NotFound />} />
+			</Routes>
+		</Suspense>
 	);
 }
 
