@@ -176,29 +176,6 @@ export class TradeService {
 
 			await this.tradeRepository.deleteTrade(tradeId, queryRunner);
 
-			const userAccount = await this.accountRepository.findOne({
-				where: { user: { id: user.userId } },
-			});
-
-			const userAsset = await this.assetRepository.findOne({
-				where: {
-					account: { id: userAccount.id },
-					assetName: trade.tradeCurrency,
-				},
-			});
-
-			userAsset.quantity = parseFloat(
-				(userAsset.quantity + trade.quantity).toFixed(8),
-			);
-			userAsset.price = parseFloat(
-				(userAsset.price + trade.quantity * trade.price).toFixed(8),
-			);
-
-			await this.assetRepository.updateAssetQuantityPrice(
-				userAsset,
-				queryRunner,
-			);
-
 			await queryRunner.commitTransaction();
 
 			return {
