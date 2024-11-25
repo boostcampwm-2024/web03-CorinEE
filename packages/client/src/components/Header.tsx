@@ -12,11 +12,18 @@ function Header() {
 	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 	const toast = useToast();
 
+	const handleLogin = (param: 'kakao' | 'google') => {
+		if (param === 'google')
+			window.location.href = `https://corinee.site/api/auth/google`;
+		else if (param === 'kakao')
+			window.location.href = `https://corinee.site/api/auth/kakao`;
+	};
+
 	return (
 		<>
 			<Navbar
 				fullWidth={true}
-				className=" flex justify-between items-center sticky top-0"
+				className=" flex justify-between items-center sticky top-0 min-w-[1300px]"
 				shadow={false}
 			>
 				<div>
@@ -53,10 +60,10 @@ function Header() {
 							>
 								체험하기
 							</Button>
-							<button>
+							<button onClick={() => handleLogin('kakao')}>
 								<img alt="kakao_image" src={kakaLogo} className="w-10 h-10" />
 							</button>
-							<button>
+							<button onClick={() => handleLogin('google')}>
 								<img
 									alt="google_image"
 									src={googleLogo}
