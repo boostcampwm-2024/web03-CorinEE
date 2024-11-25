@@ -7,6 +7,7 @@ import {
 	HttpStatus,
 	Post,
 	Request,
+	Res,
 	UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from './auth.guard';
@@ -45,7 +46,10 @@ export class AuthController {
 
   @Get('google/callback')
   @UseGuards(PassportAuthGuard('google'))
-  async googleLoginCallback(@Request() req): Promise<any> {
+  async googleLoginCallback(
+    @Request() req,
+    @Res() res,
+  ): Promise<any> {
     const googleUser = req.user;
 
     const signUpDto: SignUpDto = {
@@ -57,11 +61,11 @@ export class AuthController {
     };
 
     const tokens = await this.authService.validateOAuthLogin(signUpDto);
-    return {
-      message: 'Google login successful',
-      access_token: tokens.access_token,
-      refresh_token: tokens.refresh_token,
-    };
+    const frontendURL = 'http://localhost:5173';
+    const redirectURL = new URL('/auth/callback', frontendURL);
+    redirectURL.searchParams.append('access_token', tokens.access_token);
+    redirectURL.searchParams.append('refresh_token', tokens.refresh_token);
+    return res.redirect(redirectURL.toString());
   }
 
   @Get('kakao')
@@ -71,7 +75,10 @@ export class AuthController {
 
   @Get('kakao/callback')
   @UseGuards(PassportAuthGuard('kakao'))
-  async kakaoLoginCallback(@Request() req) {
+  async kakaoLoginCallback(
+    @Request() req,
+    @Res() res
+  ){
 		const kakaoUser = req.user; 
 
     const signUpDto: SignUpDto = {
@@ -83,11 +90,11 @@ export class AuthController {
     };
 
     const tokens = await this.authService.validateOAuthLogin(signUpDto);
-    return {
-      message: 'kakao login successful',
-      access_token: tokens.access_token,
-      refresh_token: tokens.refresh_token,
-    };
+    const frontendURL = 'http://localhost:5173';
+    const redirectURL = new URL('/auth/callback', frontendURL);
+    redirectURL.searchParams.append('access_token', tokens.access_token);
+    redirectURL.searchParams.append('refresh_token', tokens.refresh_token);
+    return res.redirect(redirectURL.toString());
   }
 
 	@ApiResponse({
