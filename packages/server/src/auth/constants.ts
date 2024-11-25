@@ -1,6 +1,6 @@
 export const jwtConstants = {
-	secret: 'superSecureAccessTokenSecret',
-	refreshSecret: 'superSecureAccessTokenSecret_superSecureAccessTokenSecret',
+  secret: 'superSecureAccessTokenSecret',
+  refreshSecret: 'superSecureAccessTokenSecret_superSecureAccessTokenSecret',
 };
 
 export const DEFAULT_KRW = 30000000;

@@ -21,7 +21,7 @@ export class SseService implements OnModuleDestroy {
     this.orderbookStream$.next(data);
   }
 
-  initPriceStream(coins, dto: Function) {
+  initPriceStream(coins, dto) {
     const events: MessageEvent[] = [];
     if (coins && typeof coins === 'string') {
       coins = [coins];
@@ -47,7 +47,7 @@ export class SseService implements OnModuleDestroy {
 
     return events;
   }
-  getPriceUpdatesStream(coins, dto: Function): Observable<MessageEvent> {
+  getPriceUpdatesStream(coins, dto): Observable<MessageEvent> {
     return this.coinTickerStream$.asObservable().pipe(
       takeUntil(this.coinTickerDestroy$),
       filter((data) => coins.includes(data.code)),
@@ -60,7 +60,7 @@ export class SseService implements OnModuleDestroy {
     );
   }
 
-  getOrderbookUpdatesStream(coins, dto: Function): Observable<MessageEvent> {
+  getOrderbookUpdatesStream(coins, dto): Observable<MessageEvent> {
     return this.orderbookStream$.asObservable().pipe(
       takeUntil(this.orderBookDestroy$),
       filter((data) => coins.includes(data.code)),

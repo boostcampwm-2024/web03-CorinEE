@@ -4,7 +4,6 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
-  Unique,
   OneToOne,
 } from 'typeorm';
 import { Account } from 'src/account/account.entity';
@@ -28,7 +27,7 @@ export class User extends BaseEntity {
 
   @Column({ nullable: true })
   provider: string;
-	
+
   @Column({ nullable: true })
   providerId: string;
 

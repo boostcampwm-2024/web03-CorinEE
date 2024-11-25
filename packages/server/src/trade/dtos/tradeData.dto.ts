@@ -1,33 +1,33 @@
-import { IsDate, IsNumber, IsString } from "class-validator";
+import { IsDate, IsNumber, IsString } from 'class-validator';
 
 export class TradeDataDto {
-    @IsString()
-    img_url: string;
-  
-    @IsString()
-    koreanName: string;
-  
-    @IsString()
-    coin: string;
-  
-    @IsString()
-    market: string;
+  @IsString()
+  img_url: string;
 
-    @IsString()
-    tradeType: string;
+  @IsString()
+  koreanName: string;
 
-    @IsString()
-    tradeId: number;
-  
-    @IsNumber()
-    price: number;
-  
-    @IsNumber()
-    quantity: number;
+  @IsString()
+  coin: string;
 
-    @IsDate()
-    createdAt: Date;
+  @IsString()
+  market: string;
 
-    @IsNumber()
-    userId: number;
-  }
+  @IsString()
+  tradeType: string;
+
+  @IsString()
+  tradeId: number;
+
+  @IsNumber()
+  price: number;
+
+  @IsNumber()
+  quantity: number;
+
+  @IsDate()
+  createdAt: Date;
+
+  @IsNumber()
+  userId: number;
+}
