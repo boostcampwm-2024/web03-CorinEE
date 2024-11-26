@@ -19,7 +19,6 @@ function Coin({ formatters, market, sseData }: CoinProps) {
 	const { addRecentlyViewedMarket } = useRecentlyMarketStore();
 	const handleClick = () => {
 		addRecentlyViewedMarket(market.market);
-		console.log(market);
 		navigate(`/trade/KRW-${market.market.split('-')[1]}`);
 		queryClient.invalidateQueries({ queryKey: ['recentlyMarketList'] });
 	};
