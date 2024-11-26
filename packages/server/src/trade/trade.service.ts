@@ -106,13 +106,7 @@ export class TradeService {
 		await queryRunner.startTransaction('READ COMMITTED');
 
 		try {
-			// 미체결 거래를 검색
-			const trade = await this.tradeRepository.findOne({
-				where: {
-					tradeId,
-					user: { id: user.userId },
-				},
-			});
+			const trade = await this.tradeRepository.getTradeFindOne(tradeId,queryRunner)
 			if (!trade) {
 				throw new UnprocessableEntityException({
 					statusCode: 422,
@@ -137,7 +131,6 @@ export class TradeService {
 				userAccount.id,
 				queryRunner,
 			);
-
 			await queryRunner.commitTransaction();
 
 			return {
