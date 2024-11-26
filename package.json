@@ -9,6 +9,7 @@
         "client": "yarn workspace client"
     },
     "devDependencies": {
+        "@types/winston": "^2.4.4",
         "eslint": "^8.0.0",
         "eslint-config-prettier": "^9.1.0",
         "prettier": "^3.3.3",
