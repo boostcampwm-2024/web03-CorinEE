@@ -1,5 +1,5 @@
 import { myWaitOrders } from '@/api/waitOrders';
-import { getCookie } from '@/utility/cookies';
+import { getCookie } from '@/utility/storage/cookies';
 import { useSuspenseQuery } from '@tanstack/react-query';
 
 export function useMyWaitOrders() {
