@@ -50,7 +50,7 @@ function History() {
 					<div className="flex-[2]">주문시간</div>
 				</div>
 
-				{filteredHistories.map((history) => (
+				{filteredHistories.reverse().map((history) => (
 					<HistoryInfo key={history.tradeHistoryId} {...history} />
 				))}
 			</div>

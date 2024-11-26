@@ -1,6 +1,6 @@
 import AccountCategories from '@/pages/account/AccountCategory';
 import History from '@/pages/account/history/History';
-import WaitOrders from '@/pages/account/WaitOrders';
+import WaitOrders from '@/pages/account/waitOrders/WaitOrders';
 import Balance from '@/pages/account/balance/Balance';
 import { AccountCategory } from '@/types/category';
 import { useState } from 'react';
