@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { getCookie, removeCookie } from '@/utility/cookies';
+import { getCookie, removeCookie } from '@/utility/storage/cookies';
 interface AuthState {
 	isAuthenticated: boolean;
 	isLoading: boolean;
