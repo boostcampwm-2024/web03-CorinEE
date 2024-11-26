@@ -1,6 +1,6 @@
 import { DataSource, Repository, QueryRunner } from 'typeorm';
 import { Account } from './account.entity';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { User } from 'src/auth/user.entity';
 
 @Injectable()
@@ -53,5 +53,20 @@ export class AccountRepository extends Repository<Account> {
       })
       .where('id = :id', { id: id })
       .execute();
+  }
+
+  async validateUserAccount(userId: number) {
+    const userAccount = await this.findOne({
+      where: { user: { id: userId } }
+    });
+
+    if (!userAccount) {
+      throw new UnprocessableEntityException({
+        message: '유저가 존재하지 않습니다.',
+        statusCode: 422
+      });
+    }
+
+    return userAccount;
   }
 }
