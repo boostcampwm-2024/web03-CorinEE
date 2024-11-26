@@ -19,14 +19,14 @@ function AccountContent() {
 	return (
 		<>
 			<div className="flex rounded-md">
-        {Object.keys(ACCOUNT_CATEGORY_INFO).map((category) => (
-          <AccountCategories
-            key={category}
-            text={ACCOUNT_CATEGORY_INFO[category as CategoryKey].text}
-            isActive={getCurrentCategory() === category}
-            category={category as CategoryKey}
-            handleCategory={handleCategory}
-          />
+				{Object.keys(ACCOUNT_CATEGORY_INFO).map((category) => (
+					<AccountCategories
+						key={category}
+						text={ACCOUNT_CATEGORY_INFO[category as CategoryKey].text}
+						isActive={getCurrentCategory() === category}
+						category={category as CategoryKey}
+						handleCategory={handleCategory}
+					/>
 				))}
 			</div>
 			<Outlet />
