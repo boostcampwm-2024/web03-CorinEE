@@ -33,14 +33,59 @@ function CandleChart({
 	const lastCandleRef = useRef<CandleFormat | null>(null);
 	const intervalRef = useRef<number | null>(null);
 
-	const updateRealTimeCandle = () => {
-		if (!seriesRef.current || !minute) return;
+	const getPeriodMs = () => {
+		switch (activePeriod) {
+			case 'minutes':
+				return (minute || 1) * 60 * 1000;
+			case 'days':
+				return 24 * 60 * 60 * 1000;
+			case 'weeks':
+				return 7 * 24 * 60 * 60 * 1000;
+			case 'months':
+				return 30 * 24 * 60 * 60 * 1000;
+			default:
+				return 60 * 1000;
+		}
+	};
 
-		const now = new Date().getTime();
-		const candlePeriodMs = (minute || 1) * 60 * 1000;
-		const currentCandleStartTime = ((Math.floor(now / candlePeriodMs) *
-			candlePeriodMs) /
-			1000) as Time;
+	const getCurrentCandleStartTime = () => {
+		const now = new Date();
+		const periodMs = getPeriodMs();
+
+		switch (activePeriod) {
+			case 'minutes':
+				return ((Math.floor(now.getTime() / periodMs) * periodMs) /
+					1000) as Time;
+
+			case 'days':
+				const startOfDay = new Date(now);
+				startOfDay.setUTCHours(0, 0, 0, 0);
+				return (startOfDay.getTime() / 1000) as Time;
+
+			case 'weeks':
+				const startOfWeek = new Date(now);
+				startOfWeek.setUTCHours(0, 0, 0, 0);
+				const day = startOfWeek.getUTCDay();
+				const diff = startOfWeek.getUTCDate() - day + (day === 0 ? -6 : 1);
+				startOfWeek.setUTCDate(diff);
+				return (startOfWeek.getTime() / 1000) as Time;
+
+			case 'months':
+				const startOfMonth = new Date(now);
+				startOfMonth.setUTCHours(0, 0, 0, 0);
+				startOfMonth.setUTCDate(1);
+				return (startOfMonth.getTime() / 1000) as Time;
+
+			default:
+				return ((Math.floor(now.getTime() / periodMs) * periodMs) /
+					1000) as Time;
+		}
+	};
+
+	const updateRealTimeCandle = () => {
+		if (!seriesRef.current) return;
+
+		const currentCandleStartTime = getCurrentCandleStartTime();
 
 		if (
 			!lastCandleRef.current ||
@@ -115,11 +160,16 @@ function CandleChart({
 
 	useEffect(() => {
 		if (!seriesRef.current) return;
+
 		if (intervalRef.current) {
 			clearInterval(intervalRef.current);
 		}
+
 		updateRealTimeCandle();
-		intervalRef.current = setInterval(updateRealTimeCandle, 1000);
+
+		const updateInterval = activePeriod === 'minutes' ? 1000 : 5000;
+		intervalRef.current = setInterval(updateRealTimeCandle, updateInterval);
+
 		return () => {
 			if (intervalRef.current) {
 				clearInterval(intervalRef.current);
