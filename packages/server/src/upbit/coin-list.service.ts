@@ -4,13 +4,11 @@ import { CoinDataUpdaterService } from './coin-data-updater.service';
 
 @Injectable()
 export class CoinListService {
-
-  private readonly logger = new Logger(CoinListService.name);
+	private readonly logger = new Logger(CoinListService.name);
 
 	constructor(
 		private readonly coinDataUpdaterService: CoinDataUpdaterService,
 	) {}
-
 
 	async getMostTradeCoin(): Promise<any[]> {
 		const krwCoinInfo = await this.waitForKrwCoinInfo();
@@ -73,15 +71,17 @@ export class CoinListService {
 			.filter((coin) => coin.market.startsWith('USDT'));
 	}
 
-	getCoinTickers(coins: string[]): any[] {
+	getCoinTickers(coins): any[] {
 		const coinData = this.coinDataUpdaterService.getCoinLatestInfo();
 
-		return Array.from(coinData.entries())
+		const filteredData = Array.from(coinData.entries())
 			.filter(([symbol]) => !coins || coins.includes(symbol))
 			.map(([symbol, details]) => ({
 				code: symbol,
 				...details,
 			}));
+
+		return filteredData;
 	}
 
 	convertToCodeCoinDto = (coin) => {

@@ -95,7 +95,7 @@ export class UpbitController {
 	@Get('market/tickers')
 	@ApiQuery({ name: 'coins', required: false, type: String })
 	getCoinTickers(@Query('coins') coins?: string) {
-		return this.coinListService.getCoinTickers(coins ? coins.split(',') : []);
+		return this.coinListService.getCoinTickers(coins);
 	}
 
 	@ApiOperation({ summary: 'Get candlestick data' })
