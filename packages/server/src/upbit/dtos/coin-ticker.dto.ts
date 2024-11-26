@@ -10,7 +10,7 @@ export class CoinTickerDto {
   @IsString()
   coin_img_url: string;
 
-  @IsString()
+  @IsNumber()
   signed_change_price: number;
 
   @IsNumber()
