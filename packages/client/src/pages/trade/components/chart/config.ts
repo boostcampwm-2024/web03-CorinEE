@@ -20,6 +20,10 @@ export const chartConfig = {
 			vertLines: { color: '#1111' },
 			horzLines: { color: '#1111' },
 		},
+		timeScale: {
+			rightOffset: 5,
+			barSpacing: 15,
+		},
 	},
 	candleStickOptions: {
 		wickUpColor: 'rgb(225, 50, 85)',
