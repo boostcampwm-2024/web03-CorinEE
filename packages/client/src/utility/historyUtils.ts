@@ -33,28 +33,28 @@ export function getCustomDateRange(period: Period) {
 }
 
 export function formatDateTime(dateString: string) {
-	const date = new Date(dateString);
+	// UTC 문자열을 로컬 시간으로 변환하지 않고 그대로 표시하기 위해
+	// UTC 표시자 'Z'를 제거하고 처리
+	const localDate = new Date(dateString.replace('Z', ''));
 
-	// 날짜 형식 (YYYY.MM.DD)
 	const formatDate = () => {
-		const year = date.getFullYear();
-		const month = String(date.getMonth() + 1).padStart(2, '0');
-		const day = String(date.getDate()).padStart(2, '0');
+			const year = localDate.getFullYear();
+			const month = String(localDate.getMonth() + 1).padStart(2, '0');
+			const day = String(localDate.getDate()).padStart(2, '0');
 
-		return `${year}.${month}.${day}`;
+			return `${year}.${month}.${day}`;
 	};
 
-	// 시간 형식 (HH:MM)
 	const formatTime = () => {
-		const hours = String(date.getHours()).padStart(2, '0');
-		const minutes = String(date.getMinutes()).padStart(2, '0');
+			const hours = String(localDate.getHours()).padStart(2, '0');
+			const minutes = String(localDate.getMinutes()).padStart(2, '0');
 
-		return `${hours}:${minutes}`;
+			return `${hours}:${minutes}`;
 	};
 
 	return {
-		date: formatDate(),
-		time: formatTime(),
+			date: formatDate(),
+			time: formatTime(),
 	};
 }
 
@@ -63,8 +63,9 @@ export const filterByDate = (
 	history: AccountHistory,
 	dateRange: { startDate: Date; endDate: Date } | null,
 ) => {
-	if (!dateRange) return true; // TOTAL인 경우
-	const historyDate = new Date(history.createdAt);
+	if (!dateRange) return true;
+	// UTC 'Z' 제거하여 로컬 시간으로 처리
+	const historyDate = new Date(history.createdAt.replace('Z', ''));
 	return historyDate >= dateRange.startDate && historyDate <= dateRange.endDate;
 };
 
