@@ -22,7 +22,7 @@ export const chartConfig = {
 		},
 		timeScale: {
 			rightOffset: 5,
-			barSpacing: 15,
+			barSpacing: 10,
 		},
 	},
 	candleStickOptions: {
