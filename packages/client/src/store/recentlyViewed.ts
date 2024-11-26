@@ -1,7 +1,7 @@
 import {
 	getRecentlyViewedMarketList,
 	setRecentlyViewedMarketList,
-} from '@/utility/recentlyMarket';
+} from '@/utility/storage/recentlyMarket';
 import { create } from 'zustand';
 
 type RecentlyMarketStore = {

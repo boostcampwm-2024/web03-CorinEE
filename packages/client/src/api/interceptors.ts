@@ -1,6 +1,6 @@
 import { authInstance, instance } from '@/api/instance';
 import { Login } from '@/types/auth';
-import { getCookie, removeCookie, setCookie } from '@/utility/cookies';
+import { getCookie, removeCookie, setCookie } from '@/utility/storage/cookies';
 import { AxiosResponse } from 'axios';
 
 authInstance.interceptors.request.use(

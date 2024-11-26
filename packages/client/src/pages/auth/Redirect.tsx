@@ -1,6 +1,6 @@
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { setCookie } from '@/utility/cookies';
+import { setCookie } from '@/utility/storage/cookies';
 import { useAuthStore } from '@/store/authStore';
 
 function Redirect() {

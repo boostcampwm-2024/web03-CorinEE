@@ -1,7 +1,7 @@
 import BalanceInfo from '@/pages/account/balance/BalanceInfo';
 import { BalanceMarket } from '@/types/market';
 import { SSEDataType } from '@/types/ticker';
-import PORTFOLIO_EVALUATOR from '@/utility/portfolioEvaluator';
+import PORTFOLIO_EVALUATOR from '@/utility/finance/portfolioEvaluator';
 
 type BalanceTableProps = {
 	KRW: number;

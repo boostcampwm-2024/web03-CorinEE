@@ -3,7 +3,7 @@ import { useSSETicker } from '@/hooks/SSE/useSSETicker';
 import { formatData } from '@/utility/format/formatSSEData';
 import useRecentlyMarketStore from '@/store/recentlyViewed';
 import { useRecentlyMarketList } from '@/hooks/market/useRecentlyMarket';
-import { convertToQueryString } from '@/utility/queryString';
+import { convertToQueryString } from '@/utility/api/queryString';
 import { SidebarMarketData } from '@/types/market';
 
 function RecentlyViewed() {
