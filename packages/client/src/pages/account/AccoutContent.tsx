@@ -1,42 +1,35 @@
+import { ACCOUNT_CATEGORY_INFO } from '@/constants/accountCategory';
 import AccountCategories from '@/pages/account/AccountCategories';
-import History from '@/pages/account/history/History';
-import WaitOrders from '@/pages/account/waitOrders/WaitOrders';
-import Balance from '@/pages/account/balance/Balance';
-import { AccountCategory } from '@/types/category';
-import { useState } from 'react';
+import { CategoryKey } from '@/types/account';
+import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 
 function AccountContent() {
-	const [currentAccountCategory, setCurrentAccountCategory] =
-		useState<AccountCategory>('BALANCE');
+	const navigate = useNavigate();
+	const location = useLocation();
 
-	const categoryInfo = {
-		BALANCE: {
-			text: '보유자산',
-			component: <Balance />,
-		},
-		HISTORY: { text: '거래내역', component: <History /> },
-		WAIT_ORDERS: { text: '미체결', component: <WaitOrders /> },
+	const getCurrentCategory = () => {
+		const path = location.pathname.split('/').pop() || 'balance';
+		return path;
 	};
 
-	const handleCategory = (accountCategory: AccountCategory) => {
-		setCurrentAccountCategory(accountCategory);
+	const handleCategory = (path: CategoryKey) => {
+		navigate(ACCOUNT_CATEGORY_INFO[path].path);
 	};
 
 	return (
 		<>
 			<div className="flex rounded-md">
-				{Object.entries(categoryInfo).map(([category, info]) => (
-					<AccountCategories
-						key={category}
-						text={info.text}
-						isActive={currentAccountCategory === category}
-						category={category as AccountCategory}
-						handleCategory={handleCategory}
-					/>
+        {Object.keys(ACCOUNT_CATEGORY_INFO).map((category) => (
+          <AccountCategories
+            key={category}
+            text={ACCOUNT_CATEGORY_INFO[category as CategoryKey].text}
+            isActive={getCurrentCategory() === category}
+            category={category as CategoryKey}
+            handleCategory={handleCategory}
+          />
 				))}
 			</div>
-
-			{categoryInfo[currentAccountCategory].component}
+			<Outlet />
 		</>
 	);
 }
