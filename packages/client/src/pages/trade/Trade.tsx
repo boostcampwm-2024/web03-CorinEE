@@ -36,23 +36,25 @@ function Trade() {
 	const currentPrice = price[market]?.trade_price;
 
 	return (
-		<div className="w-full h-fit flex flex-col overflow-x-scroll">
-			<TradeHeader market={market} sseData={price} />
-			<div className="flex flex-nowrap gap-2 min-w-[1300px] max-h-[72vh]">
-				<Suspense fallback={<ChartSkeleton />}>
-					<Chart market={market} currentPrice={currentPrice} />
-				</Suspense>
-				<OrderBook
-					currentPrice={currentPrice}
-					marketCode={marketCode}
-					handleSelectPrice={handleSelectPrice}
-				/>
-				<OrderForm currentPrice={currentPrice} selectPrice={selectPrice} />
+		<>
+			<div className="w-full h-full flex flex-col">
+				<TradeHeader market={market} sseData={price} />
+				<div className="flex flex-1 gap-2 max-h-[670px] min-h-0">
+					<Suspense fallback={<ChartSkeleton />}>
+						<Chart market={market} currentPrice={currentPrice} />
+					</Suspense>
+					<OrderBook
+						currentPrice={currentPrice}
+						marketCode={marketCode}
+						handleSelectPrice={handleSelectPrice}
+					/>
+					<OrderForm currentPrice={currentPrice} selectPrice={selectPrice} />
+				</div>
 			</div>
 			<Suspense>
 				<TradeFooter />
 			</Suspense>
-		</div>
+		</>
 	);
 }
 
