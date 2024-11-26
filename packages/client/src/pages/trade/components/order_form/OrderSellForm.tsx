@@ -56,7 +56,7 @@ function OrderSellForm({ currentPrice, selectPrice }: OrderSellFormProps) {
 					<div className="flex flex-col gap-3">
 						<OrderInput
 							label="매도 가격(KRW)"
-							value={Number(price).toLocaleString()}
+							value={price}
 							onChange={setPrice}
 						/>
 						<OrderInput
