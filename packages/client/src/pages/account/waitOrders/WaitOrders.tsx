@@ -1,4 +1,3 @@
-
 import { useMyWaitOrders } from '@/hooks/useMyWaitOrders';
 import WaitOrderInfo from '@/pages/account/waitOrders/WaitOrderInfo';
 

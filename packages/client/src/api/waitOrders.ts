@@ -2,7 +2,7 @@ import { authInstance } from '@/api/instance';
 import { useToast } from '@/hooks/ui/useToast';
 import { AccountWaitOrder } from '@/types/waitOrder';
 
-export async function myWaitOrders(token: string): Promise<AccountWaitOrder[]> {
+export async function myWaitOrders(): Promise<AccountWaitOrder[]> {
 	const response = await authInstance.get(`/trade/tradeData`, {});
 	return response.data.result;
 }
