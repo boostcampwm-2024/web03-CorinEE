@@ -11,10 +11,10 @@ function Router() {
 	return (
 		<Suspense>
 			<Routes>
-				<Route element={<Layout />}>
-					<Route path="/" element={<Home />} />
-					<Route path="/account" element={<Account />} />
-					<Route path="/trade/:market" element={<Trade />} />
+				<Route element={<Layout/>}>
+					<Route path="/" element={<Home />}/>
+					<Route path="/account" element={<Account />}/>
+					<Route path="/trade/:market" element={<Trade />}/>
 				</Route>
 				<Route path="/auth/callback" element={<Redricet />} />
 				<Route path="*" element={<NotFound />} />
