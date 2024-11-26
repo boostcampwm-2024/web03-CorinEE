@@ -7,12 +7,16 @@ import {
 import { config } from 'dotenv';
 import { setupSshTunnel } from './configs/ssh-tunnel';
 import { AllExceptionsFilter } from 'common/all-exceptions.filter';
+import { WinstonModule } from 'nest-winston';
+import { winstonConfig } from './configs/winston.config';
 
 config();
 
 async function bootstrap() {
   await setupSshTunnel();
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: WinstonModule.createLogger(winstonConfig),
+  });
   app.enableCors({
     origin: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
