@@ -4,4 +4,4 @@ export type SideBarCategory = 'MY_INVESTMENT' | 'INTEREST' | 'RECENTLY_VIEWED' |
 
 export type MarketCategory = Market | 'INTEREST' | 'OWN';
 
-export type AccountCategory = 'BALANCE' | 'HISTORY' | 'WAIT_ORDERS'
+
