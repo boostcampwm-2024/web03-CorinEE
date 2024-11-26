@@ -30,7 +30,7 @@ export function useRealTimeCandle({
 			!lastCandleRef.current ||
 			lastCandleRef.current.time !== currentCandleStartTime
 		) {
-			refetch();
+			// refetch();
 		} else {
 			const updatedCandle = {
 				...lastCandleRef.current,
