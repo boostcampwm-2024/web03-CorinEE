@@ -43,6 +43,7 @@ export class AccountService {
           coinNameData.get(`USDT-${name}`),
         market: name,
         quantity: myCoin.quantity,
+        availableQuantity: myCoin.availableQuantity,
         price: myCoin.price,
         averagePrice: myCoin.price / myCoin.quantity,
       };
