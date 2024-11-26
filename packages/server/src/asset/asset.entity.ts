@@ -22,6 +22,9 @@ export class Asset {
   @Column('double')
   quantity: number;
 
+  @Column('double')
+  availableQuantity: number;
+
   @CreateDateColumn({ type: 'timestamp' })
   created: Date;
 
