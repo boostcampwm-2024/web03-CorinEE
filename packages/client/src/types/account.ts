@@ -13,3 +13,12 @@ export type AccountCoin = {
 	averagePrice: number;
 	availableQuantity: number;
 };
+
+export type CategoryKey = 'balance' | 'history' | 'wait_orders';
+
+export type CategoryInfo = {
+  [K in CategoryKey]: {
+    text: string;
+    path: string;
+  }
+};
