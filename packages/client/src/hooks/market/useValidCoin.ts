@@ -1,6 +1,6 @@
 import { useMarketAll } from '@/hooks/market/useMarketAll';
 import { useMemo } from 'react';
-import { filterCoin } from '@/utility/filter';
+import { filterCoin } from '@/utility/validation/filter';
 export function useValidCoin(market: string | undefined) {
 	const { data } = useMarketAll();
 	const KRW_Markets = useMemo(() => filterCoin(data, 'KRW'), [data]);
