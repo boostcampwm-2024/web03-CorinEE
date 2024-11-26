@@ -1,5 +1,6 @@
 import { getCandleByPeriod } from '@/api/market';
 import { Candle, CandlePeriod, InfiniteCandle } from '@/types/chart';
+import { getPeriodMs } from '@/utility/chart/chartTimeUtils';
 import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
 
 export function usePeriodChart(
@@ -29,6 +30,7 @@ export function usePeriodChart(
 				candles: data.pages.flat(),
 				hasNextPage: data.pages[data.pages.length - 1]?.length === 200,
 			}),
+			refetchInterval: getPeriodMs(period, minute),
 		});
 
 	return {
