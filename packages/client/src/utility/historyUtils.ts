@@ -1,4 +1,4 @@
-import { AccountHistory, Period } from '@/types/history';
+import { AccountHistory, Option, Period } from '@/types/history';
 
 export function getCustomDateRange(period: Period) {
 	const endDate = new Date();
