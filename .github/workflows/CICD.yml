@@ -6,7 +6,7 @@ on:
       - main
       - dev
       - dev-be
-      - hotfix-be-#37
+      - hotfix-be-#114
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
