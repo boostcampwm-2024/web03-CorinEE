@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AssetRepository } from '@src/asset/asset.repository';
-import { UPBIT_IMAGE_URL } from 'common/upbit';
+import { UPBIT_IMAGE_URL } from '@src/upbit/constants';
 import { AccountRepository } from 'src/account/account.repository';
 import { MyAccountDto } from './dtos/myAccount.dto';
 import { CoinDataUpdaterService } from '@src/upbit/coin-data-updater.service';

@@ -4,7 +4,7 @@ import { AccountRepository } from 'src/account/account.repository';
 import { AssetRepository } from 'src/asset/asset.repository';
 import { TradeRepository } from './trade.repository';
 import { CoinDataUpdaterService } from 'src/upbit/coin-data-updater.service';
-import { UPBIT_IMAGE_URL } from 'common/upbit';
+import { UPBIT_IMAGE_URL } from '@src/upbit/constants';
 import { TradeDataDto } from './dtos/tradeData.dto';
 @Injectable()
 export class TradeService {

@@ -10,7 +10,7 @@ import { AssetRepository } from 'src/asset/asset.repository';
 import { TradeRepository } from './trade.repository';
 import { CoinDataUpdaterService } from 'src/upbit/coin-data-updater.service';
 import { TradeHistoryRepository } from '../trade-history/trade-history.repository';
-import { UPBIT_UPDATED_COIN_INFO_TIME } from 'common/upbit';
+import { UPBIT_UPDATED_COIN_INFO_TIME } from '@src/upbit/constants';
 import { UserRepository } from '@src/auth/user.repository';
 
 @Injectable()
