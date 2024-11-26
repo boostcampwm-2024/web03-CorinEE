@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { DataSource, QueryRunner } from 'typeorm';
 import { AccountRepository } from 'src/account/account.repository';
 import { AssetRepository } from 'src/asset/asset.repository';
@@ -8,377 +8,294 @@ import { UPBIT_IMAGE_URL } from '@src/upbit/constants';
 import { TradeDataDto } from './dtos/tradeData.dto';
 import { Inject } from '@nestjs/common';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import { Logger } from 'winston';
 import { TradeDeleteFailedException } from './exceptions/trade.exceptions';
 import { MINIMUM_TRADE_AMOUNT, TRADE_TYPES } from './constants/trade.constants';
-import { CoinPriceDto, TradeData, TradeResponse } from './dtos/trade.interface';
+import { TradeResponse } from './dtos/trade.interface';
 import { TradeHistoryRepository } from '../trade-history/trade-history.repository';
 import { UserRepository } from '@src/auth/user.repository';
 
 @Injectable()
 export class TradeService {
-	constructor(
-		@Inject(WINSTON_MODULE_PROVIDER) protected readonly logger: Logger,
-		protected readonly dataSource: DataSource,
-		protected readonly accountRepository: AccountRepository,
-		protected readonly assetRepository: AssetRepository,
-		protected readonly tradeRepository: TradeRepository,
-		protected readonly userRepository: UserRepository,
-		protected readonly tradeHistoryRepository: TradeHistoryRepository,
-		protected readonly coinDataUpdaterService: CoinDataUpdaterService,
-	) {}
+  private readonly logger = new Logger(TradeService.name);
 
-	async checkMyCoinData(user: any, coin: string): Promise<TradeResponse> {
-		try {
-			const account = await this.accountRepository.findOne({
-				where: { user: { id: user.userId } },
-			});
+  constructor(
+    protected readonly dataSource: DataSource,
+    protected readonly accountRepository: AccountRepository,
+    protected readonly assetRepository: AssetRepository,
+    protected readonly tradeRepository: TradeRepository,
+    protected readonly userRepository: UserRepository,
+    protected readonly tradeHistoryRepository: TradeHistoryRepository,
+    protected readonly coinDataUpdaterService: CoinDataUpdaterService,
+  ) {}
 
-			if (!account) {
-				return {
-					statusCode: 400,
-					message: '등록되지 않은 사용자입니다.',
-				};
-			}
+  async checkMyCoinData(user: any, coin: string): Promise<TradeResponse> {
+    try {
+      const account = await this.accountRepository.findOne({
+        where: { user: { id: user.userId } },
+      });
 
-			const coinData = await this.assetRepository.findOne({
-				where: {
-					account: { id: account.id },
-					assetName: coin,
-				},
-			});
+      if (!account) {
+        return {
+          statusCode: 400,
+          message: '등록되지 않은 사용자입니다.',
+        };
+      }
 
-			return {
-				statusCode: coinData ? 200 : 201,
-				message: coinData
-					? '보유하고 계신 코인입니다.'
-					: '보유하지 않은 코인입니다.',
-				result: coinData,
-			};
-		} catch (error) {
-			this.logger.error('코인 데이터 조회 실패', {
-				error: error.stack,
-				userId: user.userId,
-			});
-			throw error;
-		}
-	}
+      const coinData = await this.assetRepository.findOne({
+        where: {
+          account: { id: account.id },
+          assetName: coin,
+        },
+      });
 
-	async getMyTradeData(user: any, coin?: string): Promise<TradeResponse> {
-		try {
-			let tradeData = await this.tradeRepository.find({
-				where: { user: { id: user.userId } },
-			});
+      return {
+        statusCode: coinData ? 200 : 201,
+        message: coinData
+          ? '보유하고 계신 코인입니다.'
+          : '보유하지 않은 코인입니다.',
+        result: coinData,
+      };
+    } catch (error) {
+      this.logger.error('코인 데이터 조회 실패', {
+        error: error.stack,
+        userId: user.userId,
+      });
+      throw error;
+    }
+  }
 
-			if (tradeData.length === 0) {
-				return {
-					statusCode: 201,
-					message: '미체결 데이터가 없습니다.',
-					result: [],
-				};
-			}
+  async getMyTradeData(user: any, coin?: string): Promise<TradeResponse> {
+    try {
+      let tradeData = await this.tradeRepository.find({
+        where: { user: { id: user.userId } },
+      });
 
-			const coinNameData = this.coinDataUpdaterService.getCoinNameList();
+      if (tradeData.length === 0) {
+        return {
+          statusCode: 201,
+          message: '미체결 데이터가 없습니다.',
+          result: [],
+        };
+      }
 
-			if (coin) {
-				tradeData = this.filterTradesByCoin(tradeData, coin);
-			}
+      const coinNameData = this.coinDataUpdaterService.getCoinNameList();
 
-			const result = this.mapTradeDataToDto(tradeData, coinNameData, user);
+      if (coin) {
+        tradeData = this.filterTradesByCoin(tradeData, coin);
+      }
 
-			return {
-				statusCode: 200,
-				message: '미체결 데이터가 있습니다.',
-				result,
-			};
-		} catch (error) {
-			this.logger.error('미체결 데이터 조회 실패', {
-				error: error.stack,
-				userId: user.userId,
-			});
-			throw error;
-		}
-	}
+      const result = this.mapTradeDataToDto(tradeData, coinNameData, user);
 
-	private filterTradesByCoin(trades: any[], coin: string): any[] {
-		const [assetName, tradeCurrency] = coin.split('-');
-		return trades.filter(
-			({ assetName: a, tradeCurrency: t }) =>
-				(a === assetName && t === tradeCurrency) ||
-				(a === tradeCurrency && t === assetName),
-		);
-	}
+      return {
+        statusCode: 200,
+        message: '미체결 데이터가 있습니다.',
+        result,
+      };
+    } catch (error) {
+      this.logger.error('미체결 데이터 조회 실패', {
+        error: error.stack,
+        userId: user.userId,
+      });
+      throw error;
+    }
+  }
 
-	private mapTradeDataToDto(
-		trades: any[],
-		coinNameData: Map<string, string>,
-		user: any,
-	): TradeDataDto[] {
-		return trades.map((trade) => {
-			const name =
-				trade.tradeType === TRADE_TYPES.BUY
-					? trade.tradeCurrency
-					: trade.assetName;
-			const tradeType = trade.tradeType;
+  private filterTradesByCoin(trades: any[], coin: string): any[] {
+    const [assetName, tradeCurrency] = coin.split('-');
+    return trades.filter(
+      ({ assetName: a, tradeCurrency: t }) =>
+        (a === assetName && t === tradeCurrency) ||
+        (a === tradeCurrency && t === assetName),
+    );
+  }
 
-			return {
-				img_url: `${UPBIT_IMAGE_URL}${name}.png`,
-				koreanName:
-					coinNameData.get(`${trade.assetName}-${trade.tradeCurrency}`) ||
-					coinNameData.get(`${trade.tradeCurrency}-${trade.assetName}`),
-				coin:
-					tradeType === TRADE_TYPES.BUY ? trade.assetName : trade.tradeCurrency,
-				market:
-					tradeType === TRADE_TYPES.SELL
-						? trade.assetName
-						: trade.tradeCurrency,
-				tradeId: trade.tradeId,
-				tradeType,
-				price: trade.price,
-				quantity: trade.quantity,
-				createdAt: trade.createdAt,
-				userId: user.userId,
-			};
-		});
-	}
+  private mapTradeDataToDto(
+    trades: any[],
+    coinNameData: Map<string, string>,
+    user: any,
+  ): TradeDataDto[] {
+    return trades.map((trade) => {
+      const name =
+        trade.tradeType === TRADE_TYPES.BUY
+          ? trade.tradeCurrency
+          : trade.assetName;
+      const tradeType = trade.tradeType;
 
-	async deleteMyBidTrade(user: any, tradeId: number): Promise<TradeResponse> {
-		const queryRunner = this.dataSource.createQueryRunner();
-		await queryRunner.connect();
-		await queryRunner.startTransaction('READ COMMITTED');
+      return {
+        img_url: `${UPBIT_IMAGE_URL}${name}.png`,
+        koreanName:
+          coinNameData.get(`${trade.assetName}-${trade.tradeCurrency}`) ||
+          coinNameData.get(`${trade.tradeCurrency}-${trade.assetName}`),
+        coin:
+          tradeType === TRADE_TYPES.BUY ? trade.assetName : trade.tradeCurrency,
+        market:
+          tradeType === TRADE_TYPES.SELL
+            ? trade.assetName
+            : trade.tradeCurrency,
+        tradeId: trade.tradeId,
+        tradeType,
+        price: trade.price,
+        quantity: trade.quantity,
+        createdAt: trade.createdAt,
+        userId: user.userId,
+      };
+    });
+  }
 
-		try {
-			const trade = await this.tradeRepository.findTradeWithLock(
-				tradeId,
-				queryRunner,
-			);
+  async deleteMyBidTrade(user: any, tradeId: number): Promise<TradeResponse> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction('READ COMMITTED');
 
-			await this.tradeRepository.deleteTrade(tradeId, queryRunner);
+    try {
+      const trade = await this.tradeRepository.findTradeWithLock(
+        tradeId,
+        queryRunner,
+      );
 
-			const userAccount = await this.accountRepository.findOne({
-				where: { user: { id: user.userId } },
-			});
+      await this.tradeRepository.deleteTrade(tradeId, queryRunner);
 
-			const accountBalance = this.calculateAccountBalance(trade, userAccount);
+      const userAccount = await this.accountRepository.findOne({
+        where: { user: { id: user.userId } },
+      });
 
-			await this.accountRepository.updateAccountCurrency(
-				trade.tradeCurrency,
-				accountBalance,
-				userAccount.id,
-				queryRunner,
-			);
-			await queryRunner.commitTransaction();
+      const accountBalance = this.calculateAccountBalance(trade, userAccount);
 
-			return {
-				statusCode: 200,
-				message: '거래가 성공적으로 취소되었습니다.',
-			};
-		} catch (error) {
-			await queryRunner.rollbackTransaction();
-			this.logger.error('매수 거래 취소 실패', {
-				error: error.stack,
-				tradeId,
-				userId: user.userId,
-			});
-			throw new TradeDeleteFailedException(tradeId, error.message);
-		} finally {
-			await queryRunner.release();
-		}
-	}
+      await this.accountRepository.updateAccountCurrency(
+        trade.tradeCurrency,
+        accountBalance,
+        userAccount.id,
+        queryRunner,
+      );
+      await queryRunner.commitTransaction();
 
-	async deleteMyAskTrade(user: any, tradeId: number): Promise<TradeResponse> {
-		const queryRunner = this.dataSource.createQueryRunner();
-		await queryRunner.connect();
-		await queryRunner.startTransaction('READ COMMITTED');
+      return {
+        statusCode: 200,
+        message: '거래가 성공적으로 취소되었습니다.',
+      };
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      this.logger.error('매수 거래 취소 실패', {
+        error: error.stack,
+        tradeId,
+        userId: user.userId,
+      });
+      throw new TradeDeleteFailedException(tradeId, error.message);
+    } finally {
+      await queryRunner.release();
+    }
+  }
 
-		try {
-			const trade = await this.tradeRepository.findTradeWithLock(
-				tradeId,
-				queryRunner,
-			);
+  async deleteMyAskTrade(user: any, tradeId: number): Promise<TradeResponse> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction('READ COMMITTED');
 
-			await this.tradeRepository.deleteTrade(tradeId, queryRunner);
+    try {
+      const trade = await this.tradeRepository.findTradeWithLock(
+        tradeId,
+        queryRunner,
+      );
 
-			const userAccount = await this.accountRepository.findOne({
-				where: { user: { id: user.userId } },
-			});
+      await this.tradeRepository.deleteTrade(tradeId, queryRunner);
 
-			const userAsset = await this.assetRepository.findOne({
-				where: {
-					account: { id: userAccount.id },
-					assetName: trade.tradeCurrency,
-				},
-			});
+      const userAccount = await this.accountRepository.findOne({
+        where: { user: { id: user.userId } },
+      });
 
-			userAsset.availableQuantity = this.calculateAvailableQuantity(
-				userAsset,
-				trade,
-			);
+      const userAsset = await this.assetRepository.findOne({
+        where: {
+          account: { id: userAccount.id },
+          assetName: trade.tradeCurrency,
+        },
+      });
 
-			await this.assetRepository.updateAssetAvailableQuantity(
-				userAsset,
-				queryRunner,
-			);
-			await queryRunner.commitTransaction();
+      userAsset.availableQuantity = this.calculateAvailableQuantity(
+        userAsset,
+        trade,
+      );
 
-			return {
-				statusCode: 200,
-				message: '거래가 성공적으로 취소되었습니다.',
-			};
-		} catch (error) {
-			await queryRunner.rollbackTransaction();
-			this.logger.error('매도 거래 취소 실패', {
-				error: error.stack,
-				tradeId,
-				userId: user.userId,
-			});
-			throw new TradeDeleteFailedException(tradeId, error.message);
-		} finally {
-			await queryRunner.release();
-		}
-	}
+      await this.assetRepository.updateAssetAvailableQuantity(
+        userAsset,
+        queryRunner,
+      );
+      await queryRunner.commitTransaction();
 
-	private calculateAccountBalance(trade: any, userAccount: any): number {
-		return parseFloat(
-			(trade.price * trade.quantity + userAccount[trade.tradeCurrency]).toFixed(
-				8,
-			),
-		);
-	}
+      return {
+        statusCode: 200,
+        message: '거래가 성공적으로 취소되었습니다.',
+      };
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      this.logger.error('매도 거래 취소 실패', {
+        error: error.stack,
+        tradeId,
+        userId: user.userId,
+      });
+      throw new TradeDeleteFailedException(tradeId, error.message);
+    } finally {
+      await queryRunner.release();
+    }
+  }
 
-	private calculateAvailableQuantity(userAsset: any, trade: any): number {
-		return parseFloat(
-			(userAsset.availableQuantity + trade.quantity).toFixed(8),
-		);
-	}
+  private calculateAccountBalance(trade: any, userAccount: any): number {
+    return parseFloat(
+      (trade.price * trade.quantity + userAccount[trade.tradeCurrency]).toFixed(
+        8,
+      ),
+    );
+  }
 
-	protected async createTradeHistory(
-		user: any,
-		tradeData: any,
-		queryRunner: QueryRunner,
-	): Promise<void> {
-		await this.tradeHistoryRepository.createTradeHistory(
-			user,
-			tradeData,
-			queryRunner,
-		);
-	}
+  private calculateAvailableQuantity(userAsset: any, trade: any): number {
+    return parseFloat(
+      (userAsset.availableQuantity + trade.quantity).toFixed(8),
+    );
+  }
 
-	protected async updateAsset(
-		asset: any,
-		quantity: number,
-		price: number,
-		queryRunner: QueryRunner,
-	): Promise<void> {
-		if (quantity < MINIMUM_TRADE_AMOUNT) {
-			await this.assetRepository.delete({ assetId: asset.assetId });
-			return;
-		}
+  protected async createTradeHistory(
+    user: any,
+    tradeData: any,
+    queryRunner: QueryRunner,
+  ): Promise<void> {
+    await this.tradeHistoryRepository.createTradeHistory(
+      user,
+      tradeData,
+      queryRunner,
+    );
+  }
 
-		await this.assetRepository.updateAssetQuantityPrice(
-			{ ...asset, quantity, price },
-			queryRunner,
-		);
-	}
+  protected async updateAsset(
+    asset: any,
+    quantity: number,
+    price: number,
+    queryRunner: QueryRunner,
+  ): Promise<void> {
+    if (quantity < MINIMUM_TRADE_AMOUNT) {
+      await this.assetRepository.delete({ assetId: asset.assetId });
+      return;
+    }
 
-	protected async updateBTCBalance(
-		accountId: number,
-		quantity: number,
-		queryRunner: QueryRunner,
-	): Promise<void> {
-		await this.accountRepository.updateAccountBTC(
-			accountId,
-			quantity,
-			queryRunner,
-		);
-	}
+    await this.assetRepository.updateAssetQuantityPrice(
+      { ...asset, quantity, price },
+      queryRunner,
+    );
+  }
 
-	protected validateTradeAmount(amount: number, price: number): void {
-		if (amount * price < MINIMUM_TRADE_AMOUNT || amount <= 0) {
-			throw new BadRequestException('유효하지 않은 거래 금액입니다.');
-		}
-	}
+  protected async updateBTCBalance(
+    accountId: number,
+    quantity: number,
+    queryRunner: QueryRunner,
+  ): Promise<void> {
+    await this.accountRepository.updateAccountBTC(
+      accountId,
+      quantity,
+      queryRunner,
+    );
+  }
 
-	protected async executeTransaction<T>(
-		callback: (queryRunner: QueryRunner) => Promise<T>,
-	): Promise<T> {
-		const queryRunner = this.dataSource.createQueryRunner();
-		await queryRunner.connect();
-		await queryRunner.startTransaction('READ COMMITTED');
-
-		try {
-			const result = await callback(queryRunner);
-			await queryRunner.commitTransaction();
-			return result;
-		} catch (error) {
-			await queryRunner.rollbackTransaction();
-			throw error;
-		} finally {
-			await queryRunner.release();
-		}
-	}
-
-	protected async processPendingTrades(
-		tradeType: 'BUY' | 'SELL',
-		handler: (tradeDto: TradeData) => Promise<void>,
-	) {
-		try {
-			const coinLatestInfo = this.coinDataUpdaterService.getCoinLatestInfo();
-			if (coinLatestInfo.size === 0) return;
-
-			const coinPrices = this.buildCoinPrices(coinLatestInfo);
-			const availableTrades =
-				tradeType === 'BUY'
-					? await this.tradeRepository.searchBuyTrades(coinPrices)
-					: await this.tradeRepository.searchSellTrades(coinPrices);
-
-			for (const trade of availableTrades) {
-				const tradeDto = this.buildTradeDto(trade, coinLatestInfo, tradeType);
-				await handler(tradeDto);
-			}
-		} catch (error) {
-			this.logger.error('미체결 거래 처리 오류:', error);
-		} finally {
-			this.logger.log('info', `미체결 거래 처리 완료: ${new Date()}`);
-		}
-	}
-
-	private buildCoinPrices(coinLatestInfo: Map<string, any>): CoinPriceDto[] {
-		const prices: CoinPriceDto[] = [];
-		coinLatestInfo.forEach((value, key) => {
-			const [give, receive] = key.split('-');
-			prices.push({
-				give: give,
-				receive: receive,
-				price: value.trade_price,
-			});
-		});
-		return prices;
-	}
-
-	private buildTradeDto(
-		trade: any,
-		coinLatestInfo: Map<string, any>,
-		tradeType: 'BUY' | 'SELL',
-	): TradeData {
-		const [baseMarket, targetMarket] =
-			tradeType === 'BUY'
-				? [trade.assetName, trade.tradeCurrency]
-				: [trade.tradeCurrency, trade.assetName];
-
-		const krw = coinLatestInfo.get(`KRW-${baseMarket}`).trade_price;
-		const another = coinLatestInfo.get(
-			`${targetMarket}-${baseMarket}`,
-		).trade_price;
-
-		return {
-			userId: trade.user.id,
-			typeGiven: trade.tradeCurrency,
-			typeReceived: trade.assetName,
-			receivedPrice: trade.price,
-			receivedAmount: trade.quantity,
-			tradeId: trade.tradeId,
-			krw: krw / another,
-		};
-	}
+  protected validateTradeAmount(amount: number, price: number): void {
+    if (amount * price < MINIMUM_TRADE_AMOUNT || amount <= 0) {
+      throw new BadRequestException('유효하지 않은 거래 금액입니다.');
+    }
+  }
 }

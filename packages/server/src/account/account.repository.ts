@@ -1,4 +1,4 @@
-import { DataSource, Repository, QueryRunner } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Account } from './account.entity';
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { User } from 'src/auth/user.entity';
@@ -57,16 +57,28 @@ export class AccountRepository extends Repository<Account> {
 
   async validateUserAccount(userId: number) {
     const userAccount = await this.findOne({
-      where: { user: { id: userId } }
+      where: { user: { id: userId } },
     });
 
     if (!userAccount) {
       throw new UnprocessableEntityException({
         message: '유저가 존재하지 않습니다.',
-        statusCode: 422
+        statusCode: 422,
       });
     }
 
     return userAccount;
+  }
+  async getAccount(id, queryRunner) {
+    try {
+      return await queryRunner.manager.findOne(Account, {
+        where: {
+          user: { id: id },
+        },
+      });
+    } catch (error) {
+      console.error('Error fetching account:', error);
+      throw new Error('Failed to fetch account');
+    }
   }
 }

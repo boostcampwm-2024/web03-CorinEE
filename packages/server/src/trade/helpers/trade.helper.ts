@@ -1,13 +1,13 @@
-import { MINIMUM_TRADE_AMOUNT } from "../constants/trade.constants";
+import { MINIMUM_TRADE_AMOUNT } from '../constants/trade.constants';
 
-export const formatQuantity = (value: number): number => 
+export const formatQuantity = (value: number): number =>
   parseFloat(value.toFixed(8));
 
 export const calculateAccountBalance = (
   currentBalance: number,
   price: number,
-  quantity: number
+  quantity: number,
 ): number => formatQuantity(currentBalance + price * quantity);
 
-export const isMinimumQuantity = (quantity: number): boolean => 
+export const isMinimumQuantity = (quantity: number): boolean =>
   quantity < MINIMUM_TRADE_AMOUNT;

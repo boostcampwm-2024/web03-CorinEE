@@ -1,6 +1,6 @@
 export const TRADE_TYPES = {
-    BUY: 'buy',
-    SELL: 'sell'
+  BUY: 'buy',
+  SELL: 'sell',
 } as const;
 
 export const MINIMUM_TRADE_AMOUNT = 0.00000001;
