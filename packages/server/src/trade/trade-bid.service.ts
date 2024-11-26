@@ -12,7 +12,7 @@ import {
   TradeData,
   TradeResponse,
 } from './dtos/trade.interface';
-import { UPBIT_UPDATED_COIN_INFO_TIME } from 'common/upbit';
+import { UPBIT_UPDATED_COIN_INFO_TIME } from '../upbit/constants';
 import { TradeNotFoundException } from './exceptions/trade.exceptions';
 import { TradeAskBidService } from './trade-ask-bid.service';
 

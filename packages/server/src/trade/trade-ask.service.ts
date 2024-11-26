@@ -4,7 +4,7 @@ import {
   OnModuleInit,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { UPBIT_UPDATED_COIN_INFO_TIME } from 'common/upbit';
+import { UPBIT_UPDATED_COIN_INFO_TIME } from '../upbit/constants';
 import {
   OrderBookEntry,
   TradeData,
