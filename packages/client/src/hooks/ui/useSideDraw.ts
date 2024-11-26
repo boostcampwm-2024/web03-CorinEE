@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { SideBarCategory } from '@/types/category';
-import { isSideBarMenu } from '@/utility/typeGuard';
+import { isSideBarMenu } from '@/utility/validation/typeGuard';
 
 function useSideDrawer() {
 	const [activeMenu, setActiveMenu] = useState<SideBarCategory>(null);
