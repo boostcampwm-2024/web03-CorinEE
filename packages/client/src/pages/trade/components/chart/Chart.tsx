@@ -24,7 +24,7 @@ function Chart({ market, currentPrice }: ChartProps) {
 	};
 
 	return (
-		<div className="bg-gray-50 min-w-80 rounded-lg flex-[2] overflow-y-auto overflow-x-hidden min-h-0 z-0">
+		<div className="bg-gray-50 rounded-lg flex-[2] overflow-y-auto overflow-x-hidden min-h-0 z-0">
 			<ChartSelector
 				activePeriods={activePeriod}
 				handleActivePeriod={handleActivePeriod}

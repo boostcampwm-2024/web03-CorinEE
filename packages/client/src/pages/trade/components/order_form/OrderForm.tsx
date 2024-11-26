@@ -17,7 +17,7 @@ function OrderForm({ currentPrice, selectPrice }: OrderFormProps) {
 	const TABS = createOrderTabs({ currentPrice, selectPrice });
 
 	return (
-		<div className="bg-gray-50 flex-1 rounded-lg p-2 min-w-80">
+		<div className="bg-gray-50 flex-1 rounded-lg p-2">
 			<div className="text-sm font-semibold">주문하기</div>
 			<div className="flex bg-gray-200 rounded-lg mt-3">
 				{TABS.map((tab) => (

@@ -33,7 +33,7 @@ function TradeHeader({ market, sseData }: TradeHeaderProps) {
 	const image_url = sseData[market].image_url;
 
 	return (
-		<div className="w-full flex justify-between mb-3 min-w-[1300px]">
+		<div className="w-full flex justify-between mb-3">
 			<CoinInfo
 				korean_name={korean_name}
 				code={code}
