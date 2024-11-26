@@ -1,11 +1,9 @@
-import { instance } from '@/api/instance';
-import { History } from '@/types/history';
+import { authInstance } from '@/api/instance';
+import { AccountHistory } from '@/types/history';
 
-export async function myHistory(token: string): Promise<History[]> {
-	const response = await instance.get(`/tradehistory/tradehistoryData`, {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
+export async function myHistory(token: string): Promise<AccountHistory[]> {
+	const response = await authInstance.get(`/tradehistory/tradehistoryData`, {
+		
 	});
 
 	return response.data.result;
