@@ -28,6 +28,7 @@ export class AssetRepository extends Repository<Asset> {
 				.update(Asset)
 				.set({
 					quantity: asset.quantity,
+          availableQuantity: asset.availableQuantity,
 					price: asset.price,
 				})
 				.where('assetId = :assetId', { assetId: asset.assetId })
