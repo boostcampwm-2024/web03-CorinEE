@@ -55,7 +55,7 @@ export class TradeRepository extends Repository<Trade> {
 			.where('tradeId = :tradeId', { tradeId: tradeData.tradeId })
 			.execute();
 	}
-	async deleteTrade(tradeId: number, queryRunner: QueryRunner): Promise<Trade> {
+	async deleteTrade(tradeId: number, queryRunner){
 		try {
 			const trade = await queryRunner.manager.findOne(Trade, {
 				where: { tradeId },
@@ -134,8 +134,11 @@ export class TradeRepository extends Repository<Trade> {
 	async getTradeFindOne(tradeId, queryRunner) {
 		const tradeData = await queryRunner.manager.findOne(Trade, {
 			where: { tradeId: tradeId },
-			lock: { mode: 'pessimistic_read' },
+			lock: { 
+				mode: 'pessimistic_write',
+				timeout: 0,
+			}
 		});
-    return tradeData
+		return tradeData
 	}
 }

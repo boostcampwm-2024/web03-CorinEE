@@ -127,10 +127,6 @@ export class BidService implements OnModuleInit {
 				});
 				bidDto.accountBalance = account[typeGiven];
 				bidDto.account = account;
-				// const tradeData = await this.tradeRepository.findOne({
-				// 	where: { tradeId: tradeId },
-				// });
-				// if (!tradeData) break;
 				const result = await this.executeTrade(bidDto, order);
 				if (!result) break;
 			}
@@ -175,7 +171,6 @@ export class BidService implements OnModuleInit {
 				buyData,
 				queryRunner,
 			);
-
 			const asset = await this.assetRepository.findOne({
 				where: { account: { id: account.id }, assetName: typeReceived },
 			});
