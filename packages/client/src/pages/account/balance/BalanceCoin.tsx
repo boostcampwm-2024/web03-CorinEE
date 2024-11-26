@@ -1,7 +1,7 @@
 import { Change, CoinTicker } from '@/types/ticker';
 import colorClasses from '@/constants/priceColor';
 import { AccountCoin } from '@/types/account';
-import PORTFOLIO_EVALUATOR from '@/utility/portfolioEvaluator';
+import PORTFOLIO_EVALUATOR from '@/utility/finance/portfolioEvaluator';
 import { Link } from 'react-router-dom';
 
 type BalanceCoinProps = {
