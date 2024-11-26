@@ -74,6 +74,19 @@ export class AskService implements OnModuleInit {
 				'sell',
 				queryRunner,
 			);
+
+			const userAsset = await this.checkCurrency(
+				askDto,
+				userAccount,
+				queryRunner,
+			);
+
+			userAsset.availableQuantity = parseFloat(
+				(userAsset.availableQuantity - askDto.receivedAmount).toFixed(8),
+			);
+
+			this.assetRepository.updateAssetAvailableQuantity(userAsset, queryRunner);
+
 			await queryRunner.commitTransaction();
 
 			return {
@@ -107,7 +120,7 @@ export class AskService implements OnModuleInit {
 				statusCode: 422,
 			});
 		}
-		const accountBalance = userAsset.quantity;
+		const accountBalance = userAsset.availableQuantity;
 		const accountResult = accountBalance - receivedAmount;
 		if (accountResult < 0)
 			throw new UnprocessableEntityException({
@@ -186,17 +199,19 @@ export class AskService implements OnModuleInit {
 				queryRunner,
 			);
 
-      asset.quantity = parseFloat((asset.quantity - buyData.quantity).toFixed(8));
+			asset.quantity = parseFloat(
+				(asset.quantity - buyData.quantity).toFixed(8),
+			);
 			asset.price = parseFloat(
 				(asset.price - buyData.price * buyData.quantity).toFixed(8),
 			);
-      if(asset.quantity < 0.00000001){
-        await this.assetRepository.delete({
-          assetId :asset.assetId 
-        })
-      }else {
-        await this.assetRepository.updateAssetPrice(asset, queryRunner);
-      }
+			if (asset.quantity < 0.00000001) {
+				await this.assetRepository.delete({
+					assetId: asset.assetId,
+				});
+			} else {
+				await this.assetRepository.updateAssetPrice(asset, queryRunner);
+			}
 
 			const account = await this.accountRepository.findOne({
 				where: { user: { id: userId } },
