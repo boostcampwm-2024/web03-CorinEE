@@ -24,7 +24,7 @@ export class ChartService implements OnModuleInit {
 		if (type === 'minutes' && (!minute || !isValidMinute(minute))) {
 			throw new BadRequestException('유효하지 않은 분봉 값입니다.');
 		}
-
+ 
 		to = to || this.formatCurrentTime();
 
 		const key = await this.getAllKeys(coin, to, type, minute);
