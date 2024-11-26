@@ -17,8 +17,8 @@ import { winstonConfig } from './configs/winston.config';
 import { WinstonModule } from 'nest-winston';
 
 @Module({
-  imports: [  
-  AuthModule,
+  imports: [
+    AuthModule,
     HealthModule,
     AccountModule,
     TradeModule,

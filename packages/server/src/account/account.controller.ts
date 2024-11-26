@@ -1,24 +1,15 @@
 import {
-  Body,
   Controller,
-  Delete,
   Get,
   HttpCode,
   HttpStatus,
-  Post,
   Request,
   Res,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
-import { AuthService } from '@src/auth/auth.service';
-import {
-  ApiBody,
-  ApiBearerAuth,
-  ApiSecurity,
-  ApiResponse,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { AccountService } from './account.service';
 import { Response } from 'express';
 
@@ -37,7 +28,7 @@ export class AccountController {
       if (response instanceof UnauthorizedException) {
         return res
           .status(HttpStatus.UNAUTHORIZED)
-          .json({ message: response.message }); // UnauthorizedException 처리
+          .json({ message: response.message });
       }
 
       return res.status(response.statusCode).json(response.message);
