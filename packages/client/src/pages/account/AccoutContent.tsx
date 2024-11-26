@@ -1,4 +1,4 @@
-import AccountCategories from '@/pages/account/AccountCategory';
+import AccountCategories from '@/pages/account/AccountCategories';
 import History from '@/pages/account/history/History';
 import WaitOrders from '@/pages/account/waitOrders/WaitOrders';
 import Balance from '@/pages/account/balance/Balance';
