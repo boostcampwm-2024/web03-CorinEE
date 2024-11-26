@@ -185,6 +185,7 @@ export class BidService implements OnModuleInit {
 					(asset.price + buyData.price * buyData.quantity).toFixed(8),
 				);
 				asset.quantity += parseFloat(buyData.quantity.toFixed(8));
+				asset.availableQuantity += parseFloat(buyData.quantity.toFixed(8));
 				await this.assetRepository.updateAssetQuantityPrice(asset, queryRunner);
 			} else {
 				await this.assetRepository.createAsset(

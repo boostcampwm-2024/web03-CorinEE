@@ -176,6 +176,23 @@ export class TradeService {
 
 			await this.tradeRepository.deleteTrade(tradeId, queryRunner);
 
+			const userAccount = await this.accountRepository.findOne({
+				where: { user: { id: user.userId } },
+			});
+
+			const userAsset = await this.assetRepository.findOne({
+				where: {
+					account: { id: userAccount.id },
+					assetName: trade.tradeCurrency,
+				},
+			});
+
+			userAsset.availableQuantity = parseFloat(
+				(userAsset.availableQuantity + trade.quantity).toFixed(8),
+			);
+
+			this.assetRepository.updateAssetAvailableQuantity(userAsset, queryRunner);
+
 			await queryRunner.commitTransaction();
 
 			return {
@@ -183,6 +200,7 @@ export class TradeService {
 				message: '거래가 성공적으로 취소되었습니다.',
 			};
 		} catch (error) {
+			console.log(error);
 			await queryRunner.rollbackTransaction();
 			throw new UnprocessableEntityException({
 				statusCode: 422,
