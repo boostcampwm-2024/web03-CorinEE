@@ -37,9 +37,9 @@ function Trade() {
 
 	return (
 		<>
-			<div className="w-full h-full flex flex-col">
+			<div className="h-auto min-h-full pb-10">
 				<TradeHeader market={market} sseData={price} />
-				<div className="flex flex-1 gap-2 max-h-[670px] min-h-0">
+				<div className="flex flex-1 gap-2 max-h-[650px] min-h-0">
 					<Suspense fallback={<ChartSkeleton />}>
 						<Chart market={market} currentPrice={currentPrice} />
 					</Suspense>
@@ -50,10 +50,12 @@ function Trade() {
 					/>
 					<OrderForm currentPrice={currentPrice} selectPrice={selectPrice} />
 				</div>
+				<div className="w-96 h-full flex justify-center">
+					<Suspense>
+						<TradeFooter />
+					</Suspense>
+				</div>
 			</div>
-			<Suspense>
-				<TradeFooter />
-			</Suspense>
 		</>
 	);
 }
