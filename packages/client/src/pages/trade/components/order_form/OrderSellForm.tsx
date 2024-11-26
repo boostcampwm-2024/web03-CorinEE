@@ -63,7 +63,7 @@ function OrderSellForm({ currentPrice, selectPrice }: OrderSellFormProps) {
 							label="수량"
 							value={quantity}
 							onChange={setQuantity}
-							placeholder={`최대 ${targetCoin?.quantity}개 가능`}
+							placeholder={`최대 ${targetCoin?.availableQuantity}개 가능`}
 							errorMessage={quantityErrorMessage}
 						/>
 						<PercentageButtons
