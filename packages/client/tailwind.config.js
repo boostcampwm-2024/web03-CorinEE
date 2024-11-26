@@ -12,12 +12,12 @@ module.exports = withMT({
 				sans: ['Pretendard', 'sans-serif'],
 			},
 			animation: {
-				infiniteScroll: 'infiniteScroll 250s linear infinite',
+				infiniteScroll: 'infiniteScroll 500s linear infinite',
 			},
 			keyframes: {
 				infiniteScroll: {
 					'0%': { transform: 'translateX(0)' },
-					'100%': { transform: 'translateX(-50%)' },
+					'100%': { transform: 'translateX(-100%)' },
 				},
 			},
 		},
