@@ -2,6 +2,7 @@ export interface TradeResponse {
   statusCode: number;
   message: string;
   result?: any;
+  own?: boolean;
 }
 
 export interface CoinPriceDto {
