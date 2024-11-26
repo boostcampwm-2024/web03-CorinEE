@@ -17,14 +17,13 @@ export async function deleteWaitOrders(
 		tradeType: tradeType,
 	});
 
-	const response = await authInstance.delete<{status:number}>(
+	const response = await authInstance.delete<{ status: number }>(
 		`/trade/tradeData?${params.toString()}`,
 	);
 
-
 	if (response.status === 200) {
-	 toast.success('주문을 취소하였습니다.')
-	}else{
-		toast.error('주문 취소를 실패했습니다.')
+		toast.success('주문을 취소하였습니다.');
+	} else {
+		toast.error('주문 취소를 실패했습니다.');
 	}
 }
