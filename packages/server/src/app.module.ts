@@ -13,10 +13,12 @@ import { ScheduleModule as NestScheduleModule } from '@nestjs/schedule';
 import { ScheduleModule } from './schedule/schedule.module';
 import { TradehistoryModule } from './trade-history/trade-history.module';
 import { FavoriteModule } from './favorite/favorite.module';
+import { winstonConfig } from './configs/winston.config';
+import { WinstonModule } from 'nest-winston';
 
 @Module({
-  imports: [
-    AuthModule,
+  imports: [  
+  AuthModule,
     HealthModule,
     AccountModule,
     TradeModule,
@@ -31,6 +33,7 @@ import { FavoriteModule } from './favorite/favorite.module';
     ScheduleModule,
     TradehistoryModule,
     FavoriteModule,
+    WinstonModule.forRoot(winstonConfig),
   ],
   controllers: [AppController],
   providers: [AppService],
