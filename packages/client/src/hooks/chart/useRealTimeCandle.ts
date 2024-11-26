@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { CandleFormat, CandlePeriod } from '@/types/chart';
 import { ISeriesApi } from 'lightweight-charts';
-import { getCurrentCandleStartTime } from '@/utility/chart/chartTimeUtils';
 
 type Props = {
 	seriesRef: React.RefObject<ISeriesApi<'Candlestick'>>;
@@ -20,31 +19,22 @@ export function useRealTimeCandle({
 
 	const updateRealTimeCandle = () => {
 		if (!seriesRef.current || !currentPrice || !lastCandleRef.current) return;
-
-		const currentCandleStartTime = getCurrentCandleStartTime(
-			activePeriod,
-			minute,
-		);
-		if (
-			!lastCandleRef.current ||
-			lastCandleRef.current.time !== currentCandleStartTime
-		) {
-			// refetch();
-		} else {
-			const updatedCandle = {
-				...lastCandleRef.current,
-				close: currentPrice,
-				high: Math.max(lastCandleRef.current.high, currentPrice),
-				low: Math.min(lastCandleRef.current.low, currentPrice),
-			};
-			lastCandleRef.current = updatedCandle;
-			seriesRef.current.update(updatedCandle);
-		}
+		const updatedCandle = {
+			...lastCandleRef.current,
+			close: currentPrice,
+			high: Math.max(lastCandleRef.current.high, currentPrice),
+			low: Math.min(lastCandleRef.current.low, currentPrice),
+		};
+		lastCandleRef.current = updatedCandle;
+		seriesRef.current.update(updatedCandle);
 	};
 
 	useEffect(() => {
-		if (!seriesRef.current || !currentPrice) return;
-		updateRealTimeCandle();
+		const intervalId = setInterval(() => {
+			if (!seriesRef.current || !currentPrice) return;
+			updateRealTimeCandle();
+		}, 500);
+		return () => clearInterval(intervalId);
 	}, [currentPrice, minute, activePeriod]);
 
 	return { lastCandleRef };
