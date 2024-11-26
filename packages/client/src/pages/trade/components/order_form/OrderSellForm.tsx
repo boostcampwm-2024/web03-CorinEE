@@ -7,7 +7,7 @@ import { useCheckCoin } from '@/hooks/trade/useCheckCoin';
 import { useMarketParams } from '@/hooks/market/useMarketParams';
 import { useOrderForm } from '@/hooks/trade/useOrderForm';
 import { useMyAccount } from '@/hooks/auth/useMyAccount';
-import { calculateProfitInfo } from '@/utility/calculateProfit';
+import { calculateProfitInfo } from '@/utility/finance/calculateProfit';
 
 type OrderSellFormProps = {
 	currentPrice: number;
