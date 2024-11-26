@@ -20,7 +20,7 @@ export class TradeHistoryRepository extends Repository<TradeHistory> {
       tradeHistory.user = user;
       tradeHistory.tradeCurrency = trade.tradeCurrency;
       tradeHistory.createdAt = trade.createdAt;
-
+ 
       await queryRunner.manager.save(TradeHistory, tradeHistory);
     } catch (e) {
       console.log(e);
