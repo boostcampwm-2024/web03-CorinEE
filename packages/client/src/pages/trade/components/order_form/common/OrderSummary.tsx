@@ -1,4 +1,4 @@
-import { calculateTotalPrice } from '@/utility/order';
+import { calculateTotalPrice } from '@/utility/finance/calculateTotalPrice';
 
 interface OrderSummaryProps {
 	price: string;
