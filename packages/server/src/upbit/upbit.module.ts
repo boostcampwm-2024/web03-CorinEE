@@ -10,17 +10,16 @@ import { ChartService } from './chart.service';
 
 @Global()
 @Module({
-	imports: [HttpModule,
-	],
-	providers: [
-		CoinDataUpdaterService,
-		ChartService,
-		CoinTickerService,
-		CoinListService,
-		SseService,
-		OrderbookService,
-	],
-	controllers: [UpbitController],
-	exports: [CoinDataUpdaterService],
+  imports: [HttpModule],
+  providers: [
+    CoinTickerService,
+    CoinListService,
+    SseService,
+    OrderbookService,
+    CoinDataUpdaterService,
+    ChartService,
+  ],
+  controllers: [UpbitController],
+  exports: [CoinDataUpdaterService],
 })
 export class UpbitModule {}
