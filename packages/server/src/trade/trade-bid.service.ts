@@ -1,11 +1,10 @@
 import {
 	BadRequestException,
 	Injectable,
-	InternalServerErrorException,
 	OnModuleInit,
 	UnprocessableEntityException,
 } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { QueryRunner } from 'typeorm';
 import { AccountRepository } from 'src/account/account.repository';
 import { AssetRepository } from 'src/asset/asset.repository';
 import { TradeRepository } from './trade.repository';
@@ -13,280 +12,292 @@ import { CoinDataUpdaterService } from 'src/upbit/coin-data-updater.service';
 import { TradeHistoryRepository } from '../trade-history/trade-history.repository';
 import { UPBIT_UPDATED_COIN_INFO_TIME } from '@src/upbit/constants';
 import { UserRepository } from '@src/auth/user.repository';
+import { TRANSACTION_CHECK_INTERVAL } from './constants/trade.constants';
+import { formatQuantity, isMinimumQuantity } from './helpers/trade.helper';
+import {
+	OrderBookEntry,
+	TradeData,
+	TradeResponse,
+} from './dtos/trade.interface';
+import { UPBIT_UPDATED_COIN_INFO_TIME } from 'common/upbit';
+import { TradeService } from './trade.service';
+import { TradeNotFoundException } from './exceptions/trade.exceptions';
 
 @Injectable()
-export class BidService implements OnModuleInit {
-	private transactionBuy: boolean = false;
+export class BidService extends TradeService implements OnModuleInit {
+	private transactionBid: boolean = false;
 	private transactionCreateBid: boolean = false;
-	private matchPendingTradesTimeoutId: NodeJS.Timeout | null = null;
-
-	constructor(
-		private accountRepository: AccountRepository,
-		private assetRepository: AssetRepository,
-		private tradeRepository: TradeRepository,
-		private coinDataUpdaterService: CoinDataUpdaterService,
-		private userRepository: UserRepository,
-		private readonly dataSource: DataSource,
-		private tradeHistoryRepository: TradeHistoryRepository,
-	) {}
+	private isProcessing: { [key: number]: boolean } = {};
 
 	onModuleInit() {
-		this.matchPendingTrades();
+		this.startPendingTradesProcessor();
 	}
 
-	async calculatePercentBuy(user, moneyType: string, percent: number) {
-		const money = await this.accountRepository.getMyMoney(user, moneyType);
-
-		return parseFloat((money * (percent / 100)).toFixed(8));
-	}
-	async createBidTrade(user, bidDto) {
-		if (bidDto.receivedAmount * bidDto.receivedPrice < 0.00000001)
-			throw new BadRequestException();
-		if (this.transactionCreateBid) await this.waitForTransactionOrderBid();
-		this.transactionCreateBid = true;
-		const queryRunner = this.dataSource.createQueryRunner();
-		await queryRunner.connect();
-		await queryRunner.startTransaction('READ COMMITTED');
-		try {
-			if (bidDto.receivedAmount <= 0) throw new BadRequestException();
-			const userAccount = await this.accountRepository.findOne({
-				where: {
-					user: { id: user.userId },
-				},
-			});
-			if (!userAccount) {
-				throw new UnprocessableEntityException({
-					message: '유저가 존재하지 않습니다.',
-					statusCode: 422,
-				});
+	private startPendingTradesProcessor() {
+		const processBidTrades = async () => {
+			try{
+				await this.processPendingTrades('BUY', this.bidTradeService.bind(this));
+			} finally{
+				setTimeout(processBidTrades, UPBIT_UPDATED_COIN_INFO_TIME);
 			}
-			const accountBalance = await this.checkCurrency(user, bidDto);
-			await this.accountRepository.updateAccountCurrency(
-				bidDto.typeGiven,
-				parseFloat(accountBalance.toFixed(8)),
-				userAccount.id,
-				queryRunner,
-			);
-			await this.tradeRepository.createTrade(
-				bidDto,
-				user.userId,
-				'buy',
-				queryRunner,
-			);
-			await queryRunner.commitTransaction();
-			return {
-				statusCode: 200,
-				message: '거래가 정상적으로 등록되었습니다.',
-			};
-		} catch (error) {
-			console.log(error);
-			await queryRunner.rollbackTransaction();
-			if (error instanceof UnprocessableEntityException || BadRequestException)
-				throw error;
-			return new InternalServerErrorException({
-				statusCode: 500,
-				message: '거래 등록에 실패했습니다.',
+		};
+		processBidTrades();
+	}
+
+	async calculatePercentBuy(
+		user: any,
+		moneyType: string,
+		percent: number,
+	): Promise<number> {
+		const account = await this.accountRepository.findOne({
+			where: { user: { id: user.userId } },
+		});
+
+		const balance = account[moneyType];
+		return formatQuantity(balance * (percent / 100));
+	}
+
+	async createBidTrade(user: any, bidDto: TradeData): Promise<TradeResponse> {
+		if (isMinimumQuantity(bidDto.receivedAmount * bidDto.receivedPrice)) {
+			throw new BadRequestException('최소 거래 금액보다 작습니다.');
+		}
+
+		if (this.transactionCreateBid) {
+			await this.waitForTransaction(() => this.transactionCreateBid);
+		}
+		this.transactionCreateBid = true;
+
+		try {
+			return await this.executeTransaction(async (queryRunner) => {
+				if (bidDto.receivedAmount <= 0) {
+					throw new BadRequestException('수량은 0보다 커야 합니다.');
+				}
+
+				const userAccount = await this.accountRepository.validateUserAccount(
+					user.userId,
+				);
+				const accountBalance = await this.checkCurrencyBalance(
+					user,
+					bidDto,
+					userAccount,
+					queryRunner,
+				);
+
+				await this.accountRepository.updateAccountCurrency(
+					bidDto.typeGiven,
+					accountBalance,
+					userAccount.id,
+					queryRunner,
+				);
+
+				await this.tradeRepository.createTrade(
+					bidDto,
+					user.userId,
+					'buy',
+					queryRunner,
+				);
+
+				return {
+					statusCode: 200,
+					message: '거래가 정상적으로 등록되었습니다.',
+				};
 			});
 		} finally {
-			await queryRunner.release();
 			this.transactionCreateBid = false;
 		}
 	}
-	async checkCurrency(user, bidDto) {
+
+	private async checkCurrencyBalance(
+		user: any,
+		bidDto: TradeData,
+		account: any,
+		queryRunner: QueryRunner,
+	): Promise<number> {
 		const { typeGiven, receivedPrice, receivedAmount } = bidDto;
-		const givenAmount = parseFloat((receivedPrice * receivedAmount).toFixed(8));
-		const userAccount = await this.accountRepository.findOne({
-			where: {
-				user: { id: user.userId },
-			},
-		});
-		const accountBalance = userAccount[typeGiven];
-		const accountResult = accountBalance - givenAmount;
+		const balance = account[typeGiven];
 
-		if (accountResult < 0) {
-			throw new UnprocessableEntityException({
-				message: '자산이 부족합니다.',
-				statusCode: 422,
-			});
+		const givenAmount = formatQuantity(receivedPrice * receivedAmount);
+		const remaining = formatQuantity(balance - givenAmount);
+
+		if (remaining < 0) {
+			throw new UnprocessableEntityException('자산이 부족합니다.');
 		}
-		return accountResult;
+
+		return remaining;
 	}
-	async bidTradeService(bidDto) {
-		if (this.transactionBuy) await this.waitForTransactionOrder();
-		this.transactionBuy = true;
-		const { tradeId, typeGiven, receivedPrice, userId } = bidDto;
+
+	private async bidTradeService(bidDto: TradeData): Promise<void> {
+		if (this.isProcessing[bidDto.tradeId]) {
+			return;
+		}
+	
+		this.isProcessing[bidDto.tradeId] = true;
+	
 		try {
-			const currentCoinOrderbook =
-				this.coinDataUpdaterService.getCoinOrderbookByBid(bidDto);
-			for (const order of currentCoinOrderbook) {
-				if (order.ask_price > receivedPrice) break;
-				const account = await this.accountRepository.findOne({
-					where: {
-						user: { id: userId },
-					},
-				});
-				bidDto.accountBalance = account[typeGiven];
-				bidDto.account = account;
-				const result = await this.executeTrade(bidDto, order);
-				if (!result) break;
-			}
+			const { userId, typeGiven } = bidDto;
+			// 트랜잭션 없이 계정 조회
+			const account = await this.accountRepository.findOne({
+				where: { user: { id: userId } }
+			});
+	
+			bidDto.accountBalance = account[typeGiven];
+			bidDto.account = account;
+	
+			const orderbook = this.coinDataUpdaterService.getCoinOrderbookByBid(bidDto);
+				
+			for (const order of orderbook) {
+				try {
+					if (order.ask_price > bidDto.receivedPrice) break;
+						
+					const queryRunner = this.dataSource.createQueryRunner();
+					await queryRunner.connect();
+					await queryRunner.startTransaction('READ COMMITTED');
+					try{
+						const tradeData = await this.tradeRepository.findTradeWithLock(
+							bidDto.tradeId,
+							queryRunner
+						);
 
-			return {
-				statusCode: 200,
-				message: '거래가 정상적으로 등록되었습니다.',
-			};
-		} catch (error) {
-			throw error;
+						if (!tradeData || isMinimumQuantity(tradeData.quantity)) {
+							break;
+						}
+
+						const remainingQuantity = await this.executeBidTrade(bidDto, order, tradeData, queryRunner);
+						
+						await queryRunner.commitTransaction();
+						if (isMinimumQuantity(remainingQuantity)) break;
+					}catch (error) {
+						await queryRunner.rollbackTransaction();
+						throw error;
+					} finally {
+						await queryRunner.release();
+					}
+	
+				} catch (error) {
+					if (error instanceof TradeNotFoundException) {
+						break;
+					}
+					throw error;
+				}
+			}
 		} finally {
-			this.transactionBuy = false;
+			delete this.isProcessing[bidDto.tradeId];
 		}
 	}
-	async executeTrade(bidDto, order) {
-		const queryRunner = this.dataSource.createQueryRunner();
-		await queryRunner.connect();
-		await queryRunner.startTransaction('READ COMMITTED');
 
+	private async executeBidTrade(
+		bidDto: TradeData,
+		order: OrderBookEntry,
+		tradeData: any,
+		queryRunner: QueryRunner
+	): Promise<number> {
 		const { ask_price, ask_size } = order;
-		const { userId, account, typeGiven, typeReceived, krw, tradeId} = bidDto;
-
-		const tradeData = await this.tradeRepository.getTradeFindOne(tradeId, queryRunner)
-    if (!tradeData) return false;
+		const { userId, account, typeGiven, typeReceived, krw } = bidDto;
+	
+		const buyData = { ...tradeData };
+		buyData.quantity = formatQuantity(
+			tradeData.quantity >= ask_size ? ask_size : tradeData.quantity,
+		);
+	
+		if (isMinimumQuantity(buyData.quantity)) {
+			return 0;
+		}
+	
+		buyData.price = formatQuantity(ask_price * krw);
+		const user = await this.userRepository.getUser(userId);
+	
+		await this.tradeHistoryRepository.createTradeHistory(user, buyData, queryRunner);
 		
-		let result = false;
-		try {
-			const buyData = { ...tradeData };
-			buyData.quantity =
-				buyData.quantity >= ask_size
-					? parseFloat(ask_size.toFixed(8))
-					: parseFloat(buyData.quantity.toFixed(8));
-			if (buyData.quantity < 0.00000001) {
-				await queryRunner.commitTransaction();
-				return true;
+		const asset = await this.assetRepository.findOne({
+			where: {
+				account: { id: account.id },
+				assetName: typeReceived,
 			}
-			buyData.price = parseFloat((ask_price * krw).toFixed(8));
-			const user = await this.userRepository.getUser(userId);
+		});
+	
+		await this.processAssetUpdate(bidDto, asset, buyData, queryRunner);
+		await this.updateAccountBalances(bidDto, buyData, queryRunner);
+		return await this.updateTradeData(tradeData, buyData, queryRunner);
+	}
 
-			await this.tradeHistoryRepository.createTradeHistory(
-				user,
-				buyData,
+	private async processAssetUpdate(
+		bidDto: TradeData,
+		asset: any,
+		buyData: any,
+		queryRunner: QueryRunner,
+	): Promise<void> {
+		if (asset) {
+			asset.price = formatQuantity(
+				asset.price + buyData.price * buyData.quantity,
+			);
+			asset.quantity = formatQuantity(asset.quantity + buyData.quantity);
+			asset.availableQuantity = formatQuantity(
+				asset.availableQuantity + buyData.quantity,
+			);
+
+			await this.assetRepository.updateAssetQuantityPrice(asset, queryRunner);
+		} else {
+			await this.assetRepository.createAsset(
+				bidDto,
+				formatQuantity(buyData.price * buyData.quantity),
+				formatQuantity(buyData.quantity),
 				queryRunner,
 			);
-			const asset = await this.assetRepository.findOne({
-				where: { account: { id: account.id }, assetName: typeReceived },
-			});
-      
-			if (asset) {
-				asset.price = parseFloat(
-					(asset.price + buyData.price * buyData.quantity).toFixed(8),
-				);
-				asset.quantity += parseFloat(buyData.quantity.toFixed(8));
-				asset.availableQuantity += parseFloat(buyData.quantity.toFixed(8));
-				await this.assetRepository.updateAssetQuantityPrice(asset, queryRunner);
-			} else {
-				await this.assetRepository.createAsset(
-					bidDto,
-					parseFloat((buyData.price * buyData.quantity).toFixed(8)),
-					buyData.quantity,
-					queryRunner,
-				);
-			}
+		}
+	}
 
-			tradeData.quantity -= parseFloat(buyData.quantity.toFixed(8));
+	private async updateAccountBalances(
+		bidDto: TradeData,
+		buyData: any,
+		queryRunner: QueryRunner,
+	): Promise<void> {
+		const { userId, account, typeGiven, typeReceived } = bidDto;
 
-			if (tradeData.quantity <= 0.00000001) {
-				await this.tradeRepository.deleteTrade(tradeId, queryRunner);
-			} else {
-				await this.tradeRepository.updateTradeTransaction(
-					tradeData,
-					queryRunner,
-				);
-			}
-			const change = (tradeData.price - buyData.price) * buyData.quantity;
-			const returnChange = parseFloat((change + account[typeGiven]).toFixed(8));
-			const new_asset = await this.assetRepository.findOne({
-				where: { account: { id: account.id }, assetName: 'BTC' },
-			});
-
-			if (typeReceived === 'BTC') {
-				const BTC_QUANTITY = new_asset ? asset.quantity : buyData.quantity;
-				await this.accountRepository.updateAccountBTC(
-					account.id,
-					BTC_QUANTITY,
-					queryRunner,
-				);
-			}
-
-			await this.accountRepository.updateAccountCurrency(
-				typeGiven,
-				returnChange,
+		if (typeReceived === 'BTC') {
+			const btcQuantity = formatQuantity(account.BTC + buyData.quantity);
+			await this.accountRepository.updateAccountBTC(
 				account.id,
+				btcQuantity,
 				queryRunner,
 			);
-
-			await queryRunner.commitTransaction();
-			result = true;
-		} catch (error) {
-			await queryRunner.rollbackTransaction();
-			console.log(error);
-		} finally {
-			await queryRunner.release();
-			return result;
 		}
+
+		const change = formatQuantity(
+			(bidDto.receivedPrice - buyData.price) * buyData.quantity,
+		);
+		const returnChange = formatQuantity(change + account[typeGiven]);
+
+		await this.accountRepository.updateAccountCurrency(
+			typeGiven,
+			returnChange,
+			account.id,
+			queryRunner,
+		);
 	}
 
-	async waitForTransactionOrder() {
+	private async updateTradeData(
+		tradeData: any,
+		buyData: any,
+		queryRunner: QueryRunner,
+	): Promise<number> {
+		tradeData.quantity = formatQuantity(tradeData.quantity - buyData.quantity);
+		if (isMinimumQuantity(tradeData.quantity)) {
+			await this.tradeRepository.deleteTrade(tradeData.tradeId, queryRunner);
+		} else {
+			await this.tradeRepository.updateTradeQuantity(tradeData, queryRunner);
+		}
+		return tradeData.quantity;
+	}
+
+	private async waitForTransaction(
+		checkCondition: () => boolean,
+	): Promise<void> {
 		return new Promise<void>((resolve) => {
 			const check = () => {
-				if (!this.transactionBuy) resolve();
-				else setTimeout(check, 100);
+				if (!checkCondition()) resolve();
+				else setTimeout(check, TRANSACTION_CHECK_INTERVAL);
 			};
 			check();
 		});
-	}
-	async waitForTransactionOrderBid() {
-		return new Promise<void>((resolve) => {
-			const check = () => {
-				if (!this.transactionCreateBid) resolve();
-				else setTimeout(check, 100);
-			};
-			check();
-		});
-	}
-	async matchPendingTrades() {
-		try {
-			const coinLatestInfo = this.coinDataUpdaterService.getCoinLatestInfo();
-			if (coinLatestInfo.size === 0) return;
-			const coinPrice = [];
-			coinLatestInfo.forEach((value, key) => {
-				const price = value.trade_price;
-				const [give, receive] = key.split('-');
-				coinPrice.push({ give: give, receive: receive, price: price });
-			});
-			const availableTrades =
-				await this.tradeRepository.searchBuyTrade(coinPrice);
-			availableTrades.forEach((trade) => {
-				const krw = coinLatestInfo.get(
-					['KRW', trade.assetName].join('-'),
-				).trade_price;
-				const another = coinLatestInfo.get(
-					[trade.tradeCurrency, trade.assetName].join('-'),
-				).trade_price;
-				const bidDto = {
-					userId: trade.user.id,
-					typeGiven: trade.tradeCurrency, //건네주는 통화
-					typeReceived: trade.assetName, //건네받을 통화 타입
-					receivedPrice: trade.price, //건네받을 통화 가격
-					receivedAmount: trade.quantity, //건네 받을 통화 갯수
-					tradeId: trade.tradeId,
-					krw: krw / another,
-				};
-				this.bidTradeService(bidDto);
-			});
-		} catch (error) {
-			console.error('미체결 거래 처리 오류:', error);
-		} finally {
-			console.log(`미체결 거래 처리 완료: ${Date()}`);
-			setTimeout(() => this.matchPendingTrades(), UPBIT_UPDATED_COIN_INFO_TIME);
-		}
 	}
 }
