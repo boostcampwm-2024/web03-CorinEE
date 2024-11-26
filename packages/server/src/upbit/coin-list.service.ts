@@ -1,161 +1,152 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
-import { UPBIT_IMAGE_URL } from 'common/upbit';
+import { Injectable, Logger } from '@nestjs/common';
+import { UPBIT_IMAGE_URL } from '@src/upbit/constants';
 import { CoinDataUpdaterService } from './coin-data-updater.service';
 
 @Injectable()
-export class CoinListService implements OnModuleInit {
-  constructor(
-    private readonly coinDataUpdaterService: CoinDataUpdaterService,
-  ) {}
+export class CoinListService {
 
-  onModuleInit() {
-    this.coinDataUpdaterService.updateCoinList();
-    this.coinDataUpdaterService.updateCoinCurrentPrice();
-    this.coinDataUpdaterService.updateCurrentOrderBook();
-  }
+  private readonly logger = new Logger(CoinListService.name);
 
-  async getMostTradeCoin() {
-    let krwCoinInfo = this.coinDataUpdaterService.getKrwCoinInfo();
-    while (!krwCoinInfo) {
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      krwCoinInfo = this.coinDataUpdaterService.getKrwCoinInfo();
-    }
-    return krwCoinInfo
-      .sort((a, b) => b.acc_trade_price_24h - a.acc_trade_price_24h)
-      .slice(0, 20)
-      .map((coin) => {
-        coin.code = coin.market;
-        this.convertToCodeCoinDto(coin);
-        return {
-          market: coin.code,
-          image_url: coin.image_url,
-          korean_name: coin.korean_name,
-        };
-      });
-  }
-  async getSimpleCoin(coins) {
-    let krwCoinInfo = this.coinDataUpdaterService.getKrwCoinInfo();
-    while (!krwCoinInfo) {
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      krwCoinInfo = this.coinDataUpdaterService.getKrwCoinInfo();
-    }
+	constructor(
+		private readonly coinDataUpdaterService: CoinDataUpdaterService,
+	) {}
 
-    if (!coins.length) return [];
 
-    return krwCoinInfo
-      .filter((coin) => coins.includes(coin.market))
-      .map((coin) => {
-        coin.code = coin.market;
-        this.convertToCodeCoinDto(coin);
-        return {
-          market: coin.code,
-          image_url: coin.image_url,
-          korean_name: coin.korean_name,
-        };
-      });
-  }
+	async getMostTradeCoin(): Promise<any[]> {
+		const krwCoinInfo = await this.waitForKrwCoinInfo();
+		return krwCoinInfo
+			.sort((a, b) => b.acc_trade_price_24h - a.acc_trade_price_24h)
+			.slice(0, 20)
+			.map((coin) => this.toSimpleCoinDto(coin));
+	}
 
-  getCoinNameList() {
-    return this.coinDataUpdaterService.getCoinCodeList();
-  }
+	async getSimpleCoin(markets: string[]): Promise<any[]> {
+		const krwCoinInfo = await this.waitForKrwCoinInfo();
+		if (!markets.length) return [];
+		return krwCoinInfo
+			.filter((coin) => markets.includes(coin.market))
+			.map((coin) => this.toSimpleCoinDto(coin));
+	}
 
-  getAllCoinList() {
-    return this.coinDataUpdaterService.getAllCoinList();
-  }
+	private toSimpleCoinDto(coin: any): any {
+		return {
+			market: coin.market,
+			image_url: this.getCoinImageURL(coin.market),
+			korean_name: this.coinDataUpdaterService
+				.getCoinNameList()
+				.get(coin.market),
+		};
+	}
 
-  getKRWCoinList() {
-    return this.coinDataUpdaterService
-      .getAllCoinList()
-      .filter((coin) => coin.market.startsWith('KRW'));
-  }
+	private async waitForKrwCoinInfo(): Promise<any[]> {
+		let krwCoinInfo = this.coinDataUpdaterService.getKrwCoinInfo();
+		while (!krwCoinInfo) {
+			await new Promise((resolve) => setTimeout(resolve, 100));
+			krwCoinInfo = this.coinDataUpdaterService.getKrwCoinInfo();
+		}
+		return krwCoinInfo;
+	}
 
-  getBTCCoinList() {
-    return this.coinDataUpdaterService
-      .getAllCoinList()
-      .filter((coin) => coin.market.startsWith('BTC'));
-  }
+	getCoinNameList() {
+		return this.coinDataUpdaterService.getCoinCodeList();
+	}
 
-  getUSDTCoinList() {
-    return this.coinDataUpdaterService
-      .getAllCoinList()
-      .filter((coin) => coin.market.startsWith('USDT'));
-  }
+	getAllCoinList() {
+		return this.coinDataUpdaterService.getAllCoinList();
+	}
 
-  getCoinTickers(coins) {
-    const coinData = this.coinDataUpdaterService.getCoinLatestInfo();
+	getKRWCoinList() {
+		return this.coinDataUpdaterService
+			.getAllCoinList()
+			.filter((coin) => coin.market.startsWith('KRW'));
+	}
 
-    const filteredData = Array.from(coinData.entries())
-      .filter(([symbol]) => !coins || coins.includes(symbol))
-      .map(([symbol, details]) => ({
-        code: symbol,
-        ...details,
-      }));
+	getBTCCoinList() {
+		return this.coinDataUpdaterService
+			.getAllCoinList()
+			.filter((coin) => coin.market.startsWith('BTC'));
+	}
 
-    return filteredData;
-  }
+	getUSDTCoinList() {
+		return this.coinDataUpdaterService
+			.getAllCoinList()
+			.filter((coin) => coin.market.startsWith('USDT'));
+	}
 
-  convertToCodeCoinDto = (coin) => {
-    coin.korean_name = this.coinDataUpdaterService
-      .getCoinNameList()
-      .get(coin.code);
-    coin.image_url = this.getCoinImageURL(coin.code);
-    return coin;
-  };
-  convertToMarketCoinDto = (coin) => {
-    coin.korean_name = this.coinDataUpdaterService
-      .getCoinNameList()
-      .get(coin.market);
-    coin.image_url = this.getCoinImageURL(coin.market);
-    coin.type = 'ticker';
-    coin.code = coin.market;
+	getCoinTickers(coins: string[]): any[] {
+		const coinData = this.coinDataUpdaterService.getCoinLatestInfo();
 
-    return coin;
-  };
+		return Array.from(coinData.entries())
+			.filter(([symbol]) => !coins || coins.includes(symbol))
+			.map(([symbol, details]) => ({
+				code: symbol,
+				...details,
+			}));
+	}
 
-  convertToOrderbookDto = (message) => {
-    const beforeTopPrice = this.coinDataUpdaterService
-      .getCoinLatestInfo()
-      .get(message.code).prev_closing_price;
+	convertToCodeCoinDto = (coin) => {
+		coin.korean_name = this.coinDataUpdaterService
+			.getCoinNameList()
+			.get(coin.code);
+		coin.image_url = this.getCoinImageURL(coin.code);
+		return coin;
+	};
 
-    message.korean_name = this.coinDataUpdaterService
-      .getCoinNameList()
-      .get(message.code);
-    message.image_url = this.getCoinImageURL(message.code);
+	convertToMarketCoinDto = (coin) => {
+		coin.korean_name = this.coinDataUpdaterService
+			.getCoinNameList()
+			.get(coin.market);
+		coin.image_url = this.getCoinImageURL(coin.market);
+		coin.type = 'ticker';
+		coin.code = coin.market;
 
-    message.orderbook_units.map((unit) => {
-      const askRateChange =
-        ((unit.ask_price - beforeTopPrice) / beforeTopPrice) * 100;
-      const bidRateChange =
-        ((unit.bid_price - beforeTopPrice) / beforeTopPrice) * 100;
+		return coin;
+	};
 
-      unit.ask_rate =
-        (askRateChange >= 0
-          ? `+${askRateChange.toFixed(2)}`
-          : `${askRateChange.toFixed(2)}`) + '%';
-      unit.bid_rate =
-        (bidRateChange >= 0
-          ? `+${bidRateChange.toFixed(2)}`
-          : `${bidRateChange.toFixed(2)}`) + '%';
-    });
+	convertToOrderbookDto = (message) => {
+		const beforeTopPrice = this.coinDataUpdaterService
+			.getCoinLatestInfo()
+			.get(message.code).prev_closing_price;
 
-    return message;
-  };
+		message.korean_name = this.coinDataUpdaterService
+			.getCoinNameList()
+			.get(message.code);
+		message.image_url = this.getCoinImageURL(message.code);
 
-  convertToTickerDto = (message) => {
-    const data = message;
-    return {
-      korean_name: this.coinDataUpdaterService.getCoinNameList().get(data.code),
-      code: data.code,
-      coin_img_url: this.getCoinImageURL(data.code),
-      signed_change_price: data.signed_change_price,
-      opening_price: data.opening_price,
-      signed_change_rate: data.signed_change_rate,
-      trade_price: data.trade_price,
-    };
-  };
+		message.orderbook_units.map((unit) => {
+			const askRateChange =
+				((unit.ask_price - beforeTopPrice) / beforeTopPrice) * 100;
+			const bidRateChange =
+				((unit.bid_price - beforeTopPrice) / beforeTopPrice) * 100;
 
-  private getCoinImageURL(code: string) {
-    const logoName = code.split('-')[1];
-    return `${UPBIT_IMAGE_URL}${logoName}.png`;
-  }
+			unit.ask_rate =
+				(askRateChange >= 0
+					? `+${askRateChange.toFixed(2)}`
+					: `${askRateChange.toFixed(2)}`) + '%';
+			unit.bid_rate =
+				(bidRateChange >= 0
+					? `+${bidRateChange.toFixed(2)}`
+					: `${bidRateChange.toFixed(2)}`) + '%';
+		});
+
+		return message;
+	};
+
+	convertToTickerDto = (message) => {
+		const data = message;
+		return {
+			korean_name: this.coinDataUpdaterService.getCoinNameList().get(data.code),
+			code: data.code,
+			coin_img_url: this.getCoinImageURL(data.code),
+			signed_change_price: data.signed_change_price,
+			opening_price: data.opening_price,
+			signed_change_rate: data.signed_change_rate,
+			trade_price: data.trade_price,
+		};
+	};
+
+	private getCoinImageURL(code: string) {
+		const logoName = code.split('-')[1];
+		return `${UPBIT_IMAGE_URL}${logoName}.png`;
+	}
 }
