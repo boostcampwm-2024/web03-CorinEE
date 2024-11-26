@@ -8,7 +8,9 @@ export const handleResize = (
 ) => {
 	if (chartRef.current && chartInstanceRef.current) {
 		const { width } =
-			chartRef.current.parentElement?.getBoundingClientRect() || { width: 0 };
+			chartRef.current.parentElement?.getBoundingClientRect() || {
+				width: 0,
+			};
 		chartInstanceRef.current.applyOptions({
 			width: width,
 		});
