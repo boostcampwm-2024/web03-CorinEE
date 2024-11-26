@@ -11,4 +11,5 @@ export type AccountCoin = {
 	quantity: number;
 	price: number;
 	averagePrice: number;
+	availableQuantity: number;
 };
