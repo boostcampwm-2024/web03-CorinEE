@@ -41,11 +41,11 @@ export async function trade(params: TradeAPI): Promise<Trade> {
 }
 
 export async function checkCoin(coin: string): Promise<CheckCoin> {
-	const response = await authInstance.get(`/trade/check-coinData/${coin}`);
+	const response = await authInstance.get(`/trade/check-coindata?coin=${coin}`);
 	return response.data;
 }
 
 export async function pendingCoin(coin: string): Promise<PendingCoinAPI> {
-	const response = await authInstance.get(`/trade/tradeData/${coin}`);
+	const response = await authInstance.get(`/trade/tradeData?coin=${coin}`);
 	return response.data;
 }
