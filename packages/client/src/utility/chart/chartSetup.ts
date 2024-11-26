@@ -1,7 +1,7 @@
 // src/components/Chart/utils/chartSetup.ts
 import { IChartApi, createChart, ISeriesApi } from 'lightweight-charts';
 import { CandleFormat } from '@/types/chart';
-import { ChartConfig } from '@/pages/trade/components/chart/config';
+import { ChartConfig } from '@/utility/chart/config';
 
 export const initializeChart = (
 	container: HTMLElement,
