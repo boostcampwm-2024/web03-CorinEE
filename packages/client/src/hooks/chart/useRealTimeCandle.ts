@@ -14,7 +14,6 @@ export function useRealTimeCandle({
 	seriesRef,
 	currentPrice,
 	activePeriod,
-	refetch,
 	minute,
 }: Props) {
 	const lastCandleRef = useRef<CandleFormat | null>(null);

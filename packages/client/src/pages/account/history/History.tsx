@@ -2,7 +2,7 @@ import { useMyHistory } from '@/hooks/useMyHistory';
 import HistoryInfo from '@/pages/account/history/HistoryInfo';
 import HistoryOption from '@/pages/account/history/HistoryOption';
 import HistoryPeriod from '@/pages/account/history/HistoryPeriod';
-import { AccountHistory, Option, Period } from '@/types/history';
+import { Option, Period } from '@/types/history';
 import {
 	filterByDate,
 	filterByTradeType,
