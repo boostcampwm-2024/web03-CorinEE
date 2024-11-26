@@ -1,7 +1,7 @@
 import { guestLogin, logout } from '@/api/auth';
 import { useAuthStore } from '@/store/authStore';
 import { Login } from '@/types/auth';
-import { removeCookie, setCookie } from '@/utility/cookies';
+import { removeCookie, setCookie } from '@/utility/storage/cookies';
 import { useMutation } from '@tanstack/react-query';
 
 export function useAuth() {
