@@ -1,5 +1,6 @@
 import { AccountHistory } from '@/types/history';
 import { formatDateTime } from '@/utility/historyUtils';
+import { Link } from 'react-router-dom';
 
 type HistoryInfoProps = AccountHistory;
 
@@ -22,7 +23,11 @@ function HistoryInfo({
 				<p>{formattedTradeTime.date}</p>
 				<p>{formattedTradeTime.time}</p>
 			</div>
-			<div className="flex-[1] font-semibold">{assetName}</div>
+			<div className="flex-[1] font-semibold">
+				<Link to={`/trade/KRW-${assetName}`}>
+				{assetName}
+				</Link>
+				</div>
 			<div
 				className={`flex-[1] ${tradeType === 'buy' ? 'text-red-500' : 'text-blue-500'}`}
 			>
