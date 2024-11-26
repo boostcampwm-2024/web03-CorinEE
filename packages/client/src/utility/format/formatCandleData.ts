@@ -1,10 +1,10 @@
-import { Candle, CandleFormat } from '@/types/chart';
 import { Time } from 'lightweight-charts';
-
+import { Candle, CandleFormat } from '@/types/chart';
 export function formatCandleData(data: Candle[]): CandleFormat[] {
 	const uniqueData = data.reduce(
 		(acc, current) => {
-			const timeKey = new Date(current.candle_date_time_kst).getTime();
+			const date = new Date(current.candle_date_time_kst);
+			const timeKey = date.getTime() + 9 * 60 * 60 * 1000;
 			acc[timeKey] = current;
 			return acc;
 		},
@@ -12,13 +12,17 @@ export function formatCandleData(data: Candle[]): CandleFormat[] {
 	);
 
 	const sortedData = Object.values(uniqueData).sort((a, b) => {
-		const dateA = new Date(a.candle_date_time_kst).getTime();
-		const dateB = new Date(b.candle_date_time_kst).getTime();
+		const dateA =
+			new Date(a.candle_date_time_kst).getTime() + 9 * 60 * 60 * 1000;
+		const dateB =
+			new Date(b.candle_date_time_kst).getTime() + 9 * 60 * 60 * 1000;
 		return dateA - dateB;
 	});
 
 	const formattedData = sortedData.map((candle) => ({
-		time: (new Date(candle.candle_date_time_kst).getTime() / 1000) as Time,
+		time: ((new Date(candle.candle_date_time_kst).getTime() +
+			9 * 60 * 60 * 1000) /
+			1000) as Time,
 		open: candle.opening_price,
 		high: candle.high_price,
 		low: candle.low_price,
