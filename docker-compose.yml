@@ -25,7 +25,6 @@ services:
       - .env
     ports:
       - "80:80"
-      - "443:443"  # SSL 포트 추가
     depends_on:
       - server
     volumes:
