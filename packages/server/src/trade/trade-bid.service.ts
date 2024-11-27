@@ -225,7 +225,8 @@ export class BidService extends TradeAskBidService implements OnModuleInit {
       await this.assetRepository.updateAssetQuantityPrice(asset, queryRunner);
     } else {
       await this.assetRepository.createAsset(
-        bidDto,
+        bidDto.typeReceived,
+        bidDto.account,
         formatQuantity(buyData.price * buyData.quantity),
         formatQuantity(buyData.quantity),
         queryRunner,

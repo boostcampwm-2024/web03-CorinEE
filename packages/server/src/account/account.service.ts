@@ -1,4 +1,9 @@
-import { HttpStatus, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import {
+  HttpStatus,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AssetRepository } from '@src/asset/asset.repository';
 import { CoinDto, MyAccountDto } from './dtos/my-account.dto';
 import { CoinDataUpdaterService } from '@src/upbit/coin-data-updater.service';
@@ -19,7 +24,7 @@ export class AccountService {
 
   async getMyAccountData(user: UserDto): Promise<MyAccountResponseDto> {
     this.logger.log(`계정 데이터 조회 시작: ${user.userId}`);
-    
+
     const account = await this.accountRepository.findOne({
       where: { user: { id: user.userId } },
     });
@@ -57,7 +62,10 @@ export class AccountService {
     }
   }
 
-  private mapCoinsData(myCoins: Asset[], coinNameData: Map<string, string>): CoinDto[] {
+  private mapCoinsData(
+    myCoins: Asset[],
+    coinNameData: Map<string, string>,
+  ): CoinDto[] {
     return myCoins.map((myCoin) => {
       const name = myCoin.assetName;
       return {
@@ -72,7 +80,10 @@ export class AccountService {
     });
   }
 
-  private getKoreanName(name: string, coinNameData: Map<string, string>): string {
+  private getKoreanName(
+    name: string,
+    coinNameData: Map<string, string>,
+  ): string {
     const markets = ['KRW', 'BTC', 'USDT'];
     for (const market of markets) {
       const koreanName = coinNameData.get(`${market}-${name}`);
