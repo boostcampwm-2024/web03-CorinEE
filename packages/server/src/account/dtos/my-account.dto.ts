@@ -30,6 +30,6 @@ export class MyAccountDto {
 
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CoinDto) 
+  @Type(() => CoinDto)
   coins: CoinDto[];
 }

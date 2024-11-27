@@ -39,9 +39,9 @@ export class TradeAskBidService {
         await handler(tradeDto);
       }
     } catch (error) {
-      this.logger.error('미체결 거래 처리 오류:', error);
+      this.logger.error(`미체결 거래 처리 오류: ${error}`);
     } finally {
-      this.logger.log(`미체결 거래 처리 완료: ${new Date()}`);
+      this.logger.log(`${tradeType} 미체결 거래 처리 완료`);
     }
   }
   private buildCoinPrices(coinLatestInfo: Map<string, any>): CoinPriceDto[] {

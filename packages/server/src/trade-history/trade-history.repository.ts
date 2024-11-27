@@ -15,10 +15,10 @@ export class TradeHistoryRepository extends Repository<TradeHistory> {
   async createTradeHistory(
     user: User,
     tradeData: CreateTradeHistoryDto,
-    queryRunner: QueryRunner
+    queryRunner: QueryRunner,
   ): Promise<void> {
     this.logger.log(`거래 내역 생성 시작: userId=${user.id}`);
-    
+
     try {
       const tradeHistory = new TradeHistory();
       Object.assign(tradeHistory, {

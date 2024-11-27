@@ -1,9 +1,14 @@
-import { Injectable, Logger, NotFoundException, ConflictException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  ConflictException,
+  HttpStatus,
+} from '@nestjs/common';
 import { FavoriteRepository } from './favorite.repository';
 import { FavoriteDto, FavoriteResponseDto } from './dtos/favorite.dto';
 import { UserDto } from '@src/account/dtos/my-account.response.dto';
 import { Favorite } from './favorite.entity';
-
 
 @Injectable()
 export class FavoriteService {
@@ -11,14 +16,17 @@ export class FavoriteService {
 
   constructor(private readonly favoriteRepository: FavoriteRepository) {}
 
-  async getFavorites(user: UserDto, assetName?: string): Promise<FavoriteResponseDto> {
+  async getFavorites(
+    user: UserDto,
+    assetName?: string,
+  ): Promise<FavoriteResponseDto> {
     const where = {
       user: { id: user.userId },
       ...(assetName && { assetName }),
     };
 
     const result = await this.favoriteRepository.find({ where });
-    
+
     return {
       statusCode: HttpStatus.OK,
       result: result,

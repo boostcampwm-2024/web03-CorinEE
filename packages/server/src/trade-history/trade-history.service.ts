@@ -1,4 +1,8 @@
-import { HttpStatus, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  HttpStatus,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { TradeHistoryRepository } from './trade-history.repository';
 import { TradeHistoryResponseDto } from './dtos/trade-history.dto';
 import { TradeHistory } from './trade-history.entity';
@@ -13,8 +17,8 @@ export class TradeHistoryService {
   ) {}
 
   async getMyTradeHistoryData(
-    user: UserDto, 
-    coin?: string
+    user: UserDto,
+    coin?: string,
   ): Promise<TradeHistoryResponseDto> {
     this.logger.log(`거래 내역 조회 시작: userId=${user.userId}`);
 

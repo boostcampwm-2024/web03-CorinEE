@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TradeHistoryRepository } from './trade-history.repository';
 import { TradeHistory } from './trade-history.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CoinDataUpdaterService } from '@src/upbit/coin-data-updater.service';
 import { HttpModule } from '@nestjs/axios';
 import { TradeHistoryController } from './trade-history.controller';
 import { TradeHistoryService } from './trade-history.service';

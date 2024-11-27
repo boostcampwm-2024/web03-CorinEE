@@ -16,19 +16,18 @@ export class MyAccountResponseDto {
   message: MyAccountDto;
 }
 
-
 export class UserDto {
-    @ApiProperty({
-      example: 1,
-      description: '사용자 고유 ID',
-    })
-    @IsNumber()
-    readonly userId: number;
-  
-    @ApiProperty({
-      example: 'john_doe',
-      description: '사용자 이름',
-    })
-    @IsString()
-    readonly userName: string;
-  }
+  @ApiProperty({
+    example: 1,
+    description: '사용자 고유 ID',
+  })
+  @IsNumber()
+  readonly userId: number;
+
+  @ApiProperty({
+    example: 'john_doe',
+    description: '사용자 이름',
+  })
+  @IsString()
+  readonly userName: string;
+}

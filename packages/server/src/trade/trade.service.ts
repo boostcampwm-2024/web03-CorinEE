@@ -6,8 +6,6 @@ import { TradeRepository } from './trade.repository';
 import { CoinDataUpdaterService } from 'src/upbit/coin-data-updater.service';
 import { UPBIT_IMAGE_URL } from '@src/upbit/constants';
 import { TradeDataDto } from './dtos/tradeData.dto';
-import { Inject } from '@nestjs/common';
-import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { TradeDeleteFailedException } from './exceptions/trade.exceptions';
 import { MINIMUM_TRADE_AMOUNT, TRADE_TYPES } from './constants/trade.constants';
 import { TradeResponse } from './dtos/trade.interface';
@@ -53,7 +51,7 @@ export class TradeService {
         message: coinData
           ? '보유하고 계신 코인입니다.'
           : '보유하지 않은 코인입니다.',
-        own: coinData ? true : false
+        own: coinData ? true : false,
       };
     } catch (error) {
       this.logger.error('코인 데이터 조회 실패', {
