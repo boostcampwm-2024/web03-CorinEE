@@ -1,8 +1,4 @@
-import {
-  HttpStatus,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { TradeHistoryRepository } from './trade-history.repository';
 import { TradeHistoryResponseDto } from './dtos/trade-history.dto';
 import { TradeHistory } from './trade-history.entity';
@@ -32,7 +28,7 @@ export class TradeHistoryService {
         return {
           statusCode: HttpStatus.NO_CONTENT,
           message: '거래 내역이 없습니다.',
-          result: []
+          result: [],
         };
       }
 

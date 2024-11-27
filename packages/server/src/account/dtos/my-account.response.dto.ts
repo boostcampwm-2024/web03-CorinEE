@@ -35,12 +35,12 @@ export class AccountResponseDto {
     })
     total_bid: number;
 
-    @ApiProperty({
-        type: MyAccountDto,
-        description: '보유 코인',
-      })
-    coins: CoinDto[]
-  }
+  @ApiProperty({
+    type: MyAccountDto,
+    description: '보유 코인',
+  })
+  coins: CoinDto[];
+}
 
 export class UserDto {
   @ApiProperty({

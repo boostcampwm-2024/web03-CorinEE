@@ -9,7 +9,11 @@ import { AssetRepository } from '@src/asset/asset.repository';
 import { CoinDto, MyAccountDto } from './dtos/my-account.dto';
 import { CoinDataUpdaterService } from '@src/upbit/coin-data-updater.service';
 import { CURRENCY_CONSTANTS } from './constants/currency.constants';
-import { AccountResponseDto, MyAccountResponseDto, UserDto } from './dtos/my-account.response.dto';
+import {
+  AccountResponseDto,
+  MyAccountResponseDto,
+  UserDto,
+} from './dtos/my-account.response.dto';
 import { AccountRepository } from './account.repository';
 import { Asset } from '@src/asset/asset.entity';
 import { UserRepository } from '@src/auth/user.repository';
@@ -24,7 +28,9 @@ export class AccountService {
     private readonly coinDataUpdaterService: CoinDataUpdaterService,
   ) {}
 
-  async getMyAccountData(user: UserDto): Promise<MyAccountResponseDto|AccountResponseDto> {
+  async getMyAccountData(
+    user: UserDto,
+  ): Promise<MyAccountResponseDto | AccountResponseDto> {
     this.logger.log(`계정 데이터 조회 시작: ${user.userId}`);
 
     const account = await this.accountRepository.findOne({
@@ -59,7 +65,7 @@ export class AccountService {
         KRW: accountData.KRW,
         availableKRW: accountData.availableKRW,
         total_bid: accountData.total_bid,
-        coins: accountData.coins
+        coins: accountData.coins,
       };
     } catch (error) {
       this.logger.error(`계정 데이터 조회 실패: ${error.message}`, error.stack);

@@ -3,7 +3,7 @@ export const jwtConstants = {
   refreshSecret: 'superSecureAccessTokenSecret_superSecureAccessTokenSecret',
 };
 
-export const FRONTEND_URL = 'https://www.corinee.site'
+export const FRONTEND_URL = 'https://www.corinee.site';
 export const DEFAULT_KRW = 30000000;
 export const DEFAULT_USDT = 300000;
 export const DEFAULT_BTC = 0;

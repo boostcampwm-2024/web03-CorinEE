@@ -32,13 +32,13 @@ export class CoinTickerService
     }
   }
 
-	protected handleMessage(data: any) {
-		if (data.error) {
-			this.logger.error('CoinTicker WebSocket 오류:', data);
-			return;
-		}
-		this.sseService.sendEvent('price', data);
-	}
+  protected handleMessage(data: any) {
+    if (data.error) {
+      this.logger.error('CoinTicker WebSocket 오류:', data);
+      return;
+    }
+    this.sseService.sendEvent('price', data);
+  }
 
   protected getSubscribeMessage(): string {
     const coinList = this.coinListService.getCoinNameList();
