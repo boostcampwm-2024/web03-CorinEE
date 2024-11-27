@@ -1,27 +1,44 @@
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Repository, QueryRunner } from 'typeorm';
+import { Injectable, Logger, InternalServerErrorException } from '@nestjs/common';
+import { Account } from '@src/account/account.entity';
 import { Asset } from './asset.entity';
-import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AssetRepository extends Repository<Asset> {
-  constructor(private dataSource: DataSource) {
+  private readonly logger = new Logger(AssetRepository.name);
+
+  constructor(private readonly dataSource: DataSource) {
     super(Asset, dataSource.createEntityManager());
   }
-  async createAsset(buyDto, price, quantity, queryRunner) {
+
+  async createAsset(
+    typeReceived: string,
+    account: Account,
+    price: number,
+    quantity: number,
+    queryRunner: QueryRunner,
+  ): Promise<Asset> {
+    this.logger.log(`자산 생성 시작: type=${typeReceived}, accountId=${account.id}`);
     try {
-      const { typeReceived, account } = buyDto;
       const asset = new Asset();
       asset.assetName = typeReceived;
       asset.price = price;
       asset.quantity = quantity;
       asset.availableQuantity = quantity;
       asset.account = account;
-      await queryRunner.manager.save(Asset, asset);
-    } catch (e) {
-      console.log(e);
+
+      const savedAsset = await queryRunner.manager.save(Asset, asset);
+      this.logger.log(`자산 생성 완료: assetId=${savedAsset.assetId}`);
+      
+      return savedAsset;
+    } catch (error) {
+      this.logger.error(`자산 생성 실패: ${error.message}`, error.stack);
+      throw new InternalServerErrorException('자산 생성 중 오류가 발생했습니다.');
     }
   }
-  async updateAssetQuantityPrice(asset, queryRunner) {
+
+  async updateAssetQuantityPrice(asset: Asset, queryRunner: QueryRunner): Promise<void> {
+    this.logger.log(`자산 수량/가격 업데이트 시작: assetId=${asset.assetId}`);
     try {
       await queryRunner.manager
         .createQueryBuilder()
@@ -33,11 +50,16 @@ export class AssetRepository extends Repository<Asset> {
         })
         .where('assetId = :assetId', { assetId: asset.assetId })
         .execute();
-    } catch (e) {
-      console.log(e);
+
+      this.logger.log(`자산 수량/가격 업데이트 완료: assetId=${asset.assetId}`);
+    } catch (error) {
+      this.logger.error(`자산 수량/가격 업데이트 실패: ${error.message}`, error.stack);
+      throw new InternalServerErrorException('자산 업데이트 중 오류가 발생했습니다.');
     }
   }
-  async updateAssetQuantity(asset, queryRunner) {
+
+  async updateAssetQuantity(asset: Asset, queryRunner: QueryRunner): Promise<void> {
+    this.logger.log(`자산 수량 업데이트 시작: assetId=${asset.assetId}`);
     try {
       await queryRunner.manager
         .createQueryBuilder()
@@ -45,12 +67,16 @@ export class AssetRepository extends Repository<Asset> {
         .set({ quantity: asset.quantity })
         .where('assetId = :assetId', { assetId: asset.assetId })
         .execute();
-    } catch (e) {
-      console.log(e);
+
+      this.logger.log(`자산 수량 업데이트 완료: assetId=${asset.assetId}`);
+    } catch (error) {
+      this.logger.error(`자산 수량 업데이트 실패: ${error.message}`, error.stack);
+      throw new InternalServerErrorException('자산 수량 업데이트 중 오류가 발생했습니다.');
     }
   }
 
-  async updateAssetAvailableQuantity(asset, queryRunner) {
+  async updateAssetAvailableQuantity(asset: Asset, queryRunner: QueryRunner): Promise<void> {
+    this.logger.log(`거래가능 수량 업데이트 시작: assetId=${asset.assetId}`);
     try {
       await queryRunner.manager
         .createQueryBuilder()
@@ -58,11 +84,16 @@ export class AssetRepository extends Repository<Asset> {
         .set({ availableQuantity: asset.availableQuantity })
         .where('assetId = :assetId', { assetId: asset.assetId })
         .execute();
-    } catch (e) {
-      console.log(e);
+
+      this.logger.log(`거래가능 수량 업데이트 완료: assetId=${asset.assetId}`);
+    } catch (error) {
+      this.logger.error(`거래가능 수량 업데이트 실패: ${error.message}`, error.stack);
+      throw new InternalServerErrorException('거래가능 수량 업데이트 중 오류가 발생했습니다.');
     }
   }
-  async updateAssetPrice(asset, queryRunner) {
+
+  async updateAssetPrice(asset: Asset, queryRunner: QueryRunner): Promise<void> {
+    this.logger.log(`자산 가격 업데이트 시작: assetId=${asset.assetId}`);
     try {
       await queryRunner.manager
         .createQueryBuilder()
@@ -73,21 +104,33 @@ export class AssetRepository extends Repository<Asset> {
         })
         .where('assetId = :assetId', { assetId: asset.assetId })
         .execute();
-    } catch (e) {
-      console.log(e);
+
+      this.logger.log(`자산 가격 업데이트 완료: assetId=${asset.assetId}`);
+    } catch (error) {
+      this.logger.error(`자산 가격 업데이트 실패: ${error.message}`, error.stack);
+      throw new InternalServerErrorException('자산 가격 업데이트 중 오류가 발생했습니다.');
     }
   }
-  async getAsset(id, assetName, queryRunner) {
+
+  async getAsset(
+    id: number,
+    assetName: string,
+    queryRunner: QueryRunner,
+  ): Promise<Asset> {
+    this.logger.log(`자산 조회 시작: accountId=${id}, assetName=${assetName}`);
     try {
-      return await queryRunner.manager.findOne(Asset, {
+      const asset = await queryRunner.manager.findOne(Asset, {
         where: {
-          account: { id: id },
-          assetName: assetName,
+          account: { id },
+          assetName,
         },
       });
+
+      this.logger.log(`자산 조회 완료: ${asset ? `assetId=${asset.assetId}` : '자산 없음'}`);
+      return asset;
     } catch (error) {
-      console.error('Error fetching asset:', error);
-      throw new Error('Failed to fetch asset');
+      this.logger.error(`자산 조회 실패: ${error.message}`, error.stack);
+      throw new InternalServerErrorException('자산 조회 중 오류가 발생했습니다.');
     }
   }
 }

@@ -1,60 +1,68 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, ConflictException, HttpStatus } from '@nestjs/common';
 import { FavoriteRepository } from './favorite.repository';
+import { FavoriteDto, FavoriteResponseDto } from './dtos/favorite.dto';
+import { UserDto } from '@src/account/dtos/my-account.response.dto';
+import { Favorite } from './favorite.entity';
+
 
 @Injectable()
 export class FavoriteService {
-  constructor(private favoriteRepository: FavoriteRepository) {}
+  private readonly logger = new Logger(FavoriteService.name);
 
-  async getFavorites(user, assetName) {
-    if (assetName) {
-      const result = await this.favoriteRepository.find({
-        where: {
-          user: { id: user.userId },
-          assetName,
-        },
-      });
-      return {
-        statusCode: 200,
-        result,
-      };
-    } else {
-      const result = await this.favoriteRepository.find({
-        where: { user: { id: user.userId } },
-      });
-      console.log(result);
-      return {
-        statusCode: 200,
-        result,
-      };
-    }
+  constructor(private readonly favoriteRepository: FavoriteRepository) {}
+
+  async getFavorites(user: UserDto, assetName?: string): Promise<FavoriteResponseDto> {
+    const where = {
+      user: { id: user.userId },
+      ...(assetName && { assetName }),
+    };
+
+    const result = await this.favoriteRepository.find({ where });
+    
+    return {
+      statusCode: HttpStatus.OK,
+      result: result,
+    };
   }
 
-  async createFavorite(user, assetName) {
+  async createFavorite(user: UserDto, assetName: string): Promise<Favorite> {
+    const existing = await this.favoriteRepository.findOne({
+      where: { user: { id: user.userId }, assetName },
+    });
+
+    if (existing) {
+      throw new ConflictException('이미 즐겨찾기에 추가된 자산입니다.');
+    }
+
     return await this.favoriteRepository.save({
       user: { id: user.userId },
       assetName,
     });
   }
 
-  async deleteFavorite(user, assetName) {
-    return await this.favoriteRepository.delete({
+  async deleteFavorite(user: UserDto, assetName: string): Promise<void> {
+    const result = await this.favoriteRepository.delete({
       user: { id: user.userId },
       assetName,
     });
+
+    if (result.affected === 0) {
+      throw new NotFoundException('해당 즐겨찾기를 찾을 수 없습니다.');
+    }
   }
 
-  async toggleFavorite(user, assetName) {
-    const favorite = await this.favoriteRepository.find({
+  async toggleFavorite(user: UserDto, assetName: string): Promise<void> {
+    const favorite = await this.favoriteRepository.findOne({
       where: {
         user: { id: user.userId },
         assetName,
       },
     });
-    console.log(favorite);
-    if (favorite.length > 0) {
-      return await this.deleteFavorite(user, assetName);
+
+    if (favorite) {
+      await this.deleteFavorite(user, assetName);
     } else {
-      return await this.createFavorite(user, assetName);
+      await this.createFavorite(user, assetName);
     }
   }
 }
