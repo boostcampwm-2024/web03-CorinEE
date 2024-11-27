@@ -13,11 +13,16 @@ module.exports = withMT({
 			},
 			animation: {
 				infiniteScroll: 'infiniteScroll 500s linear infinite',
+				fadeIn: 'fadeIn 0.7s ease-out',
 			},
 			keyframes: {
 				infiniteScroll: {
 					'0%': { transform: 'translateX(0)' },
 					'100%': { transform: 'translateX(-100%)' },
+				},
+				fadeIn: {
+					'0%': { opacity: '0' },
+					'100%': { opacity: '1' },
 				},
 			},
 		},
