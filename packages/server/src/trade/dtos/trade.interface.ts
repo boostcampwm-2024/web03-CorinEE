@@ -1,4 +1,4 @@
-import { Timestamp } from "typeorm";
+import { Timestamp } from 'typeorm';
 import { TRADE_TYPES } from '../constants/trade.constants';
 
 export interface TradeResponse {
@@ -28,7 +28,7 @@ export interface TradeData {
   assetBalance?: number;
 }
 
-export interface TradeDataRedis{
+export interface TradeDataRedis {
   tradeId: number;
   userId: number;
   tradeType: TRADE_TYPES.BUY | TRADE_TYPES.SELL;

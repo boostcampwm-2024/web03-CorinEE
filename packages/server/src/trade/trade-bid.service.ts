@@ -5,7 +5,10 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { QueryRunner } from 'typeorm';
-import { TRADE_TYPES, TRANSACTION_CHECK_INTERVAL } from './constants/trade.constants';
+import {
+  TRADE_TYPES,
+  TRANSACTION_CHECK_INTERVAL,
+} from './constants/trade.constants';
 import { formatQuantity, isMinimumQuantity } from './helpers/trade.helper';
 import {
   OrderBookEntry,
@@ -29,7 +32,10 @@ export class BidService extends TradeAskBidService implements OnModuleInit {
   private startPendingTradesProcessor() {
     const processBidTrades = async () => {
       try {
-        await this.processPendingTrades(TRADE_TYPES.BUY, this.bidTradeService.bind(this));
+        await this.processPendingTrades(
+          TRADE_TYPES.BUY,
+          this.bidTradeService.bind(this),
+        );
       } finally {
         setTimeout(processBidTrades, UPBIT_UPDATED_COIN_INFO_TIME);
       }
@@ -62,18 +68,19 @@ export class BidService extends TradeAskBidService implements OnModuleInit {
 
     try {
       let userTrade;
-      const transactionResult =  await this.executeTransaction(async (queryRunner) => {
-        if (bidDto.receivedAmount <= 0) {
-          throw new BadRequestException('수량은 0보다 커야 합니다.');
-        }
+      const transactionResult = await this.executeTransaction(
+        async (queryRunner) => {
+          if (bidDto.receivedAmount <= 0) {
+            throw new BadRequestException('수량은 0보다 커야 합니다.');
+          }
 
-        const userAccount = await this.accountRepository.validateUserAccount(
-          user.userId,
-        );
-        const accountBalance = await this.checkCurrencyBalance(
-          bidDto,
-          userAccount,
-        );
+          const userAccount = await this.accountRepository.validateUserAccount(
+            user.userId,
+          );
+          const accountBalance = await this.checkCurrencyBalance(
+            bidDto,
+            userAccount,
+          );
 
         await this.accountRepository.updateAccountCurrency(
           'availableKRW',
@@ -82,18 +89,19 @@ export class BidService extends TradeAskBidService implements OnModuleInit {
           queryRunner,
         );
 
-        userTrade = await this.tradeRepository.createTrade(
-          bidDto,
-          user.userId,
-          TRADE_TYPES.BUY,
-          queryRunner,
-        );
-        return {
-          statusCode: 200,
-          message: '거래가 정상적으로 등록되었습니다.',
-        };
-      });
-      if(transactionResult.statusCode === 200){
+          userTrade = await this.tradeRepository.createTrade(
+            bidDto,
+            user.userId,
+            TRADE_TYPES.BUY,
+            queryRunner,
+          );
+          return {
+            statusCode: 200,
+            message: '거래가 정상적으로 등록되었습니다.',
+          };
+        },
+      );
+      if (transactionResult.statusCode === 200) {
         const tradeData: TradeDataRedis = {
           tradeId: userTrade.tradeId,
           userId: user.userId,
@@ -102,12 +110,12 @@ export class BidService extends TradeAskBidService implements OnModuleInit {
           assetName: bidDto.typeReceived,
           price: bidDto.receivedPrice,
           quantity: bidDto.receivedAmount,
-          createdAt: userTrade.createdAt
+          createdAt: userTrade.createdAt,
         };
 
-        await this.redisRepository.createTrade(tradeData)
+        await this.redisRepository.createTrade(tradeData);
       }
-      return transactionResult
+      return transactionResult;
     } finally {
       this.transactionCreateBid = false;
     }

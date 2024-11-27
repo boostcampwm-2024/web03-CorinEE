@@ -22,7 +22,7 @@ export class TradeAskBidService {
     protected readonly userRepository: UserRepository,
     protected readonly tradeHistoryRepository: TradeHistoryRepository,
     protected readonly coinDataUpdaterService: CoinDataUpdaterService,
-    protected readonly redisRepository: TradeRedisRepository
+    protected readonly redisRepository: TradeRedisRepository,
   ) {}
   protected async processPendingTrades(
     tradeType: TRADE_TYPES.SELL | TRADE_TYPES.BUY,
@@ -33,9 +33,12 @@ export class TradeAskBidService {
       if (coinLatestInfo.size === 0) return;
 
       const coinPrices = this.buildCoinPrices(coinLatestInfo);
-      
-      const availableTrades = await this.redisRepository.findMatchingTrades(tradeType, coinPrices)
-          
+
+      const availableTrades = await this.redisRepository.findMatchingTrades(
+        tradeType,
+        coinPrices,
+      );
+
       for (const trade of availableTrades) {
         const tradeDto = this.buildTradeDto(trade, coinLatestInfo, tradeType);
         await handler(tradeDto);
@@ -117,7 +120,7 @@ export class TradeAskBidService {
     } else {
       await this.tradeRepository.updateTradeQuantity(tradeData, queryRunner);
     }
-    
+
     return tradeData.quantity;
   }
 }
