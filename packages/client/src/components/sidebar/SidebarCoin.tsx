@@ -9,7 +9,7 @@ type SidebarCoinProps = {
 	korean_name: string;
 	listNumber: number;
 	formatters: Formatters;
-	sseData: SSEDataType;
+	sseData: SSEDataType | undefined | null;
 	market: string;
 };
 
@@ -23,6 +23,8 @@ function SidebarCoin({
 }: SidebarCoinProps) {
 	const navigate = useNavigate();
 	const { addRecentlyViewedMarket } = useRecentlyMarketStore();
+
+	if (!sseData) return;
 
 	const handleClick = () => {
 		addRecentlyViewedMarket(market);
