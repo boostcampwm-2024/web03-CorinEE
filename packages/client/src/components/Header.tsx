@@ -33,7 +33,7 @@ function Header() {
 		<>
 			<Navbar
 				fullWidth={true}
-				className="w-full flex justify-between items-center sticky top-0 z-10"
+				className="w-full flex justify-between items-center sticky top-0 z-10 min-w-[1100px]"
 				shadow={false}
 			>
 				<div>
