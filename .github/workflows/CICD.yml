@@ -10,6 +10,15 @@ on:
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - server: main
+            host: ${{ vars.SSH_HOST }}
+            type: full
+          - server: loadbalancer
+            host: ${{ vars.LOAD_SSH_HOST }}
+            type: api
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -24,12 +33,20 @@ jobs:
         run: |
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server -f ./dockerfile-server .
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server
-          docker build --build-arg VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }} -t ${{ secrets.DOCKERHUB_USERNAME }}/corinee-client -f ./dockerfile-client .
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/corinee-client
+          if [ "${{ matrix.type }}" = "full" ]; then
+            docker build --build-arg VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }} -t ${{ secrets.DOCKERHUB_USERNAME }}/corinee-client -f ./dockerfile-client .
+            docker push ${{ secrets.DOCKERHUB_USERNAME }}/corinee-client
+          fi
 
-      - name: make deploy environment
+      - name: Make main server environment
+        if: matrix.type == 'full'
         run: |
-          echo "${{secrets.DEPLOY_ENV}}" > .env
+          echo "${{ secrets.DEPLOY_ENV }}" > .env
+  
+      - name: Make loadbalancer environment
+        if: matrix.type == 'api'
+        run: |
+          echo "${{ secrets.LOAD_DEPLOY_ENV }}" > .env
 
       - name: Send files & deploy script
         uses: appleboy/scp-action@master
@@ -38,24 +55,41 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
-          source: ${{ secrets.DEPLOY_FILES }}
+          source: "docker-compose.yml,nginx.conf,.env"
           target: /corinee
           overwrite: true
 
-      - name: Docker Container run
+      - name: Send files to loadbalancer
+        if: matrix.type == 'api'
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.LOAD_SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.LOAD_SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          source: "docker-compose.server.yml,.env"
+          target: /corinee
+          overwrite: true
+
+      - name: Deploy to servers
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          password: ${{ secrets.SSH_PASSWORD }}
-          port: ${{ secrets.SSH_PORT }}
+          host: ${{ matrix.host }}
+          username: ${{ matrix.type == 'full' && secrets.SSH_USERNAME || secrets.SSH_USERNAME }}
+          password: ${{ matrix.type == 'full' && secrets.SSH_PASSWORD || secrets.LOAD_SSH_PASSWORD }}
+          port: ${{ matrix.type == 'full' && secrets.SSH_PORT || secrets.SSH_PORT }}
           script: |
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-client
             cd /corinee
-            docker-compose down
-            docker-compose up -d
-            rm -rf .env docker-compose.yml
+            if [ "${{ matrix.type }}" = "full" ]; then
+              docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server
+              docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-client
+              docker-compose down
+              docker-compose up -d
+            else
+              docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server
+              docker-compose -f docker-compose.server.yml down
+              docker-compose -f docker-compose.server.yml up -d
+            fi
 
       - name: Generate Error Report
         if: failure()
