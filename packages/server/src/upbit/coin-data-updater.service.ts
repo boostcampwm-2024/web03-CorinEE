@@ -8,6 +8,9 @@ import {
   UPBIT_UPDATED_COIN_INFO_TIME,
   UPBIT_UPDATED_COIN_LIST_TIME,
 } from '@src/upbit/constants';
+import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
+import jwt from 'jsonwebtoken';
 
 @Injectable()
 export class CoinDataUpdaterService implements OnModuleInit {
@@ -47,8 +50,12 @@ export class CoinDataUpdaterService implements OnModuleInit {
   async updateCoinList() {
     try {
       const response = await this.fetchData(UPBIT_RESTAPI_URL);
+      
+      console.log(response.data)
+      console.log(response.headers['remaining-req'])
       this.processCoinList(response.data);
     } catch (error) {
+      console.log(error)
       this.logger.error('Failed to update coin list:', error);
     } finally {
       this.scheduleNextUpdate(
@@ -64,9 +71,12 @@ export class CoinDataUpdaterService implements OnModuleInit {
       await this.ensureCoinCodeListIsLoaded();
       const url = `${UPBIT_CURRENT_PRICE_URL}markets=${this.coinCodeList.join(',')}`;
       const response = await this.fetchData(url);
+
+      console.log(response.status)
+      console.log(response.headers['remaining-req'])
       this.processCurrentPrice(response.data);
     } catch (error) {
-      this.logger.error('Failed to update current prices:', error);
+      this.logger.error(`Failed to update current prices: ${error}`);
     } finally {
       this.scheduleNextUpdate(
         'currentPrice',
@@ -81,6 +91,9 @@ export class CoinDataUpdaterService implements OnModuleInit {
       await this.ensureCoinCodeListIsLoaded();
       const url = `${UPBIT_CURRENT_ORDERBOOK_URL}markets=${this.coinCodeList.join(',')}`;
       const response = await this.fetchData(url);
+
+      console.log(response.status)
+      console.log(response.headers['remaining-req'])
       this.processOrderBook(response.data);
     } catch (error) {
       this.logger.error('Failed to update order book:', error);
