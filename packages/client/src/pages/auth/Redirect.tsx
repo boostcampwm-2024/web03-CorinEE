@@ -14,8 +14,9 @@ function Redirect() {
 
 		if (access_token && refresh_token) {
 			localStorage.setItem('access_token', access_token);
-
-			setCookie('refresh_token', refresh_token);
+			setCookie('refresh_token', refresh_token, {
+				path: '/',
+			});
 			checkAuth();
 			navigate('/');
 		}
