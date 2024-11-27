@@ -32,6 +32,7 @@ export class TradeHistoryService {
         return {
           statusCode: HttpStatus.NO_CONTENT,
           message: '거래 내역이 없습니다.',
+          result: []
         };
       }
 
