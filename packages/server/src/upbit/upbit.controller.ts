@@ -303,6 +303,7 @@ export class UpbitController {
     @Param('minute') minute?: string,
   ) {
     try {
+      this.logger.log("차트 읽는 중 ")
       const response = await this.chartService.upbitApiDoor(
         type,
         market,
