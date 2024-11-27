@@ -12,7 +12,10 @@ export abstract class BaseWebSocketService {
 
   protected abstract handleMessage(data: any): void;
 
-  protected connectWebSocket(websocketUrl: string, reconnectInterval: number): void {
+  protected connectWebSocket(
+    websocketUrl: string,
+    reconnectInterval: number,
+  ): void {
     this.websocket = new WebSocket(websocketUrl);
 
     this.websocket.on('open', () => {
@@ -31,7 +34,10 @@ export abstract class BaseWebSocketService {
 
     this.websocket.on('close', () => {
       this.logger.warn('WebSocket 연결이 닫혔습니다. 재연결 시도 중...');
-      setTimeout(() => this.connectWebSocket(websocketUrl, reconnectInterval), reconnectInterval);
+      setTimeout(
+        () => this.connectWebSocket(websocketUrl, reconnectInterval),
+        reconnectInterval,
+      );
     });
 
     this.websocket.on('error', (error) => {

@@ -8,13 +8,13 @@ import {
   Request,
 } from '@nestjs/common';
 import { AuthGuard } from '@src/auth/auth.guard';
-import { 
-  ApiBearerAuth, 
-  ApiOperation, 
-  ApiResponse, 
-  ApiSecurity, 
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiSecurity,
   ApiTags,
-  ApiQuery 
+  ApiQuery,
 } from '@nestjs/swagger';
 import { TradeHistoryService } from './trade-history.service';
 import { TradeHistoryResponseDto } from './dtos/trade-history.dto';
@@ -29,30 +29,36 @@ export class TradeHistoryController {
 
   constructor(private readonly tradeHistoryService: TradeHistoryService) {}
 
-  @ApiOperation({ 
+  @ApiOperation({
     summary: '거래 내역 조회',
-    description: '사용자의 거래 내역을 조회합니다. 코인을 지정하면 해당 코인의 거래 내역만 조회됩니다.' 
+    description:
+      '사용자의 거래 내역을 조회합니다. 코인을 지정하면 해당 코인의 거래 내역만 조회됩니다.',
   })
-  @ApiQuery({ 
-    name: 'coins', 
-    required: false, 
+  @ApiQuery({
+    name: 'coins',
+    required: false,
     type: String,
     example: 'BTC-KRW',
-    description: '조회할 코인 페어 (예: BTC-KRW)' 
+    description: '조회할 코인 페어 (예: BTC-KRW)',
   })
-  @ApiResponse({ 
+  @ApiResponse({
     status: HttpStatus.OK,
     description: '거래 내역 조회 성공',
-    type: TradeHistoryResponseDto 
+    type: TradeHistoryResponseDto,
   })
   @Get('tradehistoryData')
   async getTradeHistory(
     @Request() req,
     @Query('coins') coins?: string,
   ): Promise<TradeHistoryResponseDto> {
-    this.logger.log(`거래 내역 조회 시작: userId=${req.user.userId}, coins=${coins || 'all'}`);
+    this.logger.log(
+      `거래 내역 조회 시작: userId=${req.user.userId}, coins=${coins || 'all'}`,
+    );
     try {
-      return await this.tradeHistoryService.getMyTradeHistoryData(req.user, coins);
+      return await this.tradeHistoryService.getMyTradeHistoryData(
+        req.user,
+        coins,
+      );
     } catch (error) {
       this.logger.error(`거래 내역 조회 실패: ${error.message}`, error.stack);
       throw error;

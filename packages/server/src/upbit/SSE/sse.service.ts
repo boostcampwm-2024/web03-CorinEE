@@ -8,9 +8,7 @@ export class SseService implements OnModuleDestroy {
   private streams = new Map<string, Subject<any>>();
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private readonly coinDataUpdaterService: CoinDataUpdaterService,
-  ) {
+  constructor(private readonly coinDataUpdaterService: CoinDataUpdaterService) {
     this.streams.set('price', new Subject<any>());
     this.streams.set('orderbook', new Subject<any>());
   }
@@ -22,7 +20,10 @@ export class SseService implements OnModuleDestroy {
     }
   }
 
-  async initStream(coins: string[], dto: (data: any) => any): Promise<MessageEvent[]> {
+  async initStream(
+    coins: string[],
+    dto: (data: any) => any,
+  ): Promise<MessageEvent[]> {
     const coinData = await Promise.all(
       coins.map(async (coin) => {
         let coinLatestInfo = this.coinDataUpdaterService.getCoinLatestInfo();
