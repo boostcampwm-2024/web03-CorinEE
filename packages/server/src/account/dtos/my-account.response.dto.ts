@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { MyAccountDto } from './my-account.dto';
+import { CoinDto, MyAccountDto } from './my-account.dto';
 import { IsNumber, IsString } from 'class-validator';
 
 export class MyAccountResponseDto {
@@ -15,6 +15,26 @@ export class MyAccountResponseDto {
   })
   message: MyAccountDto;
 }
+
+export class AccountResponseDto {
+    @ApiProperty({
+      example: 2000000,
+      description: '계좌 잔액',
+    })
+    KRW: number;
+  
+    @ApiProperty({
+      type: MyAccountDto,
+      description: '총 매수 금액',
+    })
+    total_bid: number;
+
+    @ApiProperty({
+        type: MyAccountDto,
+        description: '보유 코인',
+      })
+    coins: CoinDto[]
+  }
 
 export class UserDto {
   @ApiProperty({
