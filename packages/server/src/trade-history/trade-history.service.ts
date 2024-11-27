@@ -32,7 +32,6 @@ export class TradeHistoryService {
         return {
           statusCode: HttpStatus.NO_CONTENT,
           message: '거래 내역이 없습니다.',
-          tradeData: [],
         };
       }
 
@@ -48,7 +47,6 @@ export class TradeHistoryService {
 
       return {
         statusCode: HttpStatus.OK,
-        message: '거래 내역을 찾았습니다.',
         tradeData: filteredHistories,
       };
     } catch (error) {
