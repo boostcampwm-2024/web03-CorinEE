@@ -1,45 +1,67 @@
-import { Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
-import { TradeHistoryRepository } from '../trade-history/trade-history.repository';
+import { HttpStatus, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { TradeHistoryRepository } from './trade-history.repository';
+import { TradeHistoryResponseDto } from './dtos/trade-history.dto';
+import { TradeHistory } from './trade-history.entity';
+import { UserDto } from '@src/account/dtos/my-account.response.dto';
 
 @Injectable()
 export class TradeHistoryService {
+  private readonly logger = new Logger(TradeHistoryService.name);
+
   constructor(
-    private tradehistoryRepository: TradeHistoryRepository,
-    private readonly dataSource: DataSource,
+    private readonly tradeHistoryRepository: TradeHistoryRepository,
   ) {}
 
-  async getMyTradeHistoryData(user, coin) {
+  async getMyTradeHistoryData(
+    user: UserDto, 
+    coin?: string
+  ): Promise<TradeHistoryResponseDto> {
+    this.logger.log(`거래 내역 조회 시작: userId=${user.userId}`);
+
     try {
-      let tradehistoryData = await this.tradehistoryRepository.find({
+      const tradeHistories = await this.tradeHistoryRepository.find({
         where: { user: { id: user.userId } },
+        order: { createdAt: 'DESC' },
       });
 
-      if (tradehistoryData.length === 0) {
+      if (tradeHistories.length === 0) {
         return {
-          statusCode: 201,
+          statusCode: HttpStatus.NO_CONTENT,
           message: '거래 내역이 없습니다.',
           result: [],
         };
       }
 
+      let filteredHistories = tradeHistories;
       if (coin) {
         const [assetName, tradeCurrency] = coin.split('-');
-        tradehistoryData = tradehistoryData.filter(
-          ({ assetName: a, tradeCurrency: t }) =>
-            (a === assetName && t === tradeCurrency) ||
-            (a === tradeCurrency && t === assetName),
+        filteredHistories = this.filterTradeHistories(
+          tradeHistories,
+          assetName,
+          tradeCurrency,
         );
       }
 
       return {
-        statusCode: 200,
+        statusCode: HttpStatus.OK,
         message: '거래 내역을 찾았습니다.',
-        result: tradehistoryData,
+        result: filteredHistories,
       };
     } catch (error) {
-      console.error(error);
-      return error;
+      this.logger.error(`거래 내역 조회 실패: ${error.message}`, error.stack);
+      throw error;
     }
+  }
+
+  private filterTradeHistories(
+    histories: TradeHistory[],
+    assetName: string,
+    tradeCurrency: string,
+  ): TradeHistory[] {
+    return histories.filter(
+      ({ assetName: a, tradeCurrency: t }) =>
+        (a === assetName && t === tradeCurrency) ||
+        (a === tradeCurrency && t === assetName),
+    );
   }
 }
