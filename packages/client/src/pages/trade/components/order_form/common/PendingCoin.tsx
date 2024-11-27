@@ -1,12 +1,8 @@
-interface PendingOrder {
-	tradeType: 'sell' | 'buy';
-	quantity: number;
-	price: number;
-}
+import { AccountWaitOrder } from '@/types/waitOrder';
 
 interface PendingCoinProps {
-	order: PendingOrder;
-	onCancel: () => void;
+	order: AccountWaitOrder;
+	onCancel: (tradeId: number, tradeType: string) => void;
 }
 
 export function PendingCoin({ order, onCancel }: PendingCoinProps) {
@@ -14,7 +10,6 @@ export function PendingCoin({ order, onCancel }: PendingCoinProps) {
 		sell: { text: '매도', className: 'text-blue-800' },
 		buy: { text: '매수', className: 'text-red-600' },
 	};
-
 	const { text, className } = tradeTypeConfig[order.tradeType];
 
 	return (
@@ -30,7 +25,7 @@ export function PendingCoin({ order, onCancel }: PendingCoinProps) {
 			</div>
 			<button
 				className="font-semibold px-2 py-1 text-blue-900 rounded-md text-sm bg-blue-100 hover:bg-blue-200"
-				onClick={onCancel}
+				onClick={() => onCancel(order.tradeId, order.tradeType)}
 			>
 				취소
 			</button>
