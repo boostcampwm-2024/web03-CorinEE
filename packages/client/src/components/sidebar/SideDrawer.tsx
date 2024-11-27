@@ -1,8 +1,12 @@
-import Interest from '@/components/sidebar/Interest';
-import MyInvestment from '@/components/sidebar/MyInvestment';
-import Realtime from '@/components/sidebar/Realtime';
-import RecentlyViewed from '@/components/sidebar/RecentlyViewed';
+import { lazy, Suspense } from 'react';
 import { SideBarCategory } from '@/types/category';
+
+const MyInvestment = lazy(() => import('@/components/sidebar/MyInvestment'));
+const Interest = lazy(() => import('@/components/sidebar/Interest'));
+const RecentlyViewed = lazy(
+	() => import('@/components/sidebar/RecentlyViewed'),
+);
+const Realtime = lazy(() => import('@/components/sidebar/Realtime'));
 
 type SideDrawerProps = {
 	isOpen: boolean;
@@ -21,14 +25,14 @@ function SideDrawer({ isOpen, activeMenu }: SideDrawerProps) {
 		<div className="overflow-hidden bg-gray-100">
 			<div
 				className={`
-            h-full
-            bg-gray-100
-            transition-all duration-300 ease-in-out
-			border-l border-gray-400 border-solid
-            ${isOpen ? 'translate-x-0 w-80' : 'translate-x-full w-0'}
-          `}
+          h-full
+          bg-gray-100
+          transition-all duration-300 ease-in-out
+          border-l border-gray-400 border-solid
+          ${isOpen ? 'translate-x-0 w-80' : 'translate-x-full w-0'}
+        `}
 			>
-				{activeMenu && activeMenuComponent[activeMenu]}
+				<Suspense>{activeMenu && activeMenuComponent[activeMenu]}</Suspense>
 			</div>
 		</div>
 	);
