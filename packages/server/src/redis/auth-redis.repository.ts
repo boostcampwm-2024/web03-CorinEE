@@ -3,9 +3,7 @@ import Redis from 'ioredis';
 
 @Injectable()
 export class AuthRedisRepository {
-  constructor(
-    @Inject('AUTH_REDIS_CLIENT') private readonly authRedis: Redis,
-  ) {}
+  constructor(@Inject('AUTH_REDIS_CLIENT') private readonly authRedis: Redis) {}
 
   async setAuthData(key: string, value: string, ttl?: number): Promise<string> {
     if (ttl) {

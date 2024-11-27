@@ -25,7 +25,7 @@ import { TradeAskBidService } from './trade-ask-bid.service';
     UserRepository,
     TradeHistoryRepository,
     TradeService,
-    TradeAskBidService
+    TradeAskBidService,
   ],
   controllers: [TradeController],
   exports: [TradeRepository]

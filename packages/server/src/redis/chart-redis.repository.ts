@@ -10,7 +10,7 @@ export class ChartRedisRepository {
   async setChartData(key, value) {
     this.chartRedis.set(key, value);
   }
-  
+
   async getChartDate(keys) {
     try {
       const results = await Promise.all(

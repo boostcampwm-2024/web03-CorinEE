@@ -17,7 +17,10 @@ import {
 } from '@nestjs/swagger';
 import { AccountService } from './account.service';
 import { Request } from 'express';
-import { AccountResponseDto, MyAccountResponseDto } from './dtos/my-account.response.dto';
+import {
+  AccountResponseDto,
+  MyAccountResponseDto,
+} from './dtos/my-account.response.dto';
 
 @ApiTags('계정 API')
 @Controller('account')
@@ -48,7 +51,9 @@ export class AccountController {
   @ApiSecurity('access-token')
   @UseGuards(AuthGuard)
   @Get('myaccount')
-  async getMyAccount(@Req() req: Request): Promise<MyAccountResponseDto|AccountResponseDto> {
+  async getMyAccount(
+    @Req() req: Request,
+  ): Promise<MyAccountResponseDto | AccountResponseDto> {
     this.logger.log(`계정 정보 조회 시작: ${req.user['userId']}`);
     try {
       const response = await this.accountService.getMyAccountData(req.user);

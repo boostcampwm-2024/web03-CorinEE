@@ -1,4 +1,4 @@
-export enum TRADE_TYPES{
+export enum TRADE_TYPES {
   BUY = 'buy',
   SELL = 'sell',
 }
