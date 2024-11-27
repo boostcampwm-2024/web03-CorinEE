@@ -3,13 +3,16 @@ import { getCookie, removeCookie } from '@/utility/storage/cookies';
 interface AuthState {
 	isAuthenticated: boolean;
 	isLoading: boolean;
+	isGuestLogin: boolean;
 	checkAuth: () => void;
 	logout: () => void;
 	getToken: () => string | null;
+	checkGuestLogin: () => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
 	isAuthenticated: !!localStorage.getItem('access_token'),
+	isGuestLogin: false,
 	isLoading: false,
 
 	checkAuth: () => {
@@ -22,5 +25,8 @@ export const useAuthStore = create<AuthState>((set) => ({
 		set({ isAuthenticated: false });
 	},
 
+	checkGuestLogin: () => {
+		set({ isGuestLogin: true });
+	},
 	getToken: () => getCookie('access_token'),
 }));
