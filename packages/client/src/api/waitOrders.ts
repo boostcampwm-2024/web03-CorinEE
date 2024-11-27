@@ -1,17 +1,13 @@
 import { authInstance } from '@/api/instance';
-import { useToast } from '@/hooks/ui/useToast';
 import { AccountWaitOrder } from '@/types/waitOrder';
 
-export async function myWaitOrders(): Promise<AccountWaitOrder[]> {
-	const response = await authInstance.get(`/trade/tradeData`, {});
+export async function myWaitOrders(coin?: string): Promise<AccountWaitOrder[]> {
+	const params = coin ? `?coin=${coin}` : '';
+	const response = await authInstance.get(`/trade/tradeData${params}`);
 	return response.data.result;
 }
 
-export async function deleteWaitOrders(
-	tradeId: number,
-	tradeType: string,
-): Promise<void> {
-	const toast = useToast();
+export async function deleteWaitOrders(tradeId: number, tradeType: string) {
 	const params = new URLSearchParams({
 		tradeId: tradeId.toString(),
 		tradeType: tradeType,
@@ -21,9 +17,5 @@ export async function deleteWaitOrders(
 		`/trade/tradeData?${params.toString()}`,
 	);
 
-	if (response.status === 200) {
-		toast.success('주문을 취소하였습니다.');
-	} else {
-		toast.error('주문 취소를 실패했습니다.');
-	}
+	return response.data;
 }
