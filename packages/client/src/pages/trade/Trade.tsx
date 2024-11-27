@@ -37,7 +37,7 @@ function Trade() {
 
 	return (
 		<>
-			<div className="h-auto min-h-full pb-10">
+			<div className="h-auto min-h-full pb-10 min-w-[1100px]">
 				<TradeHeader market={market} sseData={price} />
 				<div className="flex flex-1 gap-2 max-h-[650px] min-h-0">
 					<Suspense fallback={<ChartSkeleton />}>
