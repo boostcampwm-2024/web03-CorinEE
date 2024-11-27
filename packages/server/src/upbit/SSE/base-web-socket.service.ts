@@ -7,7 +7,7 @@ export abstract class BaseWebSocketService {
   protected readonly logger: Logger;
 
   constructor(context: string) {
-    this.logger = new Logger(context); // 동적으로 context 설정
+    this.logger = new Logger(context);
   }
 
   protected abstract handleMessage(data: any): void;

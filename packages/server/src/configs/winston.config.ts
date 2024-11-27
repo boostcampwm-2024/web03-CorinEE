@@ -36,17 +36,16 @@ const consoleFormat = printf(({ level, message, timestamp, context }) => {
 });
 
 export const winstonConfig = {
-  levels,
-  transports: [
-    // 콘솔 출력
-    new winston.transports.Console({
-      level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
-      format: combine(
-        colorize({ all: true }),
-        timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-        consoleFormat,
-      ),
-    }),
+	levels,
+	transports: [
+		// 콘솔 출력
+		new winston.transports.Console({
+			level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+			format: combine(
+				timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+				utilities.format.nestLike('CorinEE'),
+			),
+		}),
 
     // info 레벨 로그 파일
     new winstonDaily({
