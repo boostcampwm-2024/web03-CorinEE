@@ -12,6 +12,7 @@ import { UpbitModule } from 'src/upbit/upbit.module';
 import { TradeHistoryRepository } from 'src/trade-history/trade-history.repository';
 import { AskService } from './trade-ask.service';
 import { TradeService } from './trade.service';
+import { TradeAskBidService } from './trade-ask-bid.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Trade]), HttpModule, UpbitModule],
@@ -24,6 +25,7 @@ import { TradeService } from './trade.service';
     UserRepository,
     TradeHistoryRepository,
     TradeService,
+    TradeAskBidService
   ],
   controllers: [TradeController],
   exports: [TradeRepository]

@@ -8,11 +8,12 @@ import { UPBIT_UPDATED_COIN_INFO_TIME } from '../upbit/constants';
 import {
 	OrderBookEntry,
 	TradeData,
+	TradeDataRedis,
 	TradeResponse,
 } from './dtos/trade.interface';
 import { formatQuantity, isMinimumQuantity } from './helpers/trade.helper';
 import { QueryRunner } from 'typeorm';
-import { TRANSACTION_CHECK_INTERVAL } from './constants/trade.constants';
+import { TRADE_TYPES, TRANSACTION_CHECK_INTERVAL } from './constants/trade.constants';
 import { TradeNotFoundException } from './exceptions/trade.exceptions';
 import { TradeAskBidService } from './trade-ask-bid.service';
 
@@ -29,7 +30,7 @@ export class AskService extends TradeAskBidService implements OnModuleInit {
 		const processAskTrades = async () => {
 			try {
 				await this.processPendingTrades(
-					'SELL',
+					TRADE_TYPES.SELL,
 					this.askTradeService.bind(this),
 				);
 			} finally {
@@ -70,7 +71,8 @@ export class AskService extends TradeAskBidService implements OnModuleInit {
 		this.transactionCreateAsk = true;
 
 		try {
-			return await this.executeTransaction(async (queryRunner) => {
+      let userTrade
+			const transactionResult = await this.executeTransaction(async (queryRunner) => {
 				if (askDto.receivedAmount <= 0) {
 					throw new BadRequestException('수량은 0보다 커야 합니다.');
 				}
@@ -84,10 +86,10 @@ export class AskService extends TradeAskBidService implements OnModuleInit {
 					queryRunner,
 				);
 
-				const tradeId = await this.tradeRepository.createTrade(
+				userTrade = await this.tradeRepository.createTrade(
 					askDto,
 					user.userId,
-					'sell',
+					TRADE_TYPES.SELL,
 					queryRunner,
 				);
 
@@ -100,28 +102,26 @@ export class AskService extends TradeAskBidService implements OnModuleInit {
 					queryRunner,
 				);
 
-				const tradeData = {
-					tradeId,
-					userId: user.userId,
-					tradeType: 'sell',
-					tradeCurrency: askDto.typeGiven,
-					assetName: askDto.typeReceived,
-					price: askDto.receivedPrice,
-					quantity: askDto.receivedAmount,
-					timestamp: Date.now(),
-				};
-
-				const redisKey = `trade:sell:${askDto.typeGiven}:${askDto.typeReceived}`;
-				await this.redisRepository.setTradeData(
-					redisKey,
-					JSON.stringify(tradeData),
-				);
-
 				return {
 					statusCode: 200,
 					message: '거래가 정상적으로 등록되었습니다.',
 				};
 			});
+      if(transactionResult.statusCode === 200){
+        const tradeData: TradeDataRedis = {
+					tradeId: userTrade.tradeId,
+					userId: user.userId,
+					tradeType: TRADE_TYPES.SELL,
+					tradeCurrency: askDto.typeGiven,
+					assetName: askDto.typeReceived,
+					price: askDto.receivedPrice,
+					quantity: askDto.receivedAmount,
+					createdAt: userTrade.createdAt
+				};
+
+				await this.redisRepository.createTrade(tradeData)
+      }
+      return transactionResult
 		} finally {
 			this.transactionCreateAsk = false;
 		}

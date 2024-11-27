@@ -1,3 +1,6 @@
+import { Timestamp } from "typeorm";
+import { TRADE_TYPES } from '../constants/trade.constants';
+
 export interface TradeResponse {
   statusCode: number;
   message: string;
@@ -25,6 +28,16 @@ export interface TradeData {
   assetBalance?: number;
 }
 
+export interface TradeDataRedis{
+  tradeId: number;
+  userId: number;
+  tradeType: TRADE_TYPES.BUY | TRADE_TYPES.SELL;
+  tradeCurrency: string;
+  assetName: string;
+  price: number;
+  quantity: number;
+  createdAt: Date;
+}
 export interface OrderBookEntry {
   ask_price?: number;
   bid_price?: number;

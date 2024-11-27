@@ -8,7 +8,8 @@ import { TradeHistoryRepository } from '@src/trade-history/trade-history.reposit
 import { CoinDataUpdaterService } from '@src/upbit/coin-data-updater.service';
 import { CoinPriceDto, TradeData } from './dtos/trade.interface';
 import { formatQuantity, isMinimumQuantity } from './helpers/trade.helper';
-import { RedisRepository } from '@src/redis/redis.repository';
+import { TradeRedisRepository } from '@src/redis/trade-redis.repository';
+import { TRADE_TYPES } from './constants/trade.constants';
 
 @Injectable()
 export class TradeAskBidService {
@@ -21,10 +22,10 @@ export class TradeAskBidService {
     protected readonly userRepository: UserRepository,
     protected readonly tradeHistoryRepository: TradeHistoryRepository,
     protected readonly coinDataUpdaterService: CoinDataUpdaterService,
-    protected readonly redisRepository: RedisRepository
+    protected readonly redisRepository: TradeRedisRepository
   ) {}
   protected async processPendingTrades(
-    tradeType: 'BUY' | 'SELL',
+    tradeType: TRADE_TYPES.SELL | TRADE_TYPES.BUY,
     handler: (tradeDto: TradeData) => Promise<void>,
   ) {
     try {
@@ -32,10 +33,9 @@ export class TradeAskBidService {
       if (coinLatestInfo.size === 0) return;
 
       const coinPrices = this.buildCoinPrices(coinLatestInfo);
-      const availableTrades =
-        tradeType === 'BUY'
-          ? await this.tradeRepository.searchBuyTrades(coinPrices)
-          : await this.tradeRepository.searchSellTrades(coinPrices);
+      
+      const availableTrades = await this.redisRepository.findMatchingTrades(tradeType, coinPrices)
+          
       for (const trade of availableTrades) {
         const tradeDto = this.buildTradeDto(trade, coinLatestInfo, tradeType);
         await handler(tradeDto);
@@ -62,10 +62,10 @@ export class TradeAskBidService {
   private buildTradeDto(
     trade: any,
     coinLatestInfo: Map<string, any>,
-    tradeType: 'BUY' | 'SELL',
+    tradeType: TRADE_TYPES.BUY | TRADE_TYPES.SELL,
   ): TradeData {
     const [baseMarket, targetMarket] =
-      tradeType === 'BUY'
+      tradeType === TRADE_TYPES.BUY
         ? [trade.assetName, trade.tradeCurrency]
         : [trade.tradeCurrency, trade.assetName];
 
@@ -75,7 +75,7 @@ export class TradeAskBidService {
     ).trade_price;
 
     return {
-      userId: trade.user.id,
+      userId: trade.userId,
       typeGiven: trade.tradeCurrency,
       typeReceived: trade.assetName,
       receivedPrice: trade.price,
@@ -112,9 +112,12 @@ export class TradeAskBidService {
     tradeData.quantity = formatQuantity(tradeData.quantity - buyData.quantity);
     if (isMinimumQuantity(tradeData.quantity)) {
       await this.tradeRepository.deleteTrade(tradeData.tradeId, queryRunner);
+      await queryRunner.commitTransaction();
+      await this.redisRepository.deleteTrade(tradeData);
     } else {
       await this.tradeRepository.updateTradeQuantity(tradeData, queryRunner);
     }
+    
     return tradeData.quantity;
   }
 }
