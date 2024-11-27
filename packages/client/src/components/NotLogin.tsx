@@ -1,7 +1,7 @@
 import Lottie from 'lottie-react';
 import BitcoinLottie from '@asset/lotties/BitcoinLottie.json';
-import { useAuth } from '@/hooks/auth/useAuth';
-import { useToast } from '@/hooks/ui/useToast';
+import GuestLoginModal from '@/components/modal/GuestLoginModal';
+import { useModal } from '@/hooks/ui/useModal';
 
 type Size = 'sm' | 'md' | 'lg';
 
@@ -44,8 +44,8 @@ function NotLogin({ size }: NotLoginProps) {
 		},
 	};
 
-	const { guestLogin } = useAuth();
-	const toast = useToast();
+	const { open, handleOpen } = useModal();
+
 	return (
 		<div className="w-full min-h-[50vh] flex flex-col justify-center items-center gap-6 p-6">
 			<Lottie
@@ -61,16 +61,11 @@ function NotLogin({ size }: NotLoginProps) {
 				<p className={sizeTable[size].subText}>
 					서비스 이용을 위해 로그인해 주세요
 				</p>
-				<p
-					onClick={() => {
-						guestLogin.mutate();
-						toast.success('안녕하세요');
-					}}
-					className={sizeTable[size].highlightText}
-				>
+				<p className={sizeTable[size].highlightText} onClick={handleOpen}>
 					체험 계정으로 1초 만에 시작하기 →
 				</p>
 			</div>
+			<GuestLoginModal open={open} handleOpen={handleOpen} />
 		</div>
 	);
 }
