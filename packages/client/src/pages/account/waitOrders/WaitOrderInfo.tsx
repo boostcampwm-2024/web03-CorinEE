@@ -1,7 +1,6 @@
-import { deleteWaitOrders } from '@/api/waitOrders';
+import { useDeleteWaitOrder } from '@/hooks/trade/useDeleteWaitOrder';
 import { AccountWaitOrder } from '@/types/waitOrder';
 import { formatDateTime } from '@/utility/historyUtils';
-import { useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 
 type WaitOrderInfoProps = Omit<
@@ -18,12 +17,10 @@ function WaitOrderInfo({
 	tradeType,
 	tradeId,
 }: WaitOrderInfoProps) {
-	const queryClient = useQueryClient();
 	const formattedCreatedTime = formatDateTime(createdAt);
-
+	const { deleteOrder } = useDeleteWaitOrder();
 	const handleDelete = async () => {
-		await deleteWaitOrders(tradeId, tradeType);
-		queryClient.invalidateQueries({ queryKey: ['MY_WAIT_ORDERS'] });
+		deleteOrder.mutateAsync({ tradeId, tradeType });
 	};
 
 	return (
