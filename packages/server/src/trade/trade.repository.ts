@@ -33,7 +33,7 @@ export class TradeRepository extends Repository<Trade> {
     userId: number,
     tradeType: string,
     queryRunner: QueryRunner,
-  ): Promise<number> {
+  ): Promise<Trade> {
     try {
       const user = await this.userRepository.getUser(userId);
 
@@ -42,7 +42,7 @@ export class TradeRepository extends Repository<Trade> {
       const trade = this.createTradeEntity(tradeDto, user, tradeType);
       const savedTrade = await queryRunner.manager.save(Trade, trade);
 
-      return savedTrade.tradeId;
+      return savedTrade;
     } catch (error) {
       this.logger.error(`미체결 생성 실패`, { error: error.stack, userId });
       throw new TradeCreateFailedException(userId, error.message);

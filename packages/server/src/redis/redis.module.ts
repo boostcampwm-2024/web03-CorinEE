@@ -1,7 +1,9 @@
 import { Module, Global } from '@nestjs/common';
 import Redis from 'ioredis';
 import { getRedisConfig } from 'src/configs/redis.config';
-import { RedisRepository } from './redis.repository';
+import { TradeRedisRepository } from './trade-redis.repository';
+import { AuthRedisRepository } from './auth-redis.repository';
+import { ChartRedisRepository } from './chart-redis.repository';
 
 @Global()
 @Module({
@@ -42,8 +44,17 @@ import { RedisRepository } from './redis.repository';
         return client;
       },
     },
-    RedisRepository,
+    TradeRedisRepository,
+    AuthRedisRepository,
+    ChartRedisRepository,
   ],
-  exports: ['TRADE_REDIS_CLIENT', 'AUTH_REDIS_CLIENT', RedisRepository],
+  exports: [
+    'TRADE_REDIS_CLIENT',
+    'AUTH_REDIS_CLIENT',
+    'CHART_REDIS_CLIENT',
+    TradeRedisRepository,
+    AuthRedisRepository,
+    ChartRedisRepository,
+  ],
 })
 export class RedisModule {}

@@ -18,7 +18,7 @@ import {
 } from './constants';
 import { v4 as uuidv4 } from 'uuid';
 import { AccountRepository } from 'src/account/account.repository';
-import { RedisRepository } from 'src/redis/redis.repository';
+import { AuthRedisRepository } from 'src/redis/auth-redis.repository';
 import { User } from './user.entity';
 import { SignUpDto } from './dtos/sign-up.dto';
 @Injectable()
@@ -29,7 +29,7 @@ export class AuthService {
 		private userRepository: UserRepository,
 		private accountRepository: AccountRepository,
 		private jwtService: JwtService,
-		private readonly redisRepository: RedisRepository,
+		private readonly redisRepository: AuthRedisRepository,
 	) {}
 
 	async signIn(

@@ -1,14 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { UserRepository } from '../auth/user.repository';
-import { RedisRepository } from '../redis/redis.repository';
+import { AuthRedisRepository } from '@src/redis/auth-redis.repository';
 
 @Injectable()
 export class CleanupService {
   private readonly logger = new Logger(CleanupService.name);
 
   constructor(
-    private readonly redisRepository: RedisRepository,
+    private readonly redisRepository: AuthRedisRepository,
     private readonly userRepository: UserRepository,
   ) {}
 

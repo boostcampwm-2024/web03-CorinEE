@@ -5,12 +5,13 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { QueryRunner } from 'typeorm';
-import { TRANSACTION_CHECK_INTERVAL } from './constants/trade.constants';
+import { TRADE_TYPES, TRANSACTION_CHECK_INTERVAL } from './constants/trade.constants';
 import { formatQuantity, isMinimumQuantity } from './helpers/trade.helper';
 import {
   OrderBookEntry,
   TradeData,
   TradeResponse,
+  TradeDataRedis,
 } from './dtos/trade.interface';
 import { UPBIT_UPDATED_COIN_INFO_TIME } from '../upbit/constants';
 import { TradeNotFoundException } from './exceptions/trade.exceptions';
@@ -28,7 +29,7 @@ export class BidService extends TradeAskBidService implements OnModuleInit {
   private startPendingTradesProcessor() {
     const processBidTrades = async () => {
       try {
-        await this.processPendingTrades('BUY', this.bidTradeService.bind(this));
+        await this.processPendingTrades(TRADE_TYPES.BUY, this.bidTradeService.bind(this));
       } finally {
         setTimeout(processBidTrades, UPBIT_UPDATED_COIN_INFO_TIME);
       }
@@ -60,7 +61,8 @@ export class BidService extends TradeAskBidService implements OnModuleInit {
     this.transactionCreateBid = true;
 
     try {
-      return await this.executeTransaction(async (queryRunner) => {
+      let userTrade;
+      const transactionResult =  await this.executeTransaction(async (queryRunner) => {
         if (bidDto.receivedAmount <= 0) {
           throw new BadRequestException('수량은 0보다 커야 합니다.');
         }
@@ -80,18 +82,32 @@ export class BidService extends TradeAskBidService implements OnModuleInit {
           queryRunner,
         );
 
-        await this.tradeRepository.createTrade(
+        userTrade = await this.tradeRepository.createTrade(
           bidDto,
           user.userId,
-          'buy',
+          TRADE_TYPES.BUY,
           queryRunner,
         );
-
         return {
           statusCode: 200,
           message: '거래가 정상적으로 등록되었습니다.',
         };
       });
+      if(transactionResult.statusCode === 200){
+        const tradeData: TradeDataRedis = {
+          tradeId: userTrade.tradeId,
+          userId: user.userId,
+          tradeType: TRADE_TYPES.BUY,
+          tradeCurrency: bidDto.typeGiven,
+          assetName: bidDto.typeReceived,
+          price: bidDto.receivedPrice,
+          quantity: bidDto.receivedAmount,
+          createdAt: userTrade.createdAt
+        };
+
+        await this.redisRepository.createTrade(tradeData)
+      }
+      return transactionResult
     } finally {
       this.transactionCreateBid = false;
     }
