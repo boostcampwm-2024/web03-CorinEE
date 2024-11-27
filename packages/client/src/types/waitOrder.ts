@@ -7,6 +7,6 @@ export type AccountWaitOrder = {
 	price: number;
 	quantity: number;
 	tradeId: number;
-	tradeType: string;
+	tradeType: 'sell' | 'buy';
 	userId: number;
 };
