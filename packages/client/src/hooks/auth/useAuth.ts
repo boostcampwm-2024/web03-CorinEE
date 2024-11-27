@@ -6,7 +6,9 @@ import { useMutation } from '@tanstack/react-query';
 
 export function useAuth() {
 	const checkAuth = useAuthStore((state) => state.checkAuth);
+	const checkGuestLogin = useAuthStore((state) => state.checkGuestLogin);
 	const logoutAuth = useAuthStore((state) => state.logout);
+
 	const useGuestLogin = useMutation({
 		mutationFn: guestLogin,
 		onSuccess: ({ access_token, refresh_token }: Login) => {
@@ -15,6 +17,7 @@ export function useAuth() {
 			});
 			localStorage.setItem('access_token', access_token);
 			checkAuth();
+			checkGuestLogin();
 		},
 		onError: (error) => {
 			alert(`로그인을 실패했습니다! ${error.message}`);
