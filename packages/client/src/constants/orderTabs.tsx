@@ -2,13 +2,13 @@ import { lazy, Suspense } from 'react';
 import NotLogin from '@/components/NotLogin';
 
 const OrderBuyForm = lazy(
-	() => import('@/pages/trade/components/order_form/OrderBuyForm'),
+	() => import('@/pages/trade/components/order_form/forms/OrderBuyForm'),
 );
 const OrderSellForm = lazy(
-	() => import('@/pages/trade/components/order_form/OrderSellForm'),
+	() => import('@/pages/trade/components/order_form/forms/OrderSellForm'),
 );
 const OrderWaitForm = lazy(
-	() => import('@/pages/trade/components/order_form/OrderWaitForm'),
+	() => import('@/pages/trade/components/order_form/forms/OrderWaitForm'),
 );
 
 type CreateOrderTabProsp = {
@@ -16,10 +16,18 @@ type CreateOrderTabProsp = {
 	selectPrice: number | null;
 };
 
+export type OrderTabItem = {
+	value: string;
+	id: 'buy' | 'sell' | 'wait';
+	activeColor: string;
+	component: JSX.Element;
+	notLogin: JSX.Element;
+};
+
 export const createOrderTabs = ({
 	currentPrice,
 	selectPrice,
-}: CreateOrderTabProsp) => {
+}: CreateOrderTabProsp): OrderTabItem[] => {
 	return [
 		{
 			value: '구매',
