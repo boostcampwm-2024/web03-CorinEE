@@ -128,7 +128,7 @@ export class TradeController {
     name: 'coin',
     description: '코인 이름',
     required: false,
-    example: 'BTC',
+    example: 'KRW-BTC',
   })
   @ApiResponse({ status: HttpStatus.OK, description: '사용자 거래 내역 있음' })
   @ApiResponse({

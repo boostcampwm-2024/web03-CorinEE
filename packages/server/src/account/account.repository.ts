@@ -1,5 +1,9 @@
 import { DataSource, Repository, QueryRunner } from 'typeorm';
-import { Injectable, UnprocessableEntityException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  UnprocessableEntityException,
+  Logger,
+} from '@nestjs/common';
 import { Account } from './account.entity';
 import { User } from '@src/auth/user.entity';
 import { CURRENCY_CONSTANTS } from './constants/currency.constants';
@@ -21,7 +25,7 @@ export class AccountRepository extends Repository<Account> {
       account.USDT = CURRENCY_CONSTANTS.ADMIN_INITIAL_USDT;
       account.BTC = CURRENCY_CONSTANTS.ADMIN_INITIAL_BTC;
       account.user = adminUser;
-      
+
       await this.save(account);
       this.logger.log(`관리자 계정 생성 완료: ${adminUser.id}`);
     } catch (error) {
@@ -49,7 +53,9 @@ export class AccountRepository extends Repository<Account> {
     accountId: number,
     queryRunner: QueryRunner,
   ): Promise<void> {
-    this.logger.log(`계정 통화 업데이트 시작: accountId=${accountId}, type=${typeGiven}`);
+    this.logger.log(
+      `계정 통화 업데이트 시작: accountId=${accountId}, type=${typeGiven}`,
+    );
     try {
       await queryRunner.manager
         .createQueryBuilder()
@@ -57,10 +63,13 @@ export class AccountRepository extends Repository<Account> {
         .set({ [typeGiven]: accountBalance })
         .where('id = :id', { id: accountId })
         .execute();
-      
+
       this.logger.log(`계정 통화 업데이트 완료: accountId=${accountId}`);
     } catch (error) {
-      this.logger.error(`계정 통화 업데이트 실패: ${error.message}`, error.stack);
+      this.logger.error(
+        `계정 통화 업데이트 실패: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }
@@ -68,7 +77,7 @@ export class AccountRepository extends Repository<Account> {
   async updateAccountBTC(
     id: number,
     quantity: number,
-    queryRunner: QueryRunner
+    queryRunner: QueryRunner,
   ): Promise<void> {
     this.logger.log(`BTC 잔액 업데이트 시작: accountId=${id}`);
     try {
@@ -78,10 +87,13 @@ export class AccountRepository extends Repository<Account> {
         .set({ BTC: quantity })
         .where('id = :id', { id })
         .execute();
-      
+
       this.logger.log(`BTC 잔액 업데이트 완료: accountId=${id}`);
     } catch (error) {
-      this.logger.error(`BTC 잔액 업데이트 실패: ${error.message}`, error.stack);
+      this.logger.error(
+        `BTC 잔액 업데이트 실패: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }
@@ -106,7 +118,7 @@ export class AccountRepository extends Repository<Account> {
       const account = await queryRunner.manager.findOne(Account, {
         where: { user: { id } },
       });
-      
+
       this.logger.log(`계정 조회 완료: userId=${id}`);
       return account;
     } catch (error) {

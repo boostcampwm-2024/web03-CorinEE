@@ -26,7 +26,10 @@ export class AccountController {
 
   constructor(private readonly accountService: AccountService) {}
 
-  @ApiOperation({ summary: '내 계정 정보 조회', description: '현재 로그인한 사용자의 계정 정보를 조회합니다.' })
+  @ApiOperation({
+    summary: '내 계정 정보 조회',
+    description: '현재 로그인한 사용자의 계정 정보를 조회합니다.',
+  })
   @ApiResponse({
     status: HttpStatus.OK,
     description: '계정 정보 조회 성공',
