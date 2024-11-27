@@ -1,6 +1,6 @@
 import { useAuth } from '@/hooks/auth/useAuth';
 import { Button, Navbar } from '@material-tailwind/react';
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
 import { useToast } from '@/hooks/ui/useToast';
 import logoImage from '@asset/logo/corineeLogo.png';
@@ -12,14 +12,11 @@ function Header() {
 	const { guestLogin, logout } = useAuth();
 	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 	const toast = useToast();
-	const location = useLocation();
 
 	const handleLogin = (param: 'kakao' | 'google') => {
 		if (param === 'google') window.location.href = GOOGLE_AUTH_URL;
 		else if (param === 'kakao') window.location.href = KAKAO_AUTH_URL;
 	};
-
-	const isAccountPage = location.pathname.startsWith('/account');
 
 	return (
 		<Navbar
@@ -44,7 +41,9 @@ function Header() {
 				</NavLink>
 				<NavLink
 					to={'/account/balance'}
-					className={`${isAccountPage ? 'text-black font-semibold' : 'text-gray-600'} hover:text-black`}
+					className={({ isActive }) =>
+						`${isActive ? 'text-black font-semibold' : 'text-gray-600'} hover:text-black`
+					}
 				>
 					내 계좌
 				</NavLink>
