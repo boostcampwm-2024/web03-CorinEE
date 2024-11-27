@@ -8,6 +8,7 @@ import { TradeHistoryRepository } from '@src/trade-history/trade-history.reposit
 import { CoinDataUpdaterService } from '@src/upbit/coin-data-updater.service';
 import { CoinPriceDto, TradeData } from './dtos/trade.interface';
 import { formatQuantity, isMinimumQuantity } from './helpers/trade.helper';
+import { RedisRepository } from '@src/redis/redis.repository';
 
 @Injectable()
 export class TradeAskBidService {
@@ -20,6 +21,7 @@ export class TradeAskBidService {
     protected readonly userRepository: UserRepository,
     protected readonly tradeHistoryRepository: TradeHistoryRepository,
     protected readonly coinDataUpdaterService: CoinDataUpdaterService,
+    protected readonly redisRepository: RedisRepository
   ) {}
   protected async processPendingTrades(
     tradeType: 'BUY' | 'SELL',
