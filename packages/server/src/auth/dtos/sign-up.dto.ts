@@ -11,14 +11,14 @@ export class SignUpDto {
   name: string;
 
   @IsString()
-  email: string;
+  email?: string;
+
+  @IsString()
+  provider?: string;
+
+  @IsString()
+  providerId?: string;
 
   @IsBoolean()
   isGuest: boolean;
-
-  @IsString()
-  provider: string;
-
-  @IsString()
-  providerId: string;
 }

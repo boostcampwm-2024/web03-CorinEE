@@ -1,151 +1,135 @@
 import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Request,
-  Res,
-  UseGuards,
+	Body,
+	Controller,
+	Delete,
+	Get,
+	HttpCode,
+	HttpStatus,
+	Post,
+	Request,
+	Res,
+	UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from './auth.guard';
 import { AuthGuard as PassportAuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import {
-  ApiBody,
-  ApiBearerAuth,
-  ApiSecurity,
-  ApiResponse,
+	ApiBody,
+	ApiBearerAuth,
+	ApiSecurity,
+	ApiResponse,
 } from '@nestjs/swagger';
 import { SignInDto } from './dtos/sign-in.dto';
 import { SignUpDto } from './dtos/sign-up.dto';
+import { FRONTEND_URL } from './constants';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+	constructor(private authService: AuthService) {}
 
-  @ApiBody({ type: SignInDto })
-  @HttpCode(HttpStatus.OK)
-  @Post('login')
-  signIn(@Body() signInDto: Record<string, any>) {
-    return this.authService.signIn(signInDto.username);
-  }
+	@ApiBody({ type: SignInDto })
+	@HttpCode(HttpStatus.OK)
+	@Post('login')
+	signIn(@Body() signInDto: Record<string, any>) {
+		return this.authService.signIn(signInDto.username);
+	}
 
-  @HttpCode(HttpStatus.OK)
-  @Post('guest-login')
-  guestSignIn() {
-    return this.authService.guestSignIn();
-  }
+	@HttpCode(HttpStatus.OK)
+	@Post('guest-login')
+	guestSignIn() {
+		return this.authService.guestSignIn();
+	}
 
-  @Get('google')
-  @UseGuards(PassportAuthGuard('google'))
-  async googleLogin() {}
+	@Get('google')
+	@UseGuards(PassportAuthGuard('google'))
+	async googleLogin() {}
 
-  @Get('google/callback')
-  @UseGuards(PassportAuthGuard('google'))
-  async googleLoginCallback(@Request() req, @Res() res): Promise<any> {
-    const googleUser = req.user;
+	@Get('google/callback')
+	@UseGuards(PassportAuthGuard('google'))
+	async googleLoginCallback(@Request() req, @Res() res): Promise<void> {
+		const tokens = await this.handleOAuthLogin(req.user);
+		this.redirectWithTokens(res, tokens);
+	}
 
-    const signUpDto: SignUpDto = {
-      name: googleUser.name,
-      email: googleUser.email,
-      provider: googleUser.provider,
-      providerId: googleUser.id,
-      isGuest: false,
-    };
+	@Get('kakao')
+	@UseGuards(PassportAuthGuard('kakao'))
+	async kakaoLogin() {}
 
-    const tokens = await this.authService.validateOAuthLogin(signUpDto);
-    // 요청 Origin 기반으로 리다이렉트 URL 결정
-    const origin = req.headers['origin'];
-    const frontendURL =
-      origin && origin.includes('localhost')
-        ? 'http://localhost:5173'
-        : 'https://www.corinee.site';
-    const redirectURL = new URL('/auth/callback', frontendURL);
+	@Get('kakao/callback')
+	@UseGuards(PassportAuthGuard('kakao'))
+	async kakaoLoginCallback(@Request() req, @Res() res): Promise<void> {
+		const tokens = await this.handleOAuthLogin(req.user);
+		this.redirectWithTokens(res, tokens);
+	}
 
-    redirectURL.searchParams.append('access_token', tokens.access_token);
-    redirectURL.searchParams.append('refresh_token', tokens.refresh_token);
-    console.log(redirectURL);
-    return res.redirect(redirectURL.toString());
-  }
+	@ApiResponse({
+		status: HttpStatus.OK,
+		description: 'New user successfully registered',
+	})
+	@ApiResponse({
+		status: HttpStatus.BAD_REQUEST,
+		description: 'Invalid input or user already exists',
+	})
+	@HttpCode(HttpStatus.CREATED)
+	@Post('signup')
+	async signUp(@Body() signUpDto: SignUpDto) {
+		return this.authService.signUp(signUpDto);
+	}
 
-  @Get('kakao')
-  @UseGuards(PassportAuthGuard('kakao'))
-  async kakaoLogin() {}
+	@ApiBearerAuth('access-token')
+	@ApiSecurity('access-token')
+	@UseGuards(AuthGuard)
+	@Delete('logout')
+	logout(@Request() req) {
+		return this.authService.logout(req.user.userId);
+	}
 
-  @Get('kakao/callback')
-  @UseGuards(PassportAuthGuard('kakao'))
-  async kakaoLoginCallback(@Request() req, @Res() res) {
-    const kakaoUser = req.user;
+	@UseGuards(AuthGuard)
+	@ApiBearerAuth('access-token')
+	@ApiSecurity('access-token')
+	@Get('profile')
+	getProfile(@Request() req) {
+		return req.user;
+	}
 
-    const signUpDto: SignUpDto = {
-      name: kakaoUser.name,
-      email: kakaoUser.email,
-      provider: kakaoUser.provider,
-      providerId: kakaoUser.id,
-      isGuest: false,
-    };
+	@ApiBody({
+		schema: {
+			type: 'object',
+			properties: {
+				refreshToken: {
+					type: 'string',
+					description: 'Refresh token used for renewing access token',
+					example: 'your-refresh-token',
+				},
+			},
+		},
+	})
+	@HttpCode(HttpStatus.OK)
+	@Post('refresh')
+	refreshTokens(@Body() body: { refreshToken: string }) {
+		return this.authService.refreshTokens(body.refreshToken);
+	}
 
-    const tokens = await this.authService.validateOAuthLogin(signUpDto);
+	private async handleOAuthLogin(user: any): Promise<any> {
+		const signUpDto: SignUpDto = {
+			name: user.name,
+			email: user.email,
+			provider: user.provider,
+			providerId: user.id,
+			isGuest: false,
+		};
 
-    const origin = req.headers['origin'];
-    const frontendURL =
-      origin && origin.includes('localhost')
-        ? 'http://localhost:5173'
-        : 'https://www.corinee.site';
-    const redirectURL = new URL('/auth/callback', frontendURL);
-    redirectURL.searchParams.append('access_token', tokens.access_token);
-    redirectURL.searchParams.append('refresh_token', tokens.refresh_token);
-    return res.redirect(redirectURL.toString());
-  }
+		return this.authService.validateOAuthLogin(signUpDto);
+	}
 
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'New user successfully registered',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Invalid input or user already exists',
-  })
-  @HttpCode(HttpStatus.CREATED)
-  @Post('signup')
-  async signUp(@Body() signUpDto: SignUpDto) {
-    return this.authService.signUp(signUpDto);
-  }
+	// Helper method to redirect with tokens
+	private redirectWithTokens(res: any, tokens: any): void {
+		const redirectURL = new URL('/auth/callback', FRONTEND_URL);
 
-  @ApiBearerAuth('access-token')
-  @ApiSecurity('access-token')
-  @UseGuards(AuthGuard)
-  @Delete('logout')
-  logout(@Request() req) {
-    return this.authService.logout(req.user.userId);
-  }
+		redirectURL.searchParams.append('access_token', tokens.access_token);
+		redirectURL.searchParams.append('refresh_token', tokens.refresh_token);
+		res.redirect(redirectURL.toString());
+	}
 
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('access-token')
-  @ApiSecurity('access-token')
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
-  }
-
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        refreshToken: {
-          type: 'string',
-          description: 'Refresh token used for renewing access token',
-          example: 'your-refresh-token',
-        },
-      },
-    },
-  })
-  @HttpCode(HttpStatus.OK)
-  @Post('refresh')
-  refreshTokens(@Body() body: { refreshToken: string }) {
-    return this.authService.refreshTokens(body.refreshToken);
-  }
+  
 }
