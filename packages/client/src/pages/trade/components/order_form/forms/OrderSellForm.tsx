@@ -1,6 +1,6 @@
 import OrderInput from '@/pages/trade/components/order_form/common/OrderInput';
-import OrderSubmitButton from '@/pages/trade/components/order_form/common/OrderSubmitButton';
-import PercentageButtons from '@/pages/trade/components/order_form/common/PercentageButtons';
+import OrderSubmitButton from '@/pages/trade/components/order_form/button/OrderSubmitButton';
+import PercentageButtons from '@/pages/trade/components/order_form/button/PercentageButtons';
 import Wallet from '@/pages/trade/components/order_form/common/NoCoin';
 import OrderSummary from '@/pages/trade/components/order_form/common/OrderSummary';
 import { useCheckCoin } from '@/hooks/trade/useCheckCoin';
