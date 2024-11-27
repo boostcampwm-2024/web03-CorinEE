@@ -1,4 +1,4 @@
-import { useMyHistory } from '@/hooks/useMyHistory';
+import { useMyHistory } from '@/hooks/account/useMyHistory';
 import HistoryInfo from '@/pages/account/history/HistoryInfo';
 import HistoryOption from '@/pages/account/history/HistoryOption';
 import HistoryPeriod from '@/pages/account/history/HistoryPeriod';

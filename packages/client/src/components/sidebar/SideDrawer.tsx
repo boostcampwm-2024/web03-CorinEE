@@ -2,7 +2,7 @@ import { lazy, Suspense } from 'react';
 import { SideBarCategory } from '@/types/category';
 
 const MyInvestment = lazy(() => import('@/components/sidebar/MyInvestment'));
-const Interest = lazy(() => import('@/components/sidebar/Interest'));
+const Interest = lazy(() => import('@/components/sidebar/MyInterest'));
 const RecentlyViewed = lazy(
 	() => import('@/components/sidebar/RecentlyViewed'),
 );

@@ -5,13 +5,15 @@ import { MarketData } from '@/types/market';
 import { MarketCategory } from '@/types/category';
 import { formatData } from '@/utility/format/formatSSEData';
 import { useEffect, useMemo, useState } from 'react';
+import { Interest } from '@/types/interest';
 
 type CoinListProps = {
 	markets: MarketData[];
 	activeCategory: MarketCategory;
+	myInterestMarketList : Interest[]
 };
 
-function CoinList({ markets, activeCategory }: CoinListProps) {
+function CoinList({ markets, activeCategory,myInterestMarketList }: CoinListProps) {
 	const [currentScrollPage, setCurrentScrollPage] = useState(1);
 	const COINS_PER_PAGE = 10;
 	const maxScrollPage = Math.ceil(markets.length / COINS_PER_PAGE);
@@ -23,6 +25,7 @@ function CoinList({ markets, activeCategory }: CoinListProps) {
 			),
 		[currentScrollPage, activeCategory],
 	);
+	const formattedMyInterestMarketList = myInterestMarketList.map(info => info.assetName)
 
 	useEffect(() => {
 		setCurrentScrollPage(1);
@@ -49,6 +52,7 @@ function CoinList({ markets, activeCategory }: CoinListProps) {
 					formatters={formatters}
 					market={market}
 					sseData={sseData}
+					isInterest = {formattedMyInterestMarketList.includes(market.market)}
 				/>
 			))}
 			<ol className="flex py-4 gap-4 justify-center">
