@@ -1,5 +1,5 @@
 services:
-  server_1:
+  server:
     build:
       context: .
       dockerfile: dockerfile-server
@@ -8,46 +8,7 @@ services:
     env_file:
       - .env
     ports:
-      - "3001:3000"
-    networks:
-      - app-network
-
-  server_2:
-    build:
-      context: .
-      dockerfile: dockerfile-server
-    image: seunggwan/corinee-server
-    restart: always
-    env_file:
-      - .env
-    ports:
-      - "3002:3000"
-    networks:
-      - app-network
-
-  server_3:
-    build:
-      context: .
-      dockerfile: dockerfile-server
-    image: seunggwan/corinee-server
-    restart: always
-    env_file:
-      - .env
-    ports:
-      - "3003:3000"
-    networks:
-      - app-network
-
-  server_4:
-    build:
-      context: .
-      dockerfile: dockerfile-server
-    image: seunggwan/corinee-server
-    restart: always
-    env_file:
-      - .env
-    ports:
-      - "3004:3000"
+      - "3000:3000"
     networks:
       - app-network
 
@@ -63,10 +24,7 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - server_1
-      - server_2
-      - server_3
-      - server_4
+      - server
     volumes:
       - /etc/letsencrypt/live/corinee.site:/etc/letsencrypt/live/corinee.site
       - /etc/letsencrypt/live/corinee.site/fullchain.pem:/etc/letsencrypt/live/corinee.site/fullchain.pem
