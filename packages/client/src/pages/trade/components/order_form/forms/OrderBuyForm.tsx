@@ -1,6 +1,6 @@
 import OrderInput from '@/pages/trade/components/order_form/common/OrderInput';
-import OrderSubmitButton from '@/pages/trade/components/order_form/common/OrderSubmitButton';
-import PercentageButtons from '@/pages/trade/components/order_form/common/PercentageButtons';
+import OrderSubmitButton from '@/pages/trade/components/order_form/button/OrderSubmitButton';
+import PercentageButtons from '@/pages/trade/components/order_form/button/PercentageButtons';
 import { useMyAccount } from '@/hooks/auth/useMyAccount';
 import { useOrderForm } from '@/hooks/trade/useOrderForm';
 import OrderSummary from '@/pages/trade/components/order_form/common/OrderSummary';
