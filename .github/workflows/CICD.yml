@@ -19,6 +19,15 @@ jobs:
           - server: loadbalancer
             host: ${{ vars.LOAD_SSH_HOST }}
             type: api
+          - server: loadbalancer2
+            host: ${{ vars.LOAD_SSH_HOST_2 }}
+            type: api2
+          - server: loadbalancer3
+            host: ${{ vars.LOAD_SSH_HOST_3 }}
+            type: api3
+          # - server: loadbalancer4
+          #   host: ${{ vars.LOAD_SSH_HOST_4 }}
+          #   type: api4
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -44,11 +53,12 @@ jobs:
           echo "${{ secrets.DEPLOY_ENV }}" > .env
   
       - name: Make loadbalancer environment
-        if: matrix.type == 'api'
+        if: matrix.type != 'full'
         run: |
           echo "${{ secrets.LOAD_DEPLOY_ENV }}" > .env
 
       - name: Send files & deploy script
+        if: matrix.type == 'full'
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -70,6 +80,42 @@ jobs:
           source: "docker-compose.server.yml,.env"
           target: /corinee
           overwrite: true
+
+      - name: Send files to loadbalancer
+        if: matrix.type == 'api2'
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.LOAD_SSH_HOST_2 }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.LOAD_SSH_PASSWORD_2 }}
+          port: ${{ secrets.SSH_PORT }}
+          source: "docker-compose.server.yml,.env"
+          target: /corinee
+          overwrite: true    
+
+      - name: Send files to loadbalancer
+        if: matrix.type == 'api3'
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.LOAD_SSH_HOST_3 }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.LOAD_SSH_PASSWORD_3 }}
+          port: ${{ secrets.SSH_PORT }}
+          source: "docker-compose.server.yml,.env"
+          target: /corinee
+          overwrite: true
+
+      # - name: Send files to loadbalancer
+      #   if: matrix.type == 'api4'
+      #   uses: appleboy/scp-action@master
+      #   with:
+      #     host: ${{ secrets.LOAD_SSH_HOST_4 }}
+      #     username: ${{ secrets.SSH_USERNAME }}
+      #     password: ${{ secrets.LOAD_SSH_PASSWORD_4 }}
+      #     port: ${{ secrets.SSH_PORT }}
+      #     source: "docker-compose.server.yml,.env"
+      #     target: /corinee
+      #     overwrite: true
 
       - name: Deploy to servers
         uses: appleboy/ssh-action@master
