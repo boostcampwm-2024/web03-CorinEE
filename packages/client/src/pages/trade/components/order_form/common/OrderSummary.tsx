@@ -18,9 +18,11 @@ function OrderSummary({ price, quantity, summaryItems }: OrderSummaryProps) {
 					<span className={item.className}>{item.value}</span>
 				</div>
 			))}
-			<div className="flex justify-between">
-				<span>총 주문 금액</span>
-				<span>{calculateTotalPrice(price, quantity).toLocaleString()}원</span>
+			<div className="flex justify-between items-start gap-4">
+				<span className="flex-shrink-0">총 주문 금액</span>
+				<span className="text-right break-all">
+					{calculateTotalPrice(price, quantity).toLocaleString()}원
+				</span>
 			</div>
 		</div>
 	);
