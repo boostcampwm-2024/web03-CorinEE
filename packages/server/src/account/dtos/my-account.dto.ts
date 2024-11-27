@@ -1,7 +1,7 @@
 import { IsString, IsNumber, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
-class CoinDto {
+export class CoinDto {
   @IsString()
   img_url: string;
 
@@ -29,7 +29,7 @@ export class MyAccountDto {
   total_bid: number;
 
   @IsArray()
-  @ValidateNested({ each: true }) // 배열의 각 요소를 검증
-  @Type(() => CoinDto) // 배열 요소의 타입 지정
+  @ValidateNested({ each: true })
+  @Type(() => CoinDto) 
   coins: CoinDto[];
 }
