@@ -16,7 +16,7 @@ function HistoryOption({ option, handleOption }: HistoryOptionProps) {
 					className={`py-3 px-4 w-20  border-solid border-gray-400
 					${
 						option === 'TOTAL'
-							? 'border-2 border-blue-700  text-blue-800'
+							? 'border-2 border-blue-600  text-blue-800'
 							: option === 'BUY'
 								? 'border-y border-l'
 								: 'border'
@@ -31,7 +31,7 @@ function HistoryOption({ option, handleOption }: HistoryOptionProps) {
 					className={`py-3 px-4 w-20  border-solid border-gray-400
 					${
 						option === 'BUY'
-							? 'border-2 border-blue-700  text-blue-800'
+							? 'border-2 border-blue-600  text-blue-800'
 							: option === 'SELL'
 								? 'border-y'
 								: 'border-y border-r'
@@ -44,7 +44,7 @@ function HistoryOption({ option, handleOption }: HistoryOptionProps) {
 				</div>
 				<div
 					className={`py-3 px-4 w-20  border-solid border-gray-400
-					${option === 'SELL' ? 'border-2 border-blue-700  text-blue-800' : 'border-y border-r'}`}
+					${option === 'SELL' ? 'border-2 border-blue-600  text-blue-800' : 'border-y border-r'}`}
 					onClick={() => {
 						handleOption('SELL');
 					}}
