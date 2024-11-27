@@ -50,9 +50,17 @@ function History() {
 					<div className="flex-[2]">주문시간</div>
 				</div>
 
-				{filteredHistories.reverse().map((history) => (
-					<HistoryInfo key={history.tradeHistoryId} {...history} />
-				))}
+				{filteredHistories.length > 0 ? (
+					filteredHistories
+						.reverse()
+						.map((history) => (
+							<HistoryInfo key={history.tradeHistoryId} {...history} />
+						))
+				) : (
+					<div className="mt-20 flex justify-center">
+						<p className='font-semibold text-gray-700'>거래 내역이 없습니다.</p>
+					</div>
+				)}
 			</div>
 		</>
 	);

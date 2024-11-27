@@ -17,9 +17,19 @@ function WaitOrders() {
 					<div className="w-[10%]">주문취소</div>
 				</div>
 
-				{waitOrders.reverse().map((waitOrder) => (
-					<WaitOrderInfo key={waitOrder.tradeId} {...waitOrder} />
-				))}
+				{waitOrders.length > 0 ? (
+					waitOrders
+						.reverse()
+						.map((waitOrder) => (
+							<WaitOrderInfo key={waitOrder.tradeId} {...waitOrder} />
+						))
+				) : (
+					<div className="mt-20 flex justify-center">
+						<p className="font-semibold text-gray-700">
+							미체결 주문이 없습니다.
+						</p>
+					</div>
+				)}
 			</div>
 		</>
 	);
