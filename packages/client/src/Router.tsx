@@ -16,7 +16,12 @@ const MobileNotice = lazy(() => import('@/pages/moblie/MobileNotice'));
 function Router() {
 	const isMobile = useMobileBlocker();
 
-	if (isMobile) return <MobileNotice />;
+	if (isMobile)
+		return (
+			<Suspense>
+				<MobileNotice />
+			</Suspense>
+		);
 
 	return (
 		<Suspense>
