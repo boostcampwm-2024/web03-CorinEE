@@ -117,25 +117,76 @@ jobs:
       #     target: /corinee
       #     overwrite: true
 
-      - name: Deploy to servers
+      - name: Deploy to main server
+        if: matrix.type == 'full'
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ matrix.host }}
-          username: ${{ matrix.type == 'full' && secrets.SSH_USERNAME || secrets.SSH_USERNAME }}
-          password: ${{ matrix.type == 'full' && secrets.SSH_PASSWORD || secrets.LOAD_SSH_PASSWORD }}
-          port: ${{ matrix.type == 'full' && secrets.SSH_PORT || secrets.SSH_PORT }}
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
           script: |
             cd /corinee
-            if [ "${{ matrix.type }}" = "full" ]; then
-              docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server
-              docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-client
-              docker-compose down
-              docker-compose up -d
-            else
-              docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server
-              docker-compose -f docker-compose.server.yml down
-              docker-compose -f docker-compose.server.yml up -d
-            fi
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-client
+            docker-compose down
+            docker-compose up -d
+      
+      - name: Deploy to loadbalancer1
+        if: matrix.type == 'api'
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.LOAD_SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.LOAD_SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd /corinee
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server
+            docker-compose -f docker-compose.server.yml down
+            docker-compose -f docker-compose.server.yml up -d
+      
+      - name: Deploy to loadbalancer2
+        if: matrix.type == 'api2'
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.LOAD_SSH_HOST_2 }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.LOAD_SSH_PASSWORD_2 }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd /corinee
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server
+            docker-compose -f docker-compose.server.yml down
+            docker-compose -f docker-compose.server.yml up -d
+      
+      - name: Deploy to loadbalancer3
+        if: matrix.type == 'api3'
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.LOAD_SSH_HOST_3 }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.LOAD_SSH_PASSWORD_3 }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd /corinee
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server
+            docker-compose -f docker-compose.server.yml down
+            docker-compose -f docker-compose.server.yml up -d
+      
+      # - name: Deploy to loadbalancer4
+      #   if: matrix.type == 'api4'
+      #   uses: appleboy/ssh-action@master
+      #   with:
+      #     host: ${{ secrets.LOAD_SSH_HOST_4 }}
+      #     username: ${{ secrets.SSH_USERNAME }}
+      #     password: ${{ secrets.LOAD_SSH_PASSWORD_4 }}
+      #     port: ${{ secrets.SSH_PORT }}
+      #     script: |
+      #       cd /corinee
+      #       docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server
+      #       docker-compose -f docker-compose.server.yml down
+      #       docker-compose -f docker-compose.server.yml up -d
 
       - name: Generate Error Report
         if: failure()
