@@ -7,7 +7,8 @@ export function useToast() {
 		hideProgressBar: true,
 		transition: Zoom,
 		style: {
-			width: 'fit-content',
+			maxWidth: 'fit-content',
+			minWidth: '300px',
 			whiteSpace: 'nowrap',
 			display: 'inline-flex',
 			margin: '0 auto',
