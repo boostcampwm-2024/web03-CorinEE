@@ -35,7 +35,7 @@ function CoinList({ markets, activeCategory }: CoinListProps) {
 	};
 	if (!sseData) return;
 	return (
-		<div className="w-[90%]">
+		<div>
 			<ul className="flex py-4 border-b border-solid border-gray-300 text-gray-700  bg-white">
 				<li className="flex-[1]">관심</li>
 				<li className="flex-[6]">한글명</li>
