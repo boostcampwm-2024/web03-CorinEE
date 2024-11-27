@@ -1,14 +1,15 @@
 import { Route, Routes } from 'react-router-dom';
-import Layout from '@/pages/layout/Layout';
-import Home from '@/pages/home/Home';
-import Account from '@/pages/account/Account';
-import Trade from '@/pages/trade/Trade';
-import NotFound from '@/pages/not-found/NotFound';
-import Redricet from '@/pages/auth/Redirect';
-import { Suspense } from 'react';
-import Balance from '@/pages/account/balance/Balance';
-import History from '@/pages/account/history/History';
-import WaitOrders from '@/pages/account/waitOrders/WaitOrders';
+import { Suspense, lazy } from 'react';
+
+const Layout = lazy(() => import('@/pages/layout/Layout'));
+const Home = lazy(() => import('@/pages/home/Home'));
+const Account = lazy(() => import('@/pages/account/Account'));
+const Balance = lazy(() => import('@/pages/account/balance/Balance'));
+const History = lazy(() => import('@/pages/account/history/History'));
+const WaitOrders = lazy(() => import('@/pages/account/waitOrders/WaitOrders'));
+const Trade = lazy(() => import('@/pages/trade/Trade'));
+const Redricet = lazy(() => import('@/pages/auth/Redirect'));
+const NotFound = lazy(() => import('@/pages/not-found/NotFound'));
 
 function Router() {
 	return (
