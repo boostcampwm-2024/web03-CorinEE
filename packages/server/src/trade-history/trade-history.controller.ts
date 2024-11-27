@@ -20,7 +20,7 @@ import { TradeHistoryService } from './trade-history.service';
 import { TradeHistoryResponseDto } from './dtos/trade-history.dto';
 
 @ApiTags('거래 내역 API')
-@Controller('trade-history')
+@Controller('tradehistory')
 @ApiBearerAuth('access-token')
 @ApiSecurity('access-token')
 @UseGuards(AuthGuard)
