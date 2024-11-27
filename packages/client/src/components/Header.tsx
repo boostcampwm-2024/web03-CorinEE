@@ -1,21 +1,21 @@
 import { useAuth } from '@/hooks/auth/useAuth';
 import { Button, Navbar } from '@material-tailwind/react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
+import { GOOGLE_AUTH_URL, KAKAO_AUTH_URL } from '@/constants/authAddress';
+import { useModal } from '@/hooks/ui/useModal';
+import { useToast } from '@/hooks/ui/useToast';
 import logoImage from '@asset/logo/corineeLogo.png';
 import kakaLogo from '@asset/logo/kakao.png';
 import googleLogo from '@asset/logo/google.png';
-import { GOOGLE_AUTH_URL, KAKAO_AUTH_URL } from '@/constants/authAddress';
-import { useModal } from '@/hooks/ui/useModal';
 import GuestLoginModal from '@/components/modal/GuestLoginModal';
-import { useToast } from '@/hooks/ui/useToast';
 
 function Header() {
 	const { logout } = useAuth();
 	const { open, handleOpen } = useModal();
+	const location = useLocation();
 	const toast = useToast();
 	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-	const isGuestLogin = useAuthStore((state) => state.isGuestLogin);
 
 	const handleLogin = (param: 'kakao' | 'google') => {
 		if (param === 'google') window.location.href = GOOGLE_AUTH_URL;
@@ -24,9 +24,10 @@ function Header() {
 
 	const handleLogout = () => {
 		logout.mutateAsync();
-		if (isGuestLogin) toast.success('체험용 계정이 로그아웃 됐어요');
-		else toast.success('로그아웃에 성공했어요');
+		toast.success('로그아웃에 성공했어요');
 	};
+
+	const isAccountPage = location.pathname.startsWith('/account');
 
 	return (
 		<>
@@ -52,9 +53,7 @@ function Header() {
 					</NavLink>
 					<NavLink
 						to={'/account/balance'}
-						className={({ isActive }) =>
-							`${isActive ? 'text-black font-semibold' : 'text-gray-600'} hover:text-black`
-						}
+						className={`${isAccountPage ? 'text-black font-semibold' : 'text-gray-600'} hover:text-black`}
 					>
 						내 계좌
 					</NavLink>
