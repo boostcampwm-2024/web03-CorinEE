@@ -13,6 +13,7 @@ function RecentlyViewed() {
 		convertToQueryString(recentlyViewedMarketList),
 	);
 
+
 	const { sseData } = useSSETicker(viewedMarket || []);
 
 	if (!sseData || !viewedMarket) {

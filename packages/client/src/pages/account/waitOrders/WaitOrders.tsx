@@ -1,4 +1,4 @@
-import { useMyWaitOrders } from '@/hooks/useMyWaitOrders';
+import { useMyWaitOrders } from '@/hooks/account/useMyWaitOrders';
 import WaitOrderInfo from '@/pages/account/waitOrders/WaitOrderInfo';
 
 function WaitOrders() {

@@ -1,6 +1,6 @@
 import { useMarketParams } from '@/hooks/market/useMarketParams';
 import { useDeleteWaitOrder } from '@/hooks/trade/useDeleteWaitOrder';
-import { useMyWaitOrders } from '@/hooks/useMyWaitOrders';
+import { useMyWaitOrders } from '@/hooks/account/useMyWaitOrders';
 import NoCoin from '@/pages/trade/components/order_form/common/NoCoin';
 import { PendingCoin } from '@/pages/trade/components/order_form/common/PendingCoin';
 
