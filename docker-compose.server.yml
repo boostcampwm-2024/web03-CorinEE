@@ -2,13 +2,20 @@ services:
   server:
     image: seunggwan/corinee-server
     restart: always
+    container_name: corinee_server_2  # 두 번째 서버임을 명시
     env_file:
       - .env
     ports:
       - "3000:3000"
     networks:
       - app-network
+    healthcheck:  # 헬스체크 추가
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 networks:
   app-network:
+    name: corinee_app-network  # 메인 서버와 같은 네트워크 이름 사용
     driver: bridge
