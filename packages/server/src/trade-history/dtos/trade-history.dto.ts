@@ -51,8 +51,8 @@ export class TradeHistoryResponseDto {
   statusCode: number;
 
   @ApiProperty({ example: '거래 내역을 찾았습니다.' })
-  message: string;
+  message?: string;
 
   @ApiProperty({ type: [TradeHistory] })
-  tradeData: TradeHistory[];
+  tradeData?: TradeHistory[];
 }
