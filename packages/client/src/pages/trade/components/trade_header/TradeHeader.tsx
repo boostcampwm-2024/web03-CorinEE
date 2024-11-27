@@ -47,6 +47,7 @@ function TradeHeader({ market, sseData }: TradeHeaderProps) {
 				acc_trade_price_24h={acc_trade_price_24h}
 				high_price={high_price}
 				low_price={low_price}
+				code={code}
 			/>
 		</div>
 	);
