@@ -34,3 +34,4 @@ export class Asset {
   @JoinColumn()
   account: Account;
 }
+ 
