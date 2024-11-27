@@ -38,8 +38,8 @@ export class TradeHistoryController {
     name: 'coins',
     required: false,
     type: String,
-    example: 'BTC-KRW',
-    description: '조회할 코인 페어 (예: BTC-KRW)',
+    example: 'KRW-BTC',
+    description: '조회할 코인 페어 (예: KRW-BTC)',
   })
   @ApiResponse({
     status: HttpStatus.OK,

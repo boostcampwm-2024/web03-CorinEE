@@ -47,7 +47,7 @@ export class TradeHistoryService {
 
       return {
         statusCode: HttpStatus.OK,
-        tradeData: filteredHistories,
+        result: filteredHistories,
       };
     } catch (error) {
       this.logger.error(`거래 내역 조회 실패: ${error.message}`, error.stack);
