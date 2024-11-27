@@ -46,15 +46,21 @@ function Balance() {
 					<div className="flex-[1]">손익</div>
 				</div>
 			</div>
-			{data.coins.map((coin) => {
-				return (
-					<BalanceCoin
-						key={coin.market}
-						coin={coin}
-						sseData={sseData ? sseData[`KRW-${coin.market}`] : null}
-					/>
-				);
-			})}
+			{data.coins.length > 0 ? (
+				data.coins.map((coin) => {
+					return (
+						<BalanceCoin
+							key={coin.market}
+							coin={coin}
+							sseData={sseData ? sseData[`KRW-${coin.market}`] : null}
+						/>
+					);
+				})
+			) : (
+				<div className="mt-20 flex justify-center">
+					<p className="font-semibold text-gray-700">보유한 종목이 없습니다.</p>
+				</div>
+			)}
 		</div>
 	);
 }

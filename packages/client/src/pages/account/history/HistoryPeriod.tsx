@@ -22,7 +22,7 @@ function HistoryPeriod({ period, handlePeriod }: HistoryPeriodProps) {
 					className={`py-3 px-4 w-20  border-solid border-gray-400
 					${
 						period === 'ONE_WEEK'
-							? 'border-2 border-blue-700  text-blue-800'
+							? 'border-2 border-blue-600  text-blue-800'
 							: period === 'ONE_MONTH'
 								? 'border-y border-l'
 								: 'border'
@@ -37,7 +37,7 @@ function HistoryPeriod({ period, handlePeriod }: HistoryPeriodProps) {
 					className={`py-3 px-4 w-20  border-solid border-gray-400
 					${
 						period === 'ONE_MONTH'
-							? 'border-2 border-blue-700  text-blue-800'
+							? 'border-2 border-blue-600  text-blue-800'
 							: period === 'THREE_MONTH'
 								? 'border-y'
 								: 'border-y border-r'
@@ -52,7 +52,7 @@ function HistoryPeriod({ period, handlePeriod }: HistoryPeriodProps) {
 					className={`py-3 px-4 w-20  border-solid border-gray-400
 					${
 						period === 'THREE_MONTH'
-							? 'border-2 border-blue-700  text-blue-800'
+							? 'border-2 border-blue-600  text-blue-800'
 							: period === 'SIX_MONTH'
 								? 'border-y'
 								: 'border-y border-r'
@@ -67,7 +67,7 @@ function HistoryPeriod({ period, handlePeriod }: HistoryPeriodProps) {
 					className={`py-3 px-4 w-20  border-solid border-gray-400
 					${
 						period === 'SIX_MONTH'
-							? 'border-2 border-blue-700  text-blue-800'
+							? 'border-2 border-blue-600  text-blue-800'
 							: period === 'TOTAL'
 								? 'border-y'
 								: 'border-y border-r'
@@ -80,7 +80,7 @@ function HistoryPeriod({ period, handlePeriod }: HistoryPeriodProps) {
 				</div>
 				<div
 					className={`py-3 px-4 w-24  border-solid border-gray-400
-					${period === 'TOTAL' ? 'border-2 border-blue-700  text-blue-800' : 'border-y border-r'}`}
+					${period === 'TOTAL' ? 'border-2 border-blue-600  text-blue-800' : 'border-y border-r'}`}
 					onClick={() => {
 						handlePeriod('TOTAL');
 					}}
