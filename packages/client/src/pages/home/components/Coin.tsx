@@ -6,21 +6,27 @@ import { useNavigate } from 'react-router-dom';
 import colorClasses from '@/constants/priceColor';
 import useRecentlyMarketStore from '@/store/recentlyViewed';
 import { QueryClient } from '@tanstack/react-query';
+import { useToggleMyInterest } from '@/hooks/interest/useToggleMyInterest';
 
 type CoinProps = {
 	formatters: Formatters;
 	market: MarketData;
 	sseData: SSEDataType;
+	isInterest: boolean;
 };
 
-function Coin({ formatters, market, sseData }: CoinProps) {
+function Coin({ formatters, market, sseData, isInterest }: CoinProps) {
 	const navigate = useNavigate();
 	const queryClient = new QueryClient();
 	const { addRecentlyViewedMarket } = useRecentlyMarketStore();
+	const { toggleInterest } = useToggleMyInterest();
 	const handleClick = () => {
 		addRecentlyViewedMarket(market.market);
 		navigate(`/trade/KRW-${market.market.split('-')[1]}`);
 		queryClient.invalidateQueries({ queryKey: ['recentlyMarketList'] });
+	};
+	const handleToggle = async () => {
+		toggleInterest.mutateAsync(market.market);
 	};
 	const change: Change = sseData[market.market]?.change;
 
@@ -41,7 +47,12 @@ function Coin({ formatters, market, sseData }: CoinProps) {
 
 	return (
 		<div className="flex items-center py-1 border-b border-solid border-gray-300 cursor-pointer hover:bg-gray-100">
-			<div className="fill-blue-gray-100 flex-[1] flex w-5 h-5 hover:fill-red-400">
+			<div
+				className={`fill-blue-gray-100 flex-[1] flex w-5 h-5
+					${isInterest ? 'fill-red-400' : ''}
+					hover:fill-red-400`}
+				onClick={handleToggle}
+			>
 				<Heart />
 			</div>
 
