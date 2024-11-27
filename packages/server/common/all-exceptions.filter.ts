@@ -4,10 +4,13 @@ import {
   ArgumentsHost,
   HttpException,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
+  private readonly logger = new Logger(AllExceptionsFilter.name);
+
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
@@ -23,6 +26,14 @@ export class AllExceptionsFilter implements ExceptionFilter {
       exception instanceof HttpException
         ? exception.getResponse()
         : 'Internal server error';
+
+    // 에러 로그 출력
+    this.logger.error(
+      `HTTP Status: ${status}, Error: ${
+        typeof message === 'string' ? message : JSON.stringify(message)
+      }`,
+      exception instanceof Error ? exception.stack : '',
+    );
 
     // 일관된 에러 응답 형식
     response.status(status).json({

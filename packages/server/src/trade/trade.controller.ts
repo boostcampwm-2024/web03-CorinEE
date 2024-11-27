@@ -26,6 +26,7 @@ import { AskService } from './trade-ask.service';
 import { TradeService } from './trade.service';
 import { TradeData } from './dtos/trade.interface';
 import { TradeAskDto, TradeDto } from './dtos/trade.dto';
+import { TRADE_TYPES } from './constants/trade.constants';
 
 @ApiTags('Trade')
 @ApiBearerAuth('access-token')
@@ -154,7 +155,7 @@ export class TradeController {
     @Query('tradeId') tradeId: number,
     @Query('tradeType') tradeType: string,
   ) {
-    if (tradeType === 'buy') {
+    if (tradeType === TRADE_TYPES.BUY) {
       return this.tradeService.deleteMyBidTrade(req.user, tradeId);
     } else {
       return this.tradeService.deleteMyAskTrade(req.user, tradeId);

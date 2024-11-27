@@ -12,7 +12,7 @@ import {
   UPBIT_REQUEST_SIZE,
 } from '@src/upbit/constants';
 import { CandleDto } from './dtos/candle.dto';
-import { RedisRepository } from '@src/redis/redis.repository';
+import { ChartRedisRepository } from '@src/redis/chart-redis.repository';
 import { isValidMinute } from './utils/validation';
 
 @Injectable()
@@ -22,7 +22,7 @@ export class ChartService implements OnModuleInit {
 
   constructor(
     private readonly httpService: HttpService,
-    private redisRepository: RedisRepository,
+    private redisRepository: ChartRedisRepository,
   ) {}
 
   onModuleInit() {
