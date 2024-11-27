@@ -32,7 +32,7 @@ export class TradeHistoryService {
         return {
           statusCode: HttpStatus.NO_CONTENT,
           message: '거래 내역이 없습니다.',
-          result: [],
+          tradeData: [],
         };
       }
 
@@ -49,7 +49,7 @@ export class TradeHistoryService {
       return {
         statusCode: HttpStatus.OK,
         message: '거래 내역을 찾았습니다.',
-        result: filteredHistories,
+        tradeData: filteredHistories,
       };
     } catch (error) {
       this.logger.error(`거래 내역 조회 실패: ${error.message}`, error.stack);

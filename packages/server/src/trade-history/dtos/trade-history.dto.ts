@@ -54,5 +54,5 @@ export class TradeHistoryResponseDto {
   message: string;
 
   @ApiProperty({ type: [TradeHistory] })
-  result: TradeHistory[];
+  tradeData: TradeHistory[];
 }
