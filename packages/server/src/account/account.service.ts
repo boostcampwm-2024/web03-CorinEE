@@ -49,6 +49,7 @@ export class AccountService {
       totalPrice = this.calculateTotalPrice(coins);
 
       accountData.KRW = account.KRW;
+      accountData.availableKRW = account.availableKRW;
       accountData.total_bid = totalPrice;
       accountData.coins = coins;
 
@@ -56,6 +57,7 @@ export class AccountService {
 
       return {
         KRW: accountData.KRW,
+        availableKRW: accountData.availableKRW,
         total_bid: accountData.total_bid,
         coins: accountData.coins
       };

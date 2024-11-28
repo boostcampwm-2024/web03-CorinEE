@@ -30,9 +30,7 @@ export class AuthService {
 		private accountRepository: AccountRepository,
 		private jwtService: JwtService,
 		private readonly redisRepository: RedisRepository,
-	) {
-		this.createAdminUser();
-	}
+	) {}
 
 	async signIn(
 		username: string,
@@ -118,20 +116,6 @@ export class AuthService {
       return { message: 'Guest user data successfully deleted' };
     }
     return { message: 'User logged out successfully' };
-	}
-
-	async createAdminUser() {
-		const user = await this.userRepository.findOneBy({ username: 'admin' });
-
-		if (!user) {
-			const adminUser = new User();
-			adminUser.username = 'admin';
-			await this.userRepository.save(adminUser);
-			await this.accountRepository.createAccountForAdmin(adminUser);
-			this.logger.log('Admin user created successfully.');
-		} else {
-			this.logger.log('Admin user already exists.');
-		}
 	}
 
   private async generateTokens(
@@ -223,6 +207,7 @@ export class AuthService {
 		await this.accountRepository.save({
 			user,
 			KRW: DEFAULT_KRW,
+			availableKRW: DEFAULT_KRW,
 			USDT: DEFAULT_USDT,
 			BTC: DEFAULT_BTC,
 		});
