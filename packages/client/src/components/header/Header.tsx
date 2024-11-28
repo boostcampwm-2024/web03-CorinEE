@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import logoImage from '@asset/logo/corineeLogo.png';
 import Navigation from '@/components/header/Navigation';
 import AuthSection from '@/components/header/AuthSection';
-import SearchBar from '@/components/header/SearchBar';
+import SearchBar from '@/components/header/search/SearchBar';
+import { Suspense } from 'react';
 
 const Header = () => {
 	const Logo = () => (
@@ -23,7 +24,9 @@ const Header = () => {
 				<Logo />
 				<div className="flex gap-4 items-center">
 					<Navigation />
-					<SearchBar />
+					<Suspense>
+						<SearchBar />
+					</Suspense>
 				</div>
 				<AuthSection />
 			</Navbar>
