@@ -1,13 +1,14 @@
 import { myInterest } from '@/api/interest';
-import { useSuspenseQuery } from '@tanstack/react-query';
-
+import { useQuery } from '@tanstack/react-query';
+import { useAuthStore } from '@/store/authStore';
 export function useMyInterest() {
 	const QUERY_KEY = 'MY_INTEREST';
-	const { data } = useSuspenseQuery({
+	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+	const { data, isLoading } = useQuery({
 		queryFn: () => myInterest(),
 		queryKey: [QUERY_KEY],
-		refetchOnMount: 'always',
+		enabled: isAuthenticated,
 	});
 
-	return data;
+	return { data, isLoading };
 }
