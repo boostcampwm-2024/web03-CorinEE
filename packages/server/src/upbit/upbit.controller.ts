@@ -122,19 +122,13 @@ export class UpbitController {
     @Query('coins') coinsQuery?: string,
   ): Observable<MessageEvent> {
     const coins = this.parseCoins(coinsQuery);
-    const initData$ = from(
-      this.sseService.initOrderStream(
-        coinsQuery,
-        this.coinListService.convertToOrderbookDto,
-      ),
-    )
 
     const updatesStream = this.sseService.getUpdatesStream(
       'orderbook',
       coins,
       this.coinListService.convertToOrderbookDto,
     );
-    return concat(initData$, updatesStream)
+    return updatesStream
   }
 
   @ApiOperation({
