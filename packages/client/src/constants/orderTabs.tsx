@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import NotLogin from '@/components/NotLogin';
+import withAuthenticate from '@/components/hoc/withAuthenticate';
 
 const OrderBuyForm = lazy(
 	() => import('@/pages/trade/components/order_form/forms/OrderBuyForm'),
@@ -11,6 +11,19 @@ const OrderWaitForm = lazy(
 	() => import('@/pages/trade/components/order_form/forms/OrderWaitForm'),
 );
 
+const AuthenticatedBuyForm = withAuthenticate({
+	WrappedComponent: OrderBuyForm,
+	size: 'md',
+});
+const AuthenticatedSellForm = withAuthenticate({
+	WrappedComponent: OrderSellForm,
+	size: 'md',
+});
+const AuthenticatedWaitForm = withAuthenticate({
+	WrappedComponent: OrderWaitForm,
+	size: 'md',
+});
+
 type CreateOrderTabProsp = {
 	currentPrice: number;
 	selectPrice: number | null;
@@ -21,7 +34,6 @@ export type OrderTabItem = {
 	id: 'buy' | 'sell' | 'wait';
 	activeColor: string;
 	component: JSX.Element;
-	notLogin: JSX.Element;
 };
 
 export const createOrderTabs = ({
@@ -35,10 +47,12 @@ export const createOrderTabs = ({
 			activeColor: 'text-red-500',
 			component: (
 				<Suspense>
-					<OrderBuyForm currentPrice={currentPrice} selectPrice={selectPrice} />
+					<AuthenticatedBuyForm
+						currentPrice={currentPrice}
+						selectPrice={selectPrice}
+					/>
 				</Suspense>
 			),
-			notLogin: <NotLogin size="md" />,
 		},
 		{
 			value: '판매',
@@ -46,13 +60,12 @@ export const createOrderTabs = ({
 			activeColor: 'text-blue-600',
 			component: (
 				<Suspense>
-					<OrderSellForm
+					<AuthenticatedSellForm
 						currentPrice={currentPrice}
 						selectPrice={selectPrice}
 					/>
 				</Suspense>
 			),
-			notLogin: <NotLogin size="md" />,
 		},
 		{
 			value: '대기',
@@ -60,10 +73,9 @@ export const createOrderTabs = ({
 			activeColor: 'text-green-500',
 			component: (
 				<Suspense>
-					<OrderWaitForm />
+					<AuthenticatedWaitForm />
 				</Suspense>
 			),
-			notLogin: <NotLogin size="md" />,
 		},
 	] as const;
 };
