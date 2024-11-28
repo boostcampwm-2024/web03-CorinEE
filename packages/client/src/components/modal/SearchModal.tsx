@@ -1,5 +1,6 @@
 import SearchIcon from '@/asset/search.svg?react';
 import Modal from '@/components/modal/Modal';
+import { useSearchMarket } from '@/hooks/market/useSearchMarket';
 import { debounce } from 'lodash';
 import { useState } from 'react';
 import { useCallback } from 'react';
@@ -9,7 +10,8 @@ type SearchModalProps = {
 };
 
 function SearchModal({ open, handleOpen }: SearchModalProps) {
-	const [value, setValue] = useState<string | number>('');
+	const [value, setValue] = useState<string>('');
+	const { data, isLoading, refetch } = useSearchMarket(value);
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const searchValue = e.target.value;
@@ -19,8 +21,9 @@ function SearchModal({ open, handleOpen }: SearchModalProps) {
 
 	const debounceSearch = useCallback(
 		debounce((searchValue: string) => {
-			if (searchValue === '') return;
-			console.log(searchValue);
+			if (searchValue.trim() !== '') {
+				refetch();
+			}
 		}, 500),
 		[],
 	);
