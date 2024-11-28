@@ -51,7 +51,7 @@ export async function getCandleByPeriod(
 	return response.data.result;
 }
 
-export async function searchMarket(params: string) {
+export async function searchMarket(params: string): Promise<MarketData[]> {
 	const response = await instance.get(`/upbit/search?data=${params}`);
-	return response.data;
+	return response.data.result;
 }
