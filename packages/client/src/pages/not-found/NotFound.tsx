@@ -1,7 +1,7 @@
 import Lottie from 'lottie-react';
 import NotFoundLottie from '@/asset/lotties/NotFoud.json';
 import { Link } from 'react-router-dom';
-import Headers from '@/components/Header';
+import Headers from '@/components/header/Header';
 function NotFound() {
 	return (
 		<div className="flex flex-col h-screen">
