@@ -50,3 +50,8 @@ export async function getCandleByPeriod(
 
 	return response.data.result;
 }
+
+export async function searchMarket(params: string) {
+	const response = await instance.get(`/upbit/search?data=${params}`);
+	return response.data;
+}
