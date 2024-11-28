@@ -23,7 +23,7 @@ export class CoinListService {
     if (!markets.length) return [];
 
     return krwCoinInfo
-      .filter((coin) => coin.market === (markets))
+      .filter((coin) => markets.some(market=> market===coin.market))
       .map((coin) => this.toSimpleCoinDto(coin));
   }
 
