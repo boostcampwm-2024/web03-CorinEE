@@ -1,5 +1,6 @@
 export type Account = {
 	KRW: number;
+	availableKRW: number;
 	total_bid: number;
 	coins: AccountCoin[];
 };
@@ -17,8 +18,8 @@ export type AccountCoin = {
 export type CategoryKey = 'balance' | 'history' | 'wait_orders';
 
 export type CategoryInfo = {
-  [K in CategoryKey]: {
-    text: string;
-    path: string;
-  }
+	[K in CategoryKey]: {
+		text: string;
+		path: string;
+	};
 };

@@ -25,7 +25,7 @@ function OrderBuyForm({ currentPrice, selectPrice }: OrderBuyFormProsp) {
 	const summaryItems = [
 		{
 			label: '매수 가능 금액',
-			value: `${Math.floor(balance.KRW).toLocaleString()}원`,
+			value: `${Math.floor(balance.availableKRW).toLocaleString()}원`,
 		},
 	];
 
