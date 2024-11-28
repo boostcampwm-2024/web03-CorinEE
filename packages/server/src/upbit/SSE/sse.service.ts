@@ -62,6 +62,7 @@ export class SseService implements OnModuleDestroy {
     
     const dtoData = dto(initData)
     delete dtoData.market;
+    
     return new MessageEvent('orderbook-update', {
       data: JSON.stringify(dtoData),
     });
