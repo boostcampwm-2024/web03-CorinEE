@@ -2,6 +2,7 @@ import { useMyInterest } from '@/hooks/interest/useMyInterest';
 import Lottie from 'lottie-react';
 import Heart from '@asset/lotties/Heart.json';
 import { useRecentlyMarketList } from '@/hooks/market/useRecentlyMarket';
+import { convertToQueryString } from '@/utility/api/queryString';
 import { formatData } from '@/utility/format/formatSSEData';
 import { useSSETicker } from '@/hooks/SSE/useSSETicker';
 import SidebarCoin from '@/components/sidebar/SidebarCoin';
@@ -9,10 +10,16 @@ import withAuthenticate from '@/components/hoc/withAuthenticate';
 
 function MyInterest() {
 	const { isLoading, data: myInterest = [] } = useMyInterest();
-	const { data: viewedMarket } = useRecentlyMarketList(myInterest);
-	const { sseData } = useSSETicker(viewedMarket || []);
 	const interestMarketList = myInterest.map((info) => info.assetName);
+	const { data: viewedMarket } = useRecentlyMarketList(
+		convertToQueryString(interestMarketList),
+		{
+			enabled: myInterest.length > 0,
+		},
+	);
+
 	const formatters = formatData('KRW');
+	const { sseData } = useSSETicker(viewedMarket || []);
 
 	const sortedCoinInfos = [...(viewedMarket || [])].sort((a, b) => {
 		const indexA = interestMarketList.indexOf(a.market);
