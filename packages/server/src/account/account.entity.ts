@@ -18,6 +18,9 @@ export class Account {
   KRW: number;
 
   @Column('double')
+  availableKRW: number;
+
+  @Column('double')
   USDT: number;
 
   @Column('double')

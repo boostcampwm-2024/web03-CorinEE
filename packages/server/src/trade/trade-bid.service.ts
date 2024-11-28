@@ -74,7 +74,7 @@ export class BidService extends TradeAskBidService implements OnModuleInit {
         );
 
         await this.accountRepository.updateAccountCurrency(
-          bidDto.typeGiven,
+          'availableKRW',
           accountBalance,
           userAccount.id,
           queryRunner,
@@ -101,8 +101,8 @@ export class BidService extends TradeAskBidService implements OnModuleInit {
     bidDto: TradeData,
     account: any,
   ): Promise<number> {
-    const { typeGiven, receivedPrice, receivedAmount } = bidDto;
-    const balance = account[typeGiven];
+    const { receivedPrice, receivedAmount } = bidDto;
+    const balance = account.availableKRW;
 
     const givenAmount = formatQuantity(receivedPrice * receivedAmount);
     const remaining = formatQuantity(balance - givenAmount);
@@ -253,11 +253,19 @@ export class BidService extends TradeAskBidService implements OnModuleInit {
     const change = formatQuantity(
       (bidDto.receivedPrice - buyData.price) * buyData.quantity,
     );
-    const returnChange = formatQuantity(change + account[typeGiven]);
+    const returnChange = formatQuantity(account[typeGiven] - (buyData.price * buyData.quantity));
+    const returnAvailableChange = formatQuantity(change + account.availableKRW);
 
     await this.accountRepository.updateAccountCurrency(
       typeGiven,
       returnChange,
+      account.id,
+      queryRunner,
+    );
+
+    await this.accountRepository.updateAccountCurrency(
+      'availableKRW',
+      returnAvailableChange,
       account.id,
       queryRunner,
     );

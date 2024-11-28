@@ -26,6 +26,9 @@ export class MyAccountDto {
   KRW: number;
 
   @IsNumber()
+  availableKRW: number;
+
+  @IsNumber()
   total_bid: number;
 
   @IsArray()
