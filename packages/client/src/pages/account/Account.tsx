@@ -1,13 +1,8 @@
-import NotLogin from '@/components/NotLogin';
+import withAuthenticate from '@/components/hoc/withAuthenticate';
 import AccountContent from '@/pages/account/AccoutContent';
-import { useAuthStore } from '@/store/authStore';
 import { Suspense } from 'react';
 
 function Account() {
-	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-
-	if (!isAuthenticated) return <NotLogin size="lg" />;
-
 	return (
 		<Suspense fallback={<div>Loading...</div>}>
 			<AccountContent />
@@ -15,4 +10,4 @@ function Account() {
 	);
 }
 
-export default Account;
+export default withAuthenticate({ WrappedComponent: Account, size: 'lg' });
