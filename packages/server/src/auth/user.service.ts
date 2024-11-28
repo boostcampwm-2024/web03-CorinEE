@@ -48,6 +48,7 @@ export class UserService {
 
 			const newAccount = manager.create(this.accountRepository.target, {
 				KRW: DEFAULT_KRW,
+				availableKRW: DEFAULT_KRW,
 				USDT: DEFAULT_USDT,
 				BTC: DEFAULT_BTC,
 			});
