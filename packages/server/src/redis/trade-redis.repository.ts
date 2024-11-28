@@ -77,6 +77,49 @@ export class TradeRedisRepository {
     );
     return result;
   }
+
+  async cleanupOrphanTrades(dbTradeIds: string[]): Promise<void> {
+    this.logger.log('Starting orphan trades cleanup...');
+  
+    try {
+      // Step 1: Redis에서 모든 거래 정보 키 가져오기
+      const redisKeys = await this.tradeRedis.keys('trade:*'); // 모든 trade:{tradeId} 형식의 키 가져오기
+  
+      for (const redisKey of redisKeys) {
+        try {
+          // Step 2: Redis 거래 ID 추출
+          const tradeId = redisKey.split(':')[1];
+  
+          // Step 3: DB 거래 ID와 비교
+          if (!dbTradeIds.includes(tradeId)) {
+            // Redis에서 삭제할 trade 정보 가져오기
+            const tradeData = await this.tradeRedis.hgetall(redisKey);
+            if (!tradeData) {
+              this.logger.warn(`Trade data missing in Redis: tradeId=${tradeId}`);
+              continue;
+            }
+  
+            // Step 4: Sorted Set 키에서 제거
+            const sortedSetKey = `${tradeData.tradeType}:${tradeData.assetName}:${tradeData.tradeCurrency}`;
+            await this.tradeRedis.zrem(sortedSetKey, tradeId);
+  
+            // Step 5: Redis 해시 삭제
+            await this.tradeRedis.del(redisKey);
+  
+            this.logger.log(`Removed orphan trade from Redis: tradeId=${tradeId}`);
+          }
+        } catch (error) {
+          this.logger.error(`Error processing Redis key: ${redisKey}`, error.stack);
+        }
+      }
+  
+      this.logger.log('Orphan trades cleanup completed.');
+    } catch (error) {
+      this.logger.error('Failed to cleanup orphan trades', error.stack);
+    }
+  }
+  
+
   async deleteTrade(tradeData: TradeDataRedis) {
     const sortedSetKey = `${tradeData.tradeType}:${tradeData.assetName}:${tradeData.tradeCurrency}`;
     try {

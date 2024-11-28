@@ -40,11 +40,22 @@ export class TradeAskBidService {
       );
 
       for (const trade of availableTrades) {
+        try{
         const tradeDto = this.buildTradeDto(trade, coinLatestInfo, tradeType);
+        this.logger.debug(`처리 중인 거래: tradeId=${tradeDto.tradeId}`);
         await handler(tradeDto);
+        } catch (err) {
+          this.logger.error(
+            `미체결 거래 처리 중 오류 발생: trade=${JSON.stringify(trade)}, error=${err.message}`,
+            err.stack,
+          );
+        }
       }
     } catch (error) {
-      this.logger.error(`미체결 거래 처리 오류: ${error}`);
+      this.logger.error(
+        `미체결 거래 처리 전반적 오류: tradeType=${tradeType}, error=${error.message}`,
+        error.stack,
+      );
     } finally {
       this.logger.log(`${tradeType} 미체결 거래 처리 완료`);
     }
