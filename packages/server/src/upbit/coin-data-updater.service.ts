@@ -9,9 +9,6 @@ import {
 	UPBIT_UPDATED_COIN_INFO_TIME,
 	UPBIT_UPDATED_COIN_LIST_TIME,
 } from '@src/upbit/constants';
-import axios from 'axios';
-import { v4 as uuidv4 } from 'uuid';
-import jwt from 'jsonwebtoken';
 
 @Injectable()
 export class CoinDataUpdaterService implements OnModuleInit {
