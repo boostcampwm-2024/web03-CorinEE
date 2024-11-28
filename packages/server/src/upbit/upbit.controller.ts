@@ -125,7 +125,7 @@ export class UpbitController {
     const initData$ = from(
       this.sseService.initOrderStream(
         coinsQuery,
-        this.coinListService.convertToCodeCoinDto,
+        this.coinListService.convertToOrderbookDto,
       ),
     )
 
