@@ -44,30 +44,6 @@ export class SseService implements OnModuleDestroy {
     return coinData;
   }
 
-  async initOrderStream(
-    coin: string[],
-    dto: (data: any) => any,
-  ): Promise<MessageEvent> {
-    let coinLatestInfo = this.coinDataUpdaterService.getCoinOrderbookInfo();
-    
-    while (!coinLatestInfo.size || !coinLatestInfo.get(coin)) {
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      coinLatestInfo = this.coinDataUpdaterService.getCoinLatestInfo();
-    }
-
-    const initData = coinLatestInfo.get(coin);
-    initData.type = "orderbook"
-    initData.stream_type = "REALTIME"
-    initData.code = initData.market;
-    
-    const dtoData = dto(initData)
-    delete dtoData.market;
-
-    return new MessageEvent('orderbook-update', {
-      data: JSON.stringify(dtoData),
-    });
-  }
-
   getUpdatesStream(
     type: 'price' | 'orderbook',
     coins: string[],
