@@ -122,11 +122,9 @@ export class UpbitController {
     @Query('coins') coinsQuery?: string,
   ): Observable<MessageEvent> {
     const coins = this.parseCoins(coinsQuery);
-
     const initData$ = from(
       this.sseService.initOrderStream(
         coinsQuery,
-        this.coinListService.convertToMarketCoinDto,
       ),
     )
 
