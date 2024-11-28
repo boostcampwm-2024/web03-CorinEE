@@ -160,7 +160,7 @@ export class TradeService {
       const accountBalance = this.calculateAccountBalance(trade, userAccount);
 
       await this.accountRepository.updateAccountCurrency(
-        trade.tradeCurrency,
+        'availableKRW',
         accountBalance,
         userAccount.id,
         queryRunner,
@@ -238,7 +238,7 @@ export class TradeService {
 
   private calculateAccountBalance(trade: any, userAccount: any): number {
     return parseFloat(
-      (trade.price * trade.quantity + userAccount[trade.tradeCurrency]).toFixed(
+      (trade.price * trade.quantity + userAccount.availableKRW).toFixed(
         8,
       ),
     );

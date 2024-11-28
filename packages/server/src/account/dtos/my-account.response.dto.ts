@@ -22,6 +22,12 @@ export class AccountResponseDto {
       description: '계좌 잔액',
     })
     KRW: number;
+
+    @ApiProperty({
+      example: 2000000,
+      description: '매수가능한 계좌 잔액',
+    })
+    availableKRW: number;
   
     @ApiProperty({
       type: MyAccountDto,
