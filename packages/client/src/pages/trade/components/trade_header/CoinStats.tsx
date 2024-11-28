@@ -59,7 +59,7 @@ function CoinStats({
 				<Heart
 					className={`w-6 h-6 fill-blue-gray-200
 					${isInterest ? 'fill-red-400' : ''}
-					hover:fill-red-400`}
+					`}
 				/>
 			</div>
 		</div>
