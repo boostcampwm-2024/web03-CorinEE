@@ -13,13 +13,13 @@ function HistoryOption({ option, handleOption }: HistoryOptionProps) {
 			</div>
 			<div className="flex text-gray-700 cursor-pointer text-center">
 				<div
-					className={`py-3 px-4 w-20  border-solid border-gray-400
+					className={`py-3 px-4 w-20 border-solid 
 					${
 						option === 'TOTAL'
-							? 'border-2 border-blue-600  text-blue-800'
+							? 'border-2 border-blue-600 text-blue-800'
 							: option === 'BUY'
-								? 'border-y border-l'
-								: 'border'
+								? 'border-y border-l border-gray-400'
+								: 'border border-gray-400'
 					}`}
 					onClick={() => {
 						handleOption('TOTAL');
@@ -28,13 +28,13 @@ function HistoryOption({ option, handleOption }: HistoryOptionProps) {
 					전체
 				</div>
 				<div
-					className={`py-3 px-4 w-20  border-solid border-gray-400
+					className={`py-3 px-4 w-20 border-solid 
 					${
 						option === 'BUY'
-							? 'border-2 border-blue-600  text-blue-800'
+							? 'border-2 border-blue-600 text-blue-800'
 							: option === 'SELL'
-								? 'border-y'
-								: 'border-y border-r'
+								? 'border-y border-gray-400'
+								: 'border-y border-r border-gray-400'
 					}`}
 					onClick={() => {
 						handleOption('BUY');
@@ -43,8 +43,8 @@ function HistoryOption({ option, handleOption }: HistoryOptionProps) {
 					매수
 				</div>
 				<div
-					className={`py-3 px-4 w-20  border-solid border-gray-400
-					${option === 'SELL' ? 'border-2 border-blue-600  text-blue-800' : 'border-y border-r'}`}
+					className={`py-3 px-4 w-20 border-solid 
+					${option === 'SELL' ? 'border-2 border-blue-600 text-blue-800' : 'border-y border-r border-gray-400'}`}
 					onClick={() => {
 						handleOption('SELL');
 					}}
