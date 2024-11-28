@@ -1,6 +1,7 @@
 import Modal from '@/components/modal/Modal';
 import WarningIcon from '@/asset/warning.svg?react';
 import CloseIcon from '@/asset/close.svg?react';
+import { useResetAccount } from '@/hooks/auth/useResetAccount';
 
 type InitializeModalProps = {
 	open: boolean;
@@ -8,8 +9,9 @@ type InitializeModalProps = {
 };
 
 function InitializeModal({ open, handleOpen }: InitializeModalProps) {
+	const reset = useResetAccount();
 	const handleInitialize = () => {
-		// TODO: 초기화 로직 구현
+		reset.mutateAsync();
 		handleOpen();
 	};
 
