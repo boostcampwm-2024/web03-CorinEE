@@ -44,11 +44,11 @@ function WaitOrderInfo({
 				</div>
 				<div className="w-[20%]">
 					<span>{quantity.toLocaleString()}</span>
-					<span className="ml-1 text-xs text-gray-600">XRP</span>
+					<span className="ml-1 text-xs text-gray-600">{coin}</span>
 				</div>
 				<div className="w-[20%]">
 					<span>{quantity.toLocaleString()}</span>
-					<span className="ml-1 text-xs text-gray-600">XRP</span>
+					<span className="ml-1 text-xs text-gray-600">{coin}</span>
 				</div>
 				<div className="w-[10%]">
 					<button
