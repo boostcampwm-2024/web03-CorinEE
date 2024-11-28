@@ -12,7 +12,7 @@ function BidList({ bids, currentPrice, handleSelectPrice }: BidListProps) {
 	const maxSize = Math.max(...bids.map((bid) => bid.bid_size));
 
 	return (
-		<ul className="flex flex-col w-full">
+		<ul className="flex flex-col w-full bg-red-100 bg-opacity-10">
 			{bids.map((bid) => (
 				<li key={bid.bid_price} className="grid grid-cols-4 m-1">
 					<span></span>
