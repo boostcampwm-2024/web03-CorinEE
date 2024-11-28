@@ -2,7 +2,6 @@ import Modal from '@/components/modal/Modal';
 import { useAuth } from '@/hooks/auth/useAuth';
 import WarningIcon from '@/asset/warning.svg?react';
 import CloseIcon from '@/asset/close.svg?react';
-import { useToast } from '@/hooks/ui/useToast';
 
 type GuestLoginModalProps = {
 	open: boolean;
@@ -11,12 +10,10 @@ type GuestLoginModalProps = {
 
 function GuestLoginModal({ open, handleOpen }: GuestLoginModalProps) {
 	const { guestLogin } = useAuth();
-	const toast = useToast();
 
 	const handleLogin = () => {
 		guestLogin.mutateAsync();
 		handleOpen();
-		toast.success('안녕하세요');
 	};
 
 	return (
