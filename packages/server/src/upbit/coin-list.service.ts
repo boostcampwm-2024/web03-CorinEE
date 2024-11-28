@@ -21,8 +21,9 @@ export class CoinListService {
   async getSimpleCoin(markets: string[]): Promise<any[]> {
     const krwCoinInfo = await this.waitForKrwCoinInfo();
     if (!markets.length) return [];
+
     return krwCoinInfo
-      .filter((coin) => markets.includes(coin.market))
+      .filter((coin) => coin.market === (markets))
       .map((coin) => this.toSimpleCoinDto(coin));
   }
 
