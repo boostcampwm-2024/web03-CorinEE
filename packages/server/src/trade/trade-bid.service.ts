@@ -274,11 +274,13 @@ export class BidService extends TradeAskBidService implements OnModuleInit {
       );
     }
 
-    const change = formatQuantity(
-      (bidDto.receivedPrice - buyData.price) * buyData.quantity,
-    );
-    const returnChange = formatQuantity(account[typeGiven] - (buyData.price * buyData.quantity));
-    const returnAvailableChange = formatQuantity(change + account.availableKRW);
+    const returnChange = formatQuantity(
+			account[typeGiven] - buyData.price * buyData.quantity,
+		);
+    
+		const returnAvailableChange = formatQuantity(
+			account.availableKRW - buyData.price * buyData.quantity,
+		);
 
     await this.accountRepository.updateAccountCurrency(
       typeGiven,
