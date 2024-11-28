@@ -263,7 +263,7 @@ export class BidService extends TradeAskBidService implements OnModuleInit {
 		queryRunner: QueryRunner,
 	): Promise<void> {
 		const { account, typeGiven, typeReceived } = bidDto;
-    const userAccount = await this.accountRepository.getAccount(account.id, queryRunner);
+    const userAccount = await this.accountRepository.getAccount(bidDto.userId, queryRunner);
 
 		if (typeReceived === 'BTC') {
 			const btcQuantity = formatQuantity(account.BTC + buyData.quantity);
