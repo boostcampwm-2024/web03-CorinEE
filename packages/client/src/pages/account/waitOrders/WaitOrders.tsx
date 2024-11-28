@@ -18,11 +18,9 @@ function WaitOrders() {
 				</div>
 
 				{waitOrders.length > 0 ? (
-					waitOrders
-						.reverse()
-						.map((waitOrder) => (
-							<WaitOrderInfo key={waitOrder.tradeId} {...waitOrder} />
-						))
+					waitOrders.map((waitOrder) => (
+						<WaitOrderInfo key={waitOrder.tradeId} {...waitOrder} />
+					))
 				) : (
 					<div className="mt-20 flex justify-center">
 						<p className="font-semibold text-gray-700">
