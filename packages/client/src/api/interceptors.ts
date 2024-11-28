@@ -40,7 +40,6 @@ authInstance.interceptors.response.use(
 			} catch (error) {
 				localStorage.removeItem('access_token');
 				removeCookie('refresh_token');
-				window.location.href = '/';
 				return Promise.reject(error);
 			}
 		}
