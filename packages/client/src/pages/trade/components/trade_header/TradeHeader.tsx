@@ -9,7 +9,7 @@ type TradeHeaderProps = {
 };
 
 function TradeHeader({ market, sseData }: TradeHeaderProps) {
-	if (!sseData[market]) return; // 임시 방편 처리
+	if (!sseData[market]) return;
 	const formatter = formatData('KRW');
 
 	const code = sseData[market].code;
