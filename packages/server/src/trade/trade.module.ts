@@ -26,5 +26,6 @@ import { TradeService } from './trade.service';
     TradeService,
   ],
   controllers: [TradeController],
+  exports: [TradeRepository]
 })
 export class TradeModule {}
