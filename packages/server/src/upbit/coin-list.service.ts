@@ -18,13 +18,17 @@ export class CoinListService {
       .map((coin) => this.toSimpleCoinDto(coin));
   }
 
-  async getSimpleCoin(markets: string[]): Promise<any[]> {
+  async getSimpleCoin(markets: string[] | string): Promise<any[]> {
     const krwCoinInfo = await this.waitForKrwCoinInfo();
     if (!markets.length) return [];
-
-    return krwCoinInfo
+    if(typeof markets === "string"){
+      return krwCoinInfo.filter(krw=> krw.market === markets)
+      .map((coin) => this.toSimpleCoinDto(coin));
+    }else{
+      return krwCoinInfo
       .filter((coin) => markets.some(market=> market===coin.market))
       .map((coin) => this.toSimpleCoinDto(coin));
+    }
   }
 
   private toSimpleCoinDto(coin: any): any {
