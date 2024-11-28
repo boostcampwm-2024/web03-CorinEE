@@ -190,9 +190,14 @@ export class CoinDataUpdaterService implements OnModuleInit {
 
 	async searchCoinData(data: string) {
 		const searchTerm = data.toLowerCase();
- 
+    if(data===''){
+      return {
+        statusCode : 200,
+        result : []
+      }
+    }
     const results = await Promise.all(
-      this.coinRawList.map(async coin => {
+      this.coinRawList.map(async (coin) => {
         if ((coin.market.toLowerCase().includes(searchTerm) ||
             coin.korean_name.toLowerCase().includes(searchTerm) ||
             coin.english_name.toLowerCase().includes(searchTerm)) && 
