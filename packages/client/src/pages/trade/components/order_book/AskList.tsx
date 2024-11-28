@@ -10,7 +10,7 @@ type AskListProps = {
 function AskList({ asks, currentPrice, handleSelectPrice }: AskListProps) {
 	const maxSize = Math.max(...asks.map((ask) => ask.ask_size));
 	return (
-		<ul className="flex flex-col w-full">
+		<ul className="flex flex-col w-full bg-blue-100 bg-opacity-10">
 			{asks.map((ask) => (
 				<li key={ask.ask_price} className="grid grid-cols-4 m-1">
 					<VolumeBar
