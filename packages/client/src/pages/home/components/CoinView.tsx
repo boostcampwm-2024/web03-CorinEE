@@ -5,14 +5,26 @@ import { MarketData } from '@/types/market';
 import { MarketCategory } from '@/types/category';
 import { filterCoin } from '@/utility/validation/filter';
 import { isMarket } from '@/utility/validation/typeGuard';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMyInterest } from '@/hooks/interest/useMyInterest';
+import axios from 'axios';
+import { TempInfo } from '@/types/tempInfo';
 
 function CoinView() {
 	const { data } = useMarketAll();
 	const [activeCategory, setActiveCategory] = useState<MarketCategory>('KRW');
-	const myInterestMarketList = useMyInterest()
+	const myInterestMarketList = useMyInterest();
 	let filterData: MarketData[] = [];
+	const [tempInfo, setTempInfo] = useState<TempInfo>();
+
+	useEffect(() => {
+		const fetchData = async () => {
+			const response = await axios.get('https://api.hangang.life/');
+			setTempInfo(response.data.DATAs.DATA.HANGANG['선유']);
+		};
+
+		fetchData();
+	}, []);
 
 	const handleCategory = (category: MarketCategory) => {
 		setActiveCategory(category);
@@ -25,16 +37,19 @@ function CoinView() {
 	}
 
 	return (
-		<div className="w-11/12 m-auto min-w-[1100px] flex flex-col justify-center">
-			<div>
-				<h3 className="text-2xl font-bold text-gray-800">코인 리스트</h3>
-				<div className="mb-6 text-sm text-gray-700">실시간 코인 가격 확인</div>
-			</div>
+		<div>
+			<h3 className="text-2xl font-bold text-gray-800">코인 리스트</h3>
+			<div className="mb-6 text-sm text-gray-700">실시간 코인 가격 확인</div>
 			<CoinCategories
 				activeCategory={activeCategory}
 				handleCategory={handleCategory}
+				tempInfo={tempInfo}
 			/>
-			<CoinList markets={filterData} activeCategory={activeCategory} myInterestMarketList={myInterestMarketList} />
+			<CoinList
+				markets={filterData}
+				activeCategory={activeCategory}
+				myInterestMarketList={myInterestMarketList}
+			/>
 		</div>
 	);
 }
