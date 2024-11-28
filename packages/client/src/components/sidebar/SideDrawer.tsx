@@ -1,5 +1,9 @@
 import { lazy, Suspense } from 'react';
 import { SideBarCategory } from '@/types/category';
+import {
+	ApiErrorBoundary,
+	DefaultErrorFallback,
+} from '@/components/error/ApiErrorBoundary';
 
 const MyInvestment = lazy(() => import('@/components/sidebar/MyInvestment'));
 const Interest = lazy(() => import('@/components/sidebar/MyInterest'));
@@ -32,7 +36,11 @@ function SideDrawer({ isOpen, activeMenu }: SideDrawerProps) {
           ${isOpen ? 'translate-x-0 w-80' : 'translate-x-full w-0'}
         `}
 			>
-				<Suspense>{activeMenu && activeMenuComponent[activeMenu]}</Suspense>
+				<ApiErrorBoundary
+					fallback={({ error }) => <DefaultErrorFallback error={error} />}
+				>
+					<Suspense>{activeMenu && activeMenuComponent[activeMenu]}</Suspense>
+				</ApiErrorBoundary>
 			</div>
 		</div>
 	);
