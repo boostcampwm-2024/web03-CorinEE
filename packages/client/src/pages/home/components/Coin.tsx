@@ -6,29 +6,29 @@ import { useNavigate } from 'react-router-dom';
 import colorClasses from '@/constants/priceColor';
 import useRecentlyMarketStore from '@/store/recentlyViewed';
 import { useQueryClient } from '@tanstack/react-query';
-import { useToggleMyInterest } from '@/hooks/interest/useToggleMyInterest';
+import { useAuthStore } from '@/store/authStore';
+import { useHandleToggle } from '@/hooks/interest/useHandleToggle';
 
 type CoinProps = {
 	formatters: Formatters;
 	market: MarketData;
 	sseData: SSEDataType;
-	isInterest: boolean;
+	isInterest: boolean | undefined;
 };
 
 function Coin({ formatters, market, sseData, isInterest }: CoinProps) {
+	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
+	const { handleToggle } = useHandleToggle();
 	const { addRecentlyViewedMarket } = useRecentlyMarketStore();
-	const { toggleInterest } = useToggleMyInterest();
+
 	const handleClick = () => {
 		addRecentlyViewedMarket(market.market);
 		navigate(`/trade/KRW-${market.market.split('-')[1]}`);
 		queryClient.invalidateQueries({ queryKey: ['recentlyMarketList'] });
 	};
-	const handleToggle = async (e: React.MouseEvent) => {
-		e.stopPropagation();
-		toggleInterest.mutateAsync(market.market);
-	};
+
 	const change: Change = sseData[market.market]?.change;
 
 	const trade_price = formatters.formatTradePrice(
@@ -48,14 +48,12 @@ function Coin({ formatters, market, sseData, isInterest }: CoinProps) {
 
 	return (
 		<div className="flex items-center py-1 border-b border-solid border-gray-300 cursor-pointer hover:bg-gray-100">
-			<div
-				className={`fill-blue-gray-100 flex-[1] flex w-5 h-5
-					${isInterest ? 'fill-red-400' : ''}
-					hover:fill-red-400`}
-				onClick={handleToggle}
+			<button
+				className={`flex w-6 h-6 mr-2 ${!isInterest || !isAuthenticated ? 'fill-blue-gray-100' : 'fill-red-500'}`}
+				onClick={() => handleToggle(market.market)}
 			>
 				<Heart />
-			</div>
+			</button>
 
 			<div className="flex flex-[24] items-center" onClick={handleClick}>
 				<div className="flex items-center gap-2 flex-[6]">
