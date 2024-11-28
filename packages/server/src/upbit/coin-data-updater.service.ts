@@ -193,10 +193,11 @@ export class CoinDataUpdaterService implements OnModuleInit {
  
     const results = await Promise.all(
       this.coinRawList.map(async coin => {
-        if (coin.market.toLowerCase().includes(searchTerm) ||
+        if ((coin.market.toLowerCase().includes(searchTerm) ||
             coin.korean_name.toLowerCase().includes(searchTerm) ||
-            coin.english_name.toLowerCase().includes(searchTerm)) {
-            coin.image_url = UPBIT_IMAGE_URL + coin.market.split('-')[1];
+            coin.english_name.toLowerCase().includes(searchTerm)) && 
+            coin.market.includes("KRW")){
+            coin.image_url = UPBIT_IMAGE_URL + coin.market.split('-')[1] + '.png';
             return coin;
         }
       })
