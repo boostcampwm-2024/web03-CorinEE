@@ -6,6 +6,7 @@ import PORTFOLIO_EVALUATOR from '@/utility/finance/portfolioEvaluator';
 type BalanceTableProps = {
 	KRW: number;
 	total_bid: number;
+	availableKRW: number
 	sseData: SSEDataType | null | undefined;
 	balanceMarketList: BalanceMarket[];
 };
@@ -15,6 +16,7 @@ function BalanceTable({
 	total_bid,
 	sseData,
 	balanceMarketList,
+	availableKRW
 }: BalanceTableProps) {
 	const { evaluateTotalPrice, calculateProfitRate, getChangeStatus } =
 		PORTFOLIO_EVALUATOR;
@@ -79,7 +81,7 @@ function BalanceTable({
 			<div className="flex h-10 gap-8 items-center">
 				<BalanceInfo
 					title="주문가능"
-					amount={Math.floor(KRW)}
+					amount={Math.floor(availableKRW)}
 					unit="KRW"
 					primary={false}
 					change={changeStatus}
