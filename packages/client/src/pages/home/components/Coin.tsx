@@ -5,7 +5,7 @@ import Heart from '@asset/heart.svg?react';
 import { useNavigate } from 'react-router-dom';
 import colorClasses from '@/constants/priceColor';
 import useRecentlyMarketStore from '@/store/recentlyViewed';
-import { QueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useToggleMyInterest } from '@/hooks/interest/useToggleMyInterest';
 
 type CoinProps = {
@@ -17,7 +17,7 @@ type CoinProps = {
 
 function Coin({ formatters, market, sseData, isInterest }: CoinProps) {
 	const navigate = useNavigate();
-	const queryClient = new QueryClient();
+	const queryClient = useQueryClient();
 	const { addRecentlyViewedMarket } = useRecentlyMarketStore();
 	const { toggleInterest } = useToggleMyInterest();
 	const handleClick = () => {
@@ -25,7 +25,8 @@ function Coin({ formatters, market, sseData, isInterest }: CoinProps) {
 		navigate(`/trade/KRW-${market.market.split('-')[1]}`);
 		queryClient.invalidateQueries({ queryKey: ['recentlyMarketList'] });
 	};
-	const handleToggle = async () => {
+	const handleToggle = async (e: React.MouseEvent) => {
+		e.stopPropagation();
 		toggleInterest.mutateAsync(market.market);
 	};
 	const change: Change = sseData[market.market]?.change;
