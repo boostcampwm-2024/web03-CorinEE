@@ -46,6 +46,7 @@ export class SseService implements OnModuleDestroy {
 
   async initOrderStream(
     coin: string,
+    dto: (data: any) => any,
   ): Promise<MessageEvent> {
     let coinLatestInfo = this.coinDataUpdaterService.getCoinOrderbookInfo();
     
@@ -58,15 +59,9 @@ export class SseService implements OnModuleDestroy {
     initData.type = "orderbook"
     initData.stream_type = "REALTIME"
     initData.code = initData.market;
-    delete initData.market;
-    initData.korean_name = this.coinDataUpdaterService
-      .getCoinNameList()
-      .get(initData.code);
-    
-    initData.image_url = `${UPBIT_IMAGE_URL}${initData.code.split('-')[1]}.png`;
-    
+
     return new MessageEvent('orderbook-update', {
-      data: JSON.stringify(initData),
+      data: JSON.stringify(dto(initData)),
     });
   }
 
