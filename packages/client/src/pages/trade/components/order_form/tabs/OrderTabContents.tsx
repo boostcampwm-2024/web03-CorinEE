@@ -7,16 +7,9 @@ import { Suspense } from 'react';
 
 type OrderTabContentsType = {
 	activeTabData: OrderTabItem;
-	isAuthenticated: boolean;
 };
 
-function OrderTabContents({
-	activeTabData,
-	isAuthenticated,
-}: OrderTabContentsType) {
-	if (!isAuthenticated) {
-		return activeTabData.notLogin;
-	}
+function OrderTabContents({ activeTabData }: OrderTabContentsType) {
 	return (
 		<ApiErrorBoundary
 			fallback={({ error }) => <DefaultErrorFallback error={error} />}
