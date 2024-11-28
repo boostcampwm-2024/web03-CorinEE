@@ -2,6 +2,7 @@ import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { Subject, Observable } from 'rxjs';
 import { map, takeUntil, filter } from 'rxjs/operators';
 import { CoinDataUpdaterService } from '../coin-data-updater.service';
+import { UPBIT_IMAGE_URL } from '../constants';
 
 @Injectable()
 export class SseService implements OnModuleDestroy {
@@ -58,6 +59,11 @@ export class SseService implements OnModuleDestroy {
     initData.stream_type = "REALTIME"
     initData.code = initData.market;
     delete initData.market;
+    initData.korean_name = this.coinDataUpdaterService
+      .getCoinNameList()
+      .get(initData.code);
+    
+    initData.image_url = `${UPBIT_IMAGE_URL}${initData.code.split('-')[1]}.png`;
     
     return new MessageEvent('orderbook-update', {
       data: JSON.stringify(initData),
