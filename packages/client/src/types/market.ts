@@ -14,6 +14,7 @@ export type MarketData = {
 	english_name?: string;
 	market_warning?: string;
 	market_event?: { warning: boolean; caution: MarketEvent };
+	image_url: string;
 };
 
 export type SidebarMarketData = {
