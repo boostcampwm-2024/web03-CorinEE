@@ -1,6 +1,8 @@
 import { useMyInterest } from '@/hooks/interest/useMyInterest';
-import { useToggleMyInterest } from '@/hooks/interest/useToggleMyInterest';
 import Heart from '@asset/heart.svg?react';
+import { useAuthStore } from '@/store/authStore';
+import { useHandleToggle } from '@/hooks/interest/useHandleToggle';
+
 type CoinStatsProps = {
 	acc_trade_price_24h: string;
 	high_price: string;
@@ -14,15 +16,13 @@ function CoinStats({
 	low_price,
 	code,
 }: CoinStatsProps) {
-	const { toggleInterest } = useToggleMyInterest();
-	const handleToggle = async () => {
-		toggleInterest.mutateAsync(code);
-	};
-	const myInterestMarketList = useMyInterest();
-	const formattedMyInterestMarketList = myInterestMarketList.map(
-		(info) => info.assetName,
+	const { isLoading, data: interestMarkets = [] } = useMyInterest();
+	const isInterest = interestMarkets?.some(
+		(interestMarket) => interestMarket.assetName === code,
 	);
-	const isInterest = formattedMyInterestMarketList.includes(code);
+	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+	const { handleToggle } = useHandleToggle();
+
 	const STATS = [
 		{
 			name: '거래대금(24h)',
@@ -54,13 +54,13 @@ function CoinStats({
 			))}
 			<div
 				className="border border-solid border-white rounded-lg p-1 bg-gray-200 cursor-pointer"
-				onClick={handleToggle}
+				onClick={() => handleToggle(code)}
 			>
-				<Heart
-					className={`w-6 h-6 fill-blue-gray-200
-					${isInterest ? 'fill-red-400' : ''}
-					`}
-				/>
+				{isLoading ? null : (
+					<Heart
+						className={`w-6 h-6 ${!isInterest || !isAuthenticated ? 'fill-blue-gray-100' : 'fill-red-500'}`}
+					/>
+				)}
 			</div>
 		</div>
 	);
