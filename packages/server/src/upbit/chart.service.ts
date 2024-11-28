@@ -95,7 +95,7 @@ export class ChartService implements OnModuleInit {
       : `${baseUrl}?${query}`;
   }
 
-  async waitForTransactionOrder(key, maxRetries = 100): Promise<any> {
+  async waitForTransactionOrder(key, maxRetries = 1000): Promise<any> {
     let retryCount = 0;
 
     return new Promise(async (resolve, reject) => {
@@ -115,7 +115,7 @@ export class ChartService implements OnModuleInit {
           if (retryCount++ >= maxRetries) {
             return reject(new Error('Timeout waiting for transaction order'));
           }
-          setTimeout(check, 100);
+          setTimeout(check, 10);
         } catch (error) {
           reject(error);
         }

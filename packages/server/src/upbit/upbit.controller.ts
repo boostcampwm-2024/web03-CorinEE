@@ -11,6 +11,7 @@ import {
 import { Observable, concat, concatAll, from, map } from 'rxjs';
 import { SseService } from './SSE/sse.service';
 import { CoinListService } from './coin-list.service';
+import { CoinDataUpdaterService } from '@src/upbit/coin-data-updater.service';
 import { ChartService } from './chart.service';
 import { Response } from 'express';
 import {
@@ -30,6 +31,7 @@ export class UpbitController {
     private readonly sseService: SseService,
     private readonly coinListService: CoinListService,
     private readonly chartService: ChartService,
+    private readonly coinDataUpdaterService: CoinDataUpdaterService
   ) {}
 
   @ApiOperation({
@@ -332,5 +334,20 @@ export class UpbitController {
       message: error.message || '서버오류입니다.',
       error: error?.response || null,
     });
+  }
+
+  @ApiOperation({
+    summary: '코인 데이터 검색',
+    description: '코인 데이터를 검색합니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '코인 데이터 검색 성공',
+  })
+  @Get('search')
+  async searchCoin(
+    @Query('data') data: string,
+  ){
+    return this.coinDataUpdaterService.searchCoinData(data);
   }
 }
