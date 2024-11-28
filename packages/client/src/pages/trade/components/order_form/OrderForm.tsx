@@ -1,6 +1,5 @@
 import OrderTabs from '@/pages/trade/components/order_form/tabs/OrderTabs';
 import { useState } from 'react';
-import { useAuthStore } from '@/store/authStore';
 import { createOrderTabs } from '@/constants/orderTabs';
 import OrderTabContents from '@/pages/trade/components/order_form/tabs/OrderTabContents';
 
@@ -11,7 +10,6 @@ type OrderFormProps = {
 
 function OrderForm({ currentPrice, selectPrice }: OrderFormProps) {
 	const [activeTab, setActiveTab] = useState<'buy' | 'sell' | 'wait'>('buy');
-	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 	const TABS = createOrderTabs({ currentPrice, selectPrice });
 	const activeTabData = TABS.find((tab) => tab.id === activeTab);
 
@@ -26,12 +24,7 @@ function OrderForm({ currentPrice, selectPrice }: OrderFormProps) {
 				/>
 			</div>
 			<div className="mt-4">
-				{activeTabData && (
-					<OrderTabContents
-						activeTabData={activeTabData}
-						isAuthenticated={isAuthenticated}
-					/>
-				)}
+				{activeTabData && <OrderTabContents activeTabData={activeTabData} />}
 			</div>
 		</div>
 	);
