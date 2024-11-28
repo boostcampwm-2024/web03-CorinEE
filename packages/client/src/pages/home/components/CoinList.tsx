@@ -5,23 +5,20 @@ import { MarketData } from '@/types/market';
 import { MarketCategory } from '@/types/category';
 import { formatData } from '@/utility/format/formatSSEData';
 import { useEffect, useMemo, useState } from 'react';
-import { Interest } from '@/types/interest';
+import { useMyInterest } from '@/hooks/interest/useMyInterest';
 
 type CoinListProps = {
 	markets: MarketData[];
 	activeCategory: MarketCategory;
-	myInterestMarketList: Interest[];
 };
 
 const COINS_PER_PAGE = 10;
 
-function CoinList({
-	markets,
-	activeCategory,
-	myInterestMarketList,
-}: CoinListProps) {
+function CoinList({ markets, activeCategory }: CoinListProps) {
 	const [currentScrollPage, setCurrentScrollPage] = useState(1);
 	const maxScrollPage = Math.ceil(markets.length / COINS_PER_PAGE);
+	const { isLoading, data: interestMarkets } = useMyInterest();
+
 	const currentPageMarkets = useMemo(
 		() =>
 			markets.slice(
@@ -30,9 +27,12 @@ function CoinList({
 			),
 		[currentScrollPage, activeCategory],
 	);
-	const formattedMyInterestMarketList = myInterestMarketList.map(
-		(info) => info.assetName,
-	);
+
+	const checkInterest = (market: MarketData) => {
+		return interestMarkets?.some(
+			(interestMarket) => interestMarket.assetName === market.market,
+		);
+	};
 
 	useEffect(() => {
 		setCurrentScrollPage(1);
@@ -44,7 +44,7 @@ function CoinList({
 		setCurrentScrollPage(pageNumber);
 	};
 
-	if (!sseData) return;
+	if (!sseData || isLoading) return;
 	return (
 		<div>
 			<ul className="flex py-4 border-b border-solid border-gray-300 text-gray-700  bg-white">
@@ -60,7 +60,7 @@ function CoinList({
 					formatters={formatters}
 					market={market}
 					sseData={sseData}
-					isInterest={formattedMyInterestMarketList.includes(market.market)}
+					isInterest={checkInterest(market)}
 				/>
 			))}
 			<ol className="flex py-4 gap-4 justify-center">
