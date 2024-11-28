@@ -5,6 +5,7 @@ import {
 	Get,
 	HttpCode,
 	HttpStatus,
+	Logger,
 	Post,
 	Request,
 	Res,
@@ -25,7 +26,9 @@ import { FRONTEND_URL } from './constants';
 
 @Controller('auth')
 export class AuthController {
-	constructor(private authService: AuthService) {}
+
+	private readonly logger = new Logger(AuthController.name);
+	constructor(private authService: AuthService) { }
 
 	@ApiBody({ type: SignInDto })
 	@HttpCode(HttpStatus.OK)
@@ -42,7 +45,7 @@ export class AuthController {
 
 	@Get('google')
 	@UseGuards(PassportAuthGuard('google'))
-	async googleLogin() {}
+	async googleLogin() { }
 
 	@Get('google/callback')
 	@UseGuards(PassportAuthGuard('google'))
@@ -53,7 +56,7 @@ export class AuthController {
 
 	@Get('kakao')
 	@UseGuards(PassportAuthGuard('kakao'))
-	async kakaoLogin() {}
+	async kakaoLogin() { }
 
 	@Get('kakao/callback')
 	@UseGuards(PassportAuthGuard('kakao'))
@@ -122,7 +125,6 @@ export class AuthController {
 		return this.authService.validateOAuthLogin(signUpDto);
 	}
 
-	// Helper method to redirect with tokens
 	private redirectWithTokens(res: any, tokens: any): void {
 		const redirectURL = new URL('/auth/callback', FRONTEND_URL);
 
@@ -131,5 +133,4 @@ export class AuthController {
 		res.redirect(redirectURL.toString());
 	}
 
-  
 }

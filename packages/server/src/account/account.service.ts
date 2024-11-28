@@ -2,6 +2,7 @@ import {
   HttpStatus,
   Injectable,
   Logger,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { AssetRepository } from '@src/asset/asset.repository';
@@ -11,6 +12,7 @@ import { CURRENCY_CONSTANTS } from './constants/currency.constants';
 import { AccountResponseDto, MyAccountResponseDto, UserDto } from './dtos/my-account.response.dto';
 import { AccountRepository } from './account.repository';
 import { Asset } from '@src/asset/asset.entity';
+import { UserRepository } from '@src/auth/user.repository';
 
 @Injectable()
 export class AccountService {

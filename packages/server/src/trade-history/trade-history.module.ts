@@ -11,5 +11,6 @@ import { UpbitModule } from '@src/upbit/upbit.module';
   imports: [TypeOrmModule.forFeature([TradeHistory]), HttpModule, UpbitModule],
   providers: [TradeHistoryRepository, TradeHistoryService],
   controllers: [TradeHistoryController],
+  exports: [TradeHistoryRepository]
 })
 export class TradehistoryModule {}
