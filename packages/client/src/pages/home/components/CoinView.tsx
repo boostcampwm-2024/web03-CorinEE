@@ -6,14 +6,12 @@ import { MarketCategory } from '@/types/category';
 import { filterCoin } from '@/utility/validation/filter';
 import { isMarket } from '@/utility/validation/typeGuard';
 import { useEffect, useState } from 'react';
-import { useMyInterest } from '@/hooks/interest/useMyInterest';
 import axios from 'axios';
 import { TempInfo } from '@/types/tempInfo';
 
 function CoinView() {
 	const { data } = useMarketAll();
 	const [activeCategory, setActiveCategory] = useState<MarketCategory>('KRW');
-	const myInterestMarketList = useMyInterest();
 	let filterData: MarketData[] = [];
 	const [tempInfo, setTempInfo] = useState<TempInfo>();
 
@@ -45,11 +43,7 @@ function CoinView() {
 				handleCategory={handleCategory}
 				tempInfo={tempInfo}
 			/>
-			<CoinList
-				markets={filterData}
-				activeCategory={activeCategory}
-				myInterestMarketList={myInterestMarketList}
-			/>
+			<CoinList markets={filterData} activeCategory={activeCategory} />
 		</div>
 	);
 }
