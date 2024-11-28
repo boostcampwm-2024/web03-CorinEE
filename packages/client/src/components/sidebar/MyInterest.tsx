@@ -1,35 +1,26 @@
-import NotLogin from '@/components/NotLogin';
 import { useMyInterest } from '@/hooks/interest/useMyInterest';
-import { useAuthStore } from '@/store/authStore';
 import Lottie from 'lottie-react';
 import Heart from '@asset/lotties/Heart.json';
 import { useRecentlyMarketList } from '@/hooks/market/useRecentlyMarket';
-import { convertToQueryString } from '@/utility/api/queryString';
 import { formatData } from '@/utility/format/formatSSEData';
 import { useSSETicker } from '@/hooks/SSE/useSSETicker';
 import SidebarCoin from '@/components/sidebar/SidebarCoin';
+import withAuthenticate from '@/components/hoc/withAuthenticate';
 
 function MyInterest() {
-	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-	const myInterest = useMyInterest();
-	const interestMarketList = myInterest.map((info) => info.assetName);
-	const { data: viewedMarket } = useRecentlyMarketList(
-		convertToQueryString(interestMarketList),
-		{ 
-      enabled: myInterest.length > 0 
-    }
-	);
-	const formatters = formatData('KRW');
+	const { isLoading, data: myInterest = [] } = useMyInterest();
+	const { data: viewedMarket } = useRecentlyMarketList(myInterest);
 	const { sseData } = useSSETicker(viewedMarket || []);
-	
-	const sortedCoinInfos = [...viewedMarket || []].sort((a, b) => {
+	const interestMarketList = myInterest.map((info) => info.assetName);
+	const formatters = formatData('KRW');
+
+	const sortedCoinInfos = [...(viewedMarket || [])].sort((a, b) => {
 		const indexA = interestMarketList.indexOf(a.market);
 		const indexB = interestMarketList.indexOf(b.market);
 		return indexA - indexB;
 	});
 
-	if (!isAuthenticated) return <NotLogin size="sm" />;
-	
+	if (isLoading) return null;
 	return (
 		<div className="flex flex-col h-full overflow-y-auto [&::-webkit-scrollbar]:hidden p-4">
 			<div>
@@ -60,4 +51,4 @@ function MyInterest() {
 	);
 }
 
-export default MyInterest;
+export default withAuthenticate({ WrappedComponent: MyInterest, size: 'sm' });
