@@ -60,7 +60,7 @@ export class SseService implements OnModuleDestroy {
     initData.stream_type = "REALTIME"
     initData.code = initData.market;
     
-    const dtoData = dto(initData)
+    const dtoData = await dto(initData)
     delete dtoData.market;
 
     return new MessageEvent('orderbook-update', {
