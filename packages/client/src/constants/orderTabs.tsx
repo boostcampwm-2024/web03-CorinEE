@@ -13,15 +13,15 @@ const OrderWaitForm = lazy(
 
 const AuthenticatedBuyForm = withAuthenticate({
 	WrappedComponent: OrderBuyForm,
-	size: 'md',
+	size: 'sm',
 });
 const AuthenticatedSellForm = withAuthenticate({
 	WrappedComponent: OrderSellForm,
-	size: 'md',
+	size: 'sm',
 });
 const AuthenticatedWaitForm = withAuthenticate({
 	WrappedComponent: OrderWaitForm,
-	size: 'md',
+	size: 'sm',
 });
 
 type CreateOrderTabProsp = {
