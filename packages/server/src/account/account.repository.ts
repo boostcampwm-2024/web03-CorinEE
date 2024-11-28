@@ -168,14 +168,14 @@ export class AccountRepository extends Repository<Account> {
 		return userAccount;
 	}
 
-	async getAccount(id: number, queryRunner: QueryRunner): Promise<Account> {
-		this.logger.log(`계정 조회 시작: userId=${id}`);
+	async getAccount(accountId: number, queryRunner: QueryRunner): Promise<Account> {
+		this.logger.log(`계정 조회 시작: userId=${accountId}`);
 		try {
 			const account = await queryRunner.manager.findOne(Account, {
-				where: { user: { id } },
+				where: { id: accountId },
 			});
 
-			this.logger.log(`계정 조회 완료: userId=${id}`);
+			this.logger.log(`계정 조회 완료: userId=${accountId}`);
 			return account;
 		} catch (error) {
 			this.logger.error(`계정 조회 실패: ${error.message}`, error.stack);
