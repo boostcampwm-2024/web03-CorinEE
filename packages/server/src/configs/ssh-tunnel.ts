@@ -1,17 +1,20 @@
 import { createTunnel } from 'tunnel-ssh';
+import { Logger } from '@nestjs/common';
+
+const logger = new Logger('SSHTunnel');
 
 export async function setupSshTunnel(): Promise<void> {
   const env = process.env.NODE_ENV || 'development';
 
   if (env !== 'development') {
-    console.log('SSH 터널링은 개발 환경에서만 활성화됩니다.');
+    logger.log('SSH 터널링은 개발 환경에서만 활성화됩니다.');
     return;
   }
   try {
     await Promise.all([tunnelMySQL(), tunnelRedis()]);
-    console.log('MySQL 및 Redis 터널링 설정 완료');
+    logger.log('MySQL 및 Redis 터널링 설정 완료');
   } catch (error) {
-    console.error('SSH 터널링 설정 중 오류 발생:', error);
+    logger.error('SSH 터널링 설정 중 오류 발생:', error);
     throw error;
   }
 }
@@ -67,13 +70,13 @@ function tunnel(
       forwardOptions,
     )
       .then(() => {
-        console.log(
+        logger.log(
           `터널링 성공: ${forwardOptions.dstAddr}:${forwardOptions.dstPort}`,
         );
         resolve();
       })
       .catch((error) => {
-        console.error('터널 생성 중 오류 발생:', error);
+        logger.error('터널 생성 중 오류 발생:', error);
         reject(error);
       });
   });

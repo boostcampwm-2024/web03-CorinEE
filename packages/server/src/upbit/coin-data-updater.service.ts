@@ -51,7 +51,7 @@ export class CoinDataUpdaterService implements OnModuleInit {
 
 			this.processCoinList(response.data);
 		} catch (error) {
-			console.log(error);
+			this.logger.log(error);
 			this.logger.error('Failed to update coin list:', error);
 		} finally {
 			this.scheduleNextUpdate(
