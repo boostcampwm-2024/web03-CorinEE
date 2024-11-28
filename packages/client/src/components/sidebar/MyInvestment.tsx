@@ -1,15 +1,13 @@
-import NotLogin from '@/components/NotLogin';
 import SidebarCoin from '@/components/sidebar/SidebarCoin';
 import { useSSETicker } from '@/hooks/SSE/useSSETicker';
 import { useMyAccount } from '@/hooks/auth/useMyAccount';
-import { useAuthStore } from '@/store/authStore';
 import { formatData } from '@/utility/format/formatSSEData';
 import { useMemo } from 'react';
 import Lottie from 'lottie-react';
 import Wallet from '@asset/lotties/Wallet.json';
+import withAuthenticate from '@/components/hoc/withAuthenticate';
 
 function MyInvestment() {
-	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 	const { data } = useMyAccount();
 	const balanceMarketList = useMemo(
 		() =>
@@ -22,10 +20,8 @@ function MyInvestment() {
 		[data.coins],
 	);
 	const { sseData } = useSSETicker(balanceMarketList);
-	
-	const formatters = formatData('KRW');
 
-	if (!isAuthenticated) return <NotLogin size="sm" />;
+	const formatters = formatData('KRW');
 
 	return (
 		<div className="flex flex-col h-full overflow-y-auto [&::-webkit-scrollbar]:hidden p-4">
@@ -47,11 +43,7 @@ function MyInvestment() {
 				))
 			) : (
 				<>
-					<Lottie
-						animationData={Wallet}
-						loop={true}
-						autoPlay={true}
-					/>
+					<Lottie animationData={Wallet} loop={true} autoPlay={true} />
 					<p className="text-center text-gray-600 font-semibold">
 						투자한 종목이 없어요 !
 					</p>
@@ -61,4 +53,4 @@ function MyInvestment() {
 	);
 }
 
-export default MyInvestment;
+export default withAuthenticate({ WrappedComponent: MyInvestment, size: 'sm' });
