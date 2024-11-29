@@ -187,7 +187,7 @@ export class AssetRepository extends Repository<Asset> {
   
       const assetsWithPrices = assets.map((asset) => ({
         code: `KRW-${asset.assetName}`,
-        avg_purchase_price: asset.price,
+        price: asset.price,
         quantity: asset.quantity
       }));
   
