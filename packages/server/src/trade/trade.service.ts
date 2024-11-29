@@ -238,7 +238,7 @@ export class TradeService {
 
   private calculateAccountBalance(trade: any, userAccount: any): number {
     return parseFloat(
-      (trade.price * trade.quantity + userAccount.availableKRW).toFixed(
+      (trade.price * trade.quantity).toFixed(
         8,
       ),
     );
