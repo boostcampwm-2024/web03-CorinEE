@@ -8,6 +8,7 @@ import { Account } from './account.entity';
 import { User } from '@src/auth/user.entity';
 import { CURRENCY_CONSTANTS } from './constants/currency.constants';
 import { UserDto } from './dtos/my-account.response.dto';
+import { formatQuantity } from '@src/trade/helpers/trade.helper';
 
 @Injectable()
 export class AccountRepository extends Repository<Account> {
@@ -65,9 +66,8 @@ export class AccountRepository extends Repository<Account> {
 					[typeGiven]: () => `${typeGiven} + :change`,
 				})
 				.where('id = :id', { id: accountId })
-				.setParameters({ change })
+				.setParameters({ change: formatQuantity(change) })
 				.execute();
-
 			this.logger.log(`계정 통화 업데이트 완료: accountId=${accountId}`);
 		} catch (error) {
 			this.logger.error(
