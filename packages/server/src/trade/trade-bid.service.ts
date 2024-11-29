@@ -282,8 +282,7 @@ export class BidService extends TradeAskBidService implements OnModuleInit {
 		);
 
 		const returnChange = formatQuantity(buyData.price * buyData.quantity);
-		console.log("change : "+change)
-		console.log("returnCahgne : " +returnChange)
+
 		await this.accountRepository.updateAccountCurrency(
 			typeGiven,
 			-returnChange,
