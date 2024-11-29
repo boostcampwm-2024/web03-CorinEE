@@ -1,0 +1,35 @@
+services:
+  server:
+    image: seunggwan/corinee-server
+    restart: always
+    container_name: corinee_server_2  # 두 번째 서버임을 명시
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+  server:
+    image: seunggwan/corinee-server
+    restart: always
+    container_name: corinee_server_3  # 두 번째 서버임을 명시
+    env_file:
+      - .env
+    ports:
+      - "3001:3001"
+    networks:
+      - app-network
+  server:
+    image: seunggwan/corinee-server
+    restart: always
+    container_name: corinee_server_4  # 두 번째 서버임을 명시
+    env_file:
+      - .env
+    ports:
+      - "3002:3002"
+    networks:
+      - app-network
+networks:
+  app-network:
+    name: corinee_app-network  # 메인 서버와 같은 네트워크 이름 사용
+    driver: bridge
