@@ -77,10 +77,12 @@ export class BidService extends TradeAskBidService implements OnModuleInit {
 					const userAccount = await this.accountRepository.validateUserAccount(
 						user.userId,
 					);
-					// const accountBalance = await this.checkCurrencyBalance(
-					// 	bidDto,
-					// 	userAccount,
-					// );
+
+					await this.checkCurrencyBalance(
+						bidDto,
+						userAccount,
+					);
+					
 					const { receivedPrice, receivedAmount } = bidDto;
 
 					await this.accountRepository.updateAccountCurrency(
@@ -148,13 +150,6 @@ export class BidService extends TradeAskBidService implements OnModuleInit {
 
 		try {
 			const { userId, typeGiven } = bidDto;
-			// 트랜잭션 없이 계정 조회
-			const account = await this.accountRepository.findOne({
-				where: { user: { id: userId } },
-			});
-
-			bidDto.accountBalance = account[typeGiven];
-			bidDto.account = account;
 
 			const orderbook =
 				this.coinDataUpdaterService.getCoinOrderbookByBid(bidDto);
@@ -164,6 +159,13 @@ export class BidService extends TradeAskBidService implements OnModuleInit {
 					if (order.ask_price > bidDto.receivedPrice) break;
 					const tradeResult = await this.executeTransaction(
 						async (queryRunner) => {
+							const account = await this.accountRepository.findOne({
+								where: { user: { id: userId } },
+							});
+				
+							bidDto.accountBalance = account[typeGiven];
+							bidDto.account = account;
+
 							const remainingQuantity = await this.executeBidTrade(
 								bidDto,
 								order,
@@ -280,7 +282,8 @@ export class BidService extends TradeAskBidService implements OnModuleInit {
 		);
 
 		const returnChange = formatQuantity(buyData.price * buyData.quantity);
-
+		console.log("change : "+change)
+		console.log("returnCahgne : " +returnChange)
 		await this.accountRepository.updateAccountCurrency(
 			typeGiven,
 			-returnChange,
