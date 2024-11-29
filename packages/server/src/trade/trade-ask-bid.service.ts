@@ -95,7 +95,7 @@ export class TradeAskBidService {
       receivedPrice: trade.price,
       receivedAmount: trade.quantity,
       tradeId: trade.tradeId,
-      krw: krw / another,
+      krw: formatQuantity(krw / another),
     };
   }
 
