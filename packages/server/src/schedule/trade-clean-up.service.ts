@@ -18,7 +18,7 @@ export class TradeCleanupService {
 			const dbTradeIds = await this.tradeRepository.getAllTradeIds();
 			await this.redisRepository.cleanupOrphanTrades(dbTradeIds);
 		} else {
-			console.log('Cron job skipped: NODE_ENV is not production');
+			this.logger.log('Cron job skipped: NODE_ENV is not production');
 		}
 	}
 }
