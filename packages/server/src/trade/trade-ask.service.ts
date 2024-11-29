@@ -292,9 +292,7 @@ export class AskService extends TradeAskBidService implements OnModuleInit {
       );
     }
 
-    const change = formatQuantity(
-      account[askDto.typeReceived] + buyData.price * buyData.quantity,
-    );
+    const change = formatQuantity(buyData.price * buyData.quantity);
 
     await this.accountRepository.updateAccountCurrency(
       askDto.typeReceived,
@@ -302,16 +300,7 @@ export class AskService extends TradeAskBidService implements OnModuleInit {
       account.id,
       queryRunner,
     );
-    const availableChange = formatQuantity(
-			account.availableKRW + buyData.price * buyData.quantity,
-		);
-
-		await this.accountRepository.updateAccountCurrency(
-			askDto.typeReceived,
-			change,
-			account.id,
-			queryRunner,
-		);
+    const availableChange = formatQuantity(buyData.price * buyData.quantity);
 
 		await this.accountRepository.updateAccountCurrency(
 			'availableKRW',
