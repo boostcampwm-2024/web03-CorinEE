@@ -49,7 +49,7 @@ export class AccountRepository extends Repository<Account> {
 
 	async updateAccountCurrency(
 		typeGiven: string,
-		accountBalance: number,
+		change: number,
 		accountId: number,
 		queryRunner: QueryRunner,
 	): Promise<void> {
@@ -60,7 +60,32 @@ export class AccountRepository extends Repository<Account> {
 			await queryRunner.manager
 				.createQueryBuilder()
 				.update(Account)
-				.set({ [typeGiven]: accountBalance })
+				.set({ [typeGiven]: `${typeGiven} + ${change}` })
+				.where('id = :id', { id: accountId })
+				.execute();
+
+			this.logger.log(`계정 통화 업데이트 완료: accountId=${accountId}`);
+		} catch (error) {
+			this.logger.error(
+				`계정 통화 업데이트 실패: ${error.message}`,
+				error.stack,
+			);
+			throw error;
+		}
+	}
+	async updateAccountAvailableCurrency(
+		change: number,
+		accountId: number,
+		queryRunner: QueryRunner,
+	): Promise<void> {
+		this.logger.log(
+			`계정 통화 업데이트 시작: accountId=${accountId}, type=availableKRW`,
+		);
+		try {
+			await queryRunner.manager
+				.createQueryBuilder()
+				.update(Account)
+				.set({ availableKRW: () => `availableKRW + ${change}` })
 				.where('id = :id', { id: accountId })
 				.execute();
 
@@ -104,31 +129,7 @@ export class AccountRepository extends Repository<Account> {
 		return account.availableKRW;
 	}
 
-	async updateAccountAvailableCurrency(
-		change: number,
-		accountId: number,
-		queryRunner: QueryRunner,
-	): Promise<void> {
-		this.logger.log(
-			`계정 통화 업데이트 시작: accountId=${accountId}, type=availableKRW`,
-		);
-		try {
-			await queryRunner.manager
-				.createQueryBuilder()
-				.update(Account)
-				.set({ availableKRW: () => `availableKRW + ${change}` })
-				.where('id = :id', { id: accountId })
-				.execute();
 
-			this.logger.log(`계정 통화 업데이트 완료: accountId=${accountId}`);
-		} catch (error) {
-			this.logger.error(
-				`계정 통화 업데이트 실패: ${error.message}`,
-				error.stack,
-			);
-			throw error;
-		}
-	}
 
 	async updateAccountBTC(
 		id: number,
