@@ -60,7 +60,7 @@ export class AskService extends TradeAskBidService implements OnModuleInit {
     });
 
     if (!asset) return 0;
-    return formatQuantity(asset.quantity * (percent / 100));
+    return formatQuantity(asset.availableQuantity * (percent / 100));
   }
 
   async createAskTrade(user: any, askDto: TradeData): Promise<TradeResponse> {
