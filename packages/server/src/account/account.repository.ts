@@ -60,8 +60,12 @@ export class AccountRepository extends Repository<Account> {
 			await queryRunner.manager
 				.createQueryBuilder()
 				.update(Account)
-				.set({ [typeGiven]: `${typeGiven} + ${change}` })
+				.set({
+					// 직접 연산 처리: ()로 감싸 동적 SQL 계산
+					[typeGiven]: () => `${typeGiven} + :change`,
+				})
 				.where('id = :id', { id: accountId })
+				.setParameters({ change })
 				.execute();
 
 			this.logger.log(`계정 통화 업데이트 완료: accountId=${accountId}`);
@@ -128,8 +132,6 @@ export class AccountRepository extends Repository<Account> {
 
 		return account.availableKRW;
 	}
-
-
 
 	async updateAccountBTC(
 		id: number,
