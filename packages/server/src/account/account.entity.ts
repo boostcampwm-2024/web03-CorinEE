@@ -14,18 +14,18 @@ export class Account {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('decimal', { precision: 16, scale: 8 })
+  @Column('double')
   KRW: number;
 
-  @Column('decimal', { precision: 16, scale: 8 })
+  @Column('double')
   availableKRW: number;
 
-  @Column('decimal', { precision: 16, scale: 8 })
+  @Column('double')
   USDT: number;
 
-  @Column('decimal', { precision: 16, scale: 8 })
+  @Column('double')
   BTC: number;
-  
+
   @OneToOne(() => User, (user) => user.account, {
     nullable: true,
     onDelete: 'CASCADE',
