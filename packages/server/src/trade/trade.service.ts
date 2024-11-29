@@ -11,6 +11,7 @@ import { MINIMUM_TRADE_AMOUNT, TRADE_TYPES } from './constants/trade.constants';
 import { TradeResponse } from './dtos/trade.interface';
 import { TradeHistoryRepository } from '../trade-history/trade-history.repository';
 import { UserRepository } from '@src/auth/user.repository';
+import { formatQuantity } from './helpers/trade.helper';
 
 @Injectable()
 export class TradeService {
@@ -132,7 +133,7 @@ export class TradeService {
             : trade.tradeCurrency,
         tradeId: trade.tradeId,
         tradeType,
-        price: trade.price,
+        price: formatQuantity(trade.price),
         quantity: trade.quantity,
         createdAt: trade.createdAt,
         userId: user.userId,
@@ -237,17 +238,11 @@ export class TradeService {
   }
 
   private calculateAccountBalance(trade: any, userAccount: any): number {
-    return parseFloat(
-      (trade.price * trade.quantity).toFixed(
-        8,
-      ),
-    );
+    return formatQuantity(trade.price * trade.quantity);
   }
 
   private calculateAvailableQuantity(userAsset: any, trade: any): number {
-    return parseFloat(
-      (userAsset.availableQuantity + trade.quantity).toFixed(8),
-    );
+    return formatQuantity(userAsset.availableQuantity + trade.quantity);
   }
 
   protected async createTradeHistory(
