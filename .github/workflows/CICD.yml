@@ -131,7 +131,8 @@ jobs:
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-client
             docker-compose down
             docker-compose up -d
-      
+            docker image prune -f
+
       # - name: Deploy to loadbalancer1
       #   if: matrix.type == 'api'
       #   uses: appleboy/ssh-action@master
@@ -145,7 +146,7 @@ jobs:
       #       docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server
       #       docker-compose -f docker-compose.server.yml down
       #       docker-compose -f docker-compose.server.yml up -d
-      
+      #       docker image prune -f
       # - name: Deploy to loadbalancer2
       #   if: matrix.type == 'api2'
       #   uses: appleboy/ssh-action@master
@@ -159,7 +160,7 @@ jobs:
       #       docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server
       #       docker-compose -f docker-compose.server.yml down
       #       docker-compose -f docker-compose.server.yml up -d
-      
+      #       docker image prune -f
       # - name: Deploy to loadbalancer3
       #   if: matrix.type == 'api3'
       #   uses: appleboy/ssh-action@master
@@ -173,7 +174,7 @@ jobs:
       #       docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server
       #       docker-compose -f docker-compose.server.yml down
       #       docker-compose -f docker-compose.server.yml up -d
-      
+      #       docker image prune -f
       # - name: Deploy to loadbalancer4
       #   if: matrix.type == 'api4'
       #   uses: appleboy/ssh-action@master
@@ -187,7 +188,7 @@ jobs:
       #       docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server
       #       docker-compose -f docker-compose.server.yml down
       #       docker-compose -f docker-compose.server.yml up -d
-
+      #       docker image prune -f
       - name: Generate Error Report
         if: failure()
         run: |
