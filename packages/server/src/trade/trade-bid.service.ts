@@ -78,11 +78,8 @@ export class BidService extends TradeAskBidService implements OnModuleInit {
 						user.userId,
 					);
 
-					await this.checkCurrencyBalance(
-						bidDto,
-						userAccount,
-					);
-					
+					await this.checkCurrencyBalance(bidDto, userAccount);
+
 					const { receivedPrice, receivedAmount } = bidDto;
 
 					await this.accountRepository.updateAccountCurrency(
@@ -162,7 +159,7 @@ export class BidService extends TradeAskBidService implements OnModuleInit {
 							const account = await this.accountRepository.findOne({
 								where: { user: { id: userId } },
 							});
-				
+
 							bidDto.accountBalance = account[typeGiven];
 							bidDto.account = account;
 
@@ -266,7 +263,10 @@ export class BidService extends TradeAskBidService implements OnModuleInit {
 		queryRunner: QueryRunner,
 	): Promise<void> {
 		const { account, typeGiven, typeReceived } = bidDto;
-    const userAccount = await this.accountRepository.getAccount(bidDto.userId, queryRunner);
+		const userAccount = await this.accountRepository.getAccount(
+			bidDto.userId,
+			queryRunner,
+		);
 
 		if (typeReceived === 'BTC') {
 			const btcQuantity = formatQuantity(account.BTC + buyData.quantity);
@@ -277,23 +277,23 @@ export class BidService extends TradeAskBidService implements OnModuleInit {
 			);
 		}
 
+		const returnChange = formatQuantity(buyData.price * buyData.quantity);
+
 		const change = formatQuantity(
 			(bidDto.receivedPrice - buyData.price) * buyData.quantity,
 		);
-
-		const returnChange = formatQuantity(buyData.price * buyData.quantity);
-
+		
 		await this.accountRepository.updateAccountCurrency(
 			typeGiven,
 			-returnChange,
-			account.id,
+			userAccount.id,
 			queryRunner,
 		);
 
 		await this.accountRepository.updateAccountCurrency(
 			'availableKRW',
 			change,
-			account.id,
+			userAccount.id,
 			queryRunner,
 		);
 	}

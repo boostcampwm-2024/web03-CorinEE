@@ -16,13 +16,13 @@ export class Asset {
   @Column()
   assetName: string;
 
-  @Column('double')
+  @Column('decimal', { precision: 16, scale: 8 })
   price: number;
 
-  @Column('double')
+  @Column('decimal', { precision: 16, scale: 8 })
   quantity: number;
 
-  @Column('double')
+  @Column('decimal', { precision: 16, scale: 8 })
   availableQuantity: number;
 
   @CreateDateColumn({ type: 'timestamp' })
