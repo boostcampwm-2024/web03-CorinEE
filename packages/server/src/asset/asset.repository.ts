@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { Account } from '@src/account/account.entity';
 import { Asset } from './asset.entity';
+import { Coin } from './dtos/asset.interface';
 
 @Injectable()
 export class AssetRepository extends Repository<Asset> {
@@ -175,6 +176,26 @@ export class AssetRepository extends Repository<Asset> {
       throw new InternalServerErrorException(
         '자산 조회 중 오류가 발생했습니다.',
       );
+    }
+  }
+
+  async getAssets(accountId: number): Promise<Coin[]> {
+    try {
+      const assets = await this.find({
+        where: { account: { id: accountId } },
+      });
+  
+      const assetsWithPrices = assets.map((asset) => ({
+        code: `KRW-${asset.assetName}`,
+        avg_purchase_price: asset.price,
+        quantity: asset.quantity
+      }));
+  
+      this.logger.log(`계정의 자산별 가격 조회 완료: accountId=${accountId}, assets=${JSON.stringify(assetsWithPrices)}`);
+      return assetsWithPrices;
+    } catch (error) {
+      this.logger.error(`자산별 가격 조회 실패: ${error.message}`, error.stack);
+      throw new InternalServerErrorException('자산별 가격 조회 중 오류가 발생했습니다.');
     }
   }
 }
