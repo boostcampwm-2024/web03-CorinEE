@@ -18,17 +18,17 @@ export class AssetService {
 			}
 
 			const evaluationAmount = currentPriceData.trade_price * coin.quantity;
+      const coinAveragePrice = coin.price / coin.quantity;
 			const profitLoss =
-				(currentPriceData.trade_price - coin.avg_purchase_price) *
+				(currentPriceData.trade_price - coinAveragePrice) *
 				coin.quantity;
 			const profitLossRate =
-				((currentPriceData.trade_price - coin.avg_purchase_price) /
-					coin.avg_purchase_price) *
-				100;
+				((currentPriceData.trade_price - coinAveragePrice) /
+        coinAveragePrice) * 100;
 
 			return {
 				code: coin.code,
-				avg_purchase_price: coin.avg_purchase_price,
+				avg_purchase_price: coinAveragePrice,
 				trade_price: currentPriceData.trade_price,
 				quantity: coin.quantity,
 				evaluation_amount: evaluationAmount,
