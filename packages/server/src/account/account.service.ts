@@ -16,7 +16,8 @@ import {
 } from './dtos/my-account.response.dto';
 import { AccountRepository } from './account.repository';
 import { Asset } from '@src/asset/asset.entity';
-import { UserRepository } from '@src/auth/user.repository';
+import { AssetService } from '@src/asset/asset.service';
+import { CoinListService } from '@src/upbit/coin-list.service';
 
 @Injectable()
 export class AccountService {
@@ -25,6 +26,8 @@ export class AccountService {
   constructor(
     private readonly accountRepository: AccountRepository,
     private readonly assetRepository: AssetRepository,
+    private readonly assetService: AssetService,
+    private readonly coinListService: CoinListService,
     private readonly coinDataUpdaterService: CoinDataUpdaterService,
   ) {}
 
@@ -71,6 +74,39 @@ export class AccountService {
       this.logger.error(`계정 데이터 조회 실패: ${error.message}`, error.stack);
       throw error;
     }
+  }
+
+  async getTotalAssetData(accountId: number): Promise<any[]> {
+    const userCoins = await this.assetRepository.getAssets(accountId);
+    const CoinTickers = this.coinListService.getCoinTickers();
+    return this.assetService.calculateEvaluations(userCoins, CoinTickers);
+  }
+
+  async getEvaluatedAssets(accountId: number): Promise<any> {
+
+    const coinEvaluations = await this.getTotalAssetData(accountId);
+
+    let totalAssetValue = 0;
+    let totalKRW = 0;
+
+    coinEvaluations.forEach((coin) => {
+      totalAssetValue += coin.evaluation_amount;
+    });
+
+    const account = await this.accountRepository.findOne({
+      where: { id: accountId },
+    });
+    if (account) {
+      totalKRW = account.KRW;
+    }
+
+    const totalAsset = totalAssetValue + totalKRW;
+
+    return {
+      totalAsset: totalAsset,
+      coinEvaluations,
+      KRW: totalKRW,
+    };
   }
 
   private mapCoinsData(

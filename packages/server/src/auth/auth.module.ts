@@ -17,6 +17,9 @@ import { TradeModule } from '@src/trade/trade.module';
 import { TradehistoryModule } from '@src/trade-history/trade-history.module';
 import { AssetRepository } from '@src/asset/asset.repository';
 import { AssetModule } from '@src/asset/asset.module';
+import { AccountService } from '@src/account/account.service';
+import { AssetService } from '@src/asset/asset.service';
+import { CoinListService } from '@src/upbit/coin-list.service';
 @Module({
 	imports: [
 		TypeOrmModule.forFeature([User, UserRepository]),
@@ -29,15 +32,19 @@ import { AssetModule } from '@src/asset/asset.module';
 		TradeModule,
 		TradehistoryModule,
 		PassportModule,
+		AssetModule,
 	],
 	providers: [
 		UserRepository,
 		AccountRepository,
 		AuthService,
+		AssetService,
 		UserService,
 		JwtService,
+		AccountService,
 		GoogleStrategy,
 		KakaoStrategy,
+		CoinListService,
 	],
 	controllers: [AuthController, UserController],
 	exports: [UserRepository],
