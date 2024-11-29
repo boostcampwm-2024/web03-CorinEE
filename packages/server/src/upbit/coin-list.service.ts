@@ -76,9 +76,8 @@ export class CoinListService {
       .filter((coin) => coin.market.startsWith('USDT'));
   }
 
-  getCoinTickers(coins): any[] {
+  getCoinTickers(coins?): any[] {
     const coinData = this.coinDataUpdaterService.getCoinLatestInfo();
-
     const filteredData = Array.from(coinData.entries())
       .filter(([symbol]) => !coins || coins.includes(symbol))
       .map(([symbol, details]) => ({
@@ -88,6 +87,7 @@ export class CoinListService {
 
     return filteredData;
   }
+
 
   convertToCodeCoinDto = (coin) => {
     coin.korean_name = this.coinDataUpdaterService
