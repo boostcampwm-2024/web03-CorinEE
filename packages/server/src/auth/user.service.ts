@@ -19,7 +19,7 @@ export class UserService {
 		private readonly accountService: AccountService,
 
 		private readonly dataSource: DataSource,
-	) { }
+	) {}
 
 	async resetUserData(userId: number): Promise<void> {
 		await this.dataSource.transaction(async (manager) => {
@@ -39,7 +39,9 @@ export class UserService {
 			await manager.delete(this.tradeHistoryRepository.target, { user });
 
 			if (user.account) {
-				await manager.delete(this.accountRepository.target, { id: user.account.id });
+				await manager.delete(this.accountRepository.target, {
+					id: user.account.id,
+				});
 				user.account = null;
 				await manager.save(this.userRepository.target, user);
 			}
@@ -64,49 +66,66 @@ export class UserService {
 		});
 	}
 
-	 async getAllUsersInfo(): Promise<{ id: number; username: string }[]> {
-    try {
-      const users = await this.userRepository.find({
-        select: ['id', 'username'],
-      });
+	async getAllUsersInfo(): Promise<{ id: number; username: string }[]> {
+		try {
+			const users = await this.userRepository.find({
+				select: ['id', 'username'],
+			});
 
-      return users.map(user => ({
-        id: user.id,
-        username: user.username,
-      }));
-    } catch (error) {
-      this.logger.error('Failed to fetch all users', error.stack);
-      throw error;
-    }
-  }
+			return users.map((user) => ({
+				id: user.id,
+				username: user.username,
+			}));
+		} catch (error) {
+			this.logger.error('Failed to fetch all users', error.stack);
+			throw error;
+		}
+	}
 
 	async getAllUsersInfoWithTotalAsset(): Promise<any[]> {
-    try {
-      const users = await this.userRepository.find({
-        select: ['id', 'username'], // id와 username만 선택
-      });
+		try {
+			const users = await this.userRepository.find({
+				select: ['id', 'username'],
+			});
 
-      // 각 유저에 대해 총 자산 정보를 가져옴
-      const usersInfoWithTotalAsset = [];
-      for (const user of users) {
-        const accountId = user.id;
+			const usersInfoWithTotalAsset = [];
+			for (const user of users) {
+				const account = await this.accountRepository.findOne({
+					where: { user: { id: user.id } },
+				});
 
-        // 총 자산 계산 (accountService의 메서드를 사용)
-        const totalAssetData = await this.accountService.getEvaluatedAssets(accountId);
+				if (!account) {
+					this.logger.warn(`Account not found for userId: ${user.id}`);
+					usersInfoWithTotalAsset.push({
+						id: user.id,
+						username: user.username,
+						totalAsset: 0,
+						KRW: 0,
+						coinEvaluations: [],
+					});
+					continue;
+				}
+				const accountId = account.id;
 
-        usersInfoWithTotalAsset.push({
-          id: user.id,
-          username: user.username,
-          totalAsset: totalAssetData.totalAsset, // 총 자산 정보
-          KRW: totalAssetData.KRW, // KRW 정보
-          coinEvaluations: totalAssetData.coinEvaluations, // 코인 평가 정보
-        });
-      }
+				const totalAssetData =
+					await this.accountService.getEvaluatedAssets(accountId);
 
-      return usersInfoWithTotalAsset;
-    } catch (error) {
-      this.logger.error('Failed to fetch all users with total asset', error.stack);
-      throw error;
-    }
-  }
+				usersInfoWithTotalAsset.push({
+					id: user.id,
+					username: user.username,
+					totalAsset: totalAssetData.totalAsset, 
+					KRW: totalAssetData.KRW, 
+					coinEvaluations: totalAssetData.coinEvaluations,
+				});
+			}
+
+			return usersInfoWithTotalAsset;
+		} catch (error) {
+			this.logger.error(
+				'Failed to fetch all users with total asset',
+				error.stack,
+			);
+			throw error;
+		}
+	}
 }
