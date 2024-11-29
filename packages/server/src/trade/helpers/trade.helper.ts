@@ -1,7 +1,9 @@
 import { MINIMUM_TRADE_AMOUNT } from '../constants/trade.constants';
 
-export const formatQuantity = (value: number): number =>
-  parseFloat(value.toFixed(8));
+export const formatQuantity = (value: number | string): number => {
+  const numericValue = typeof value === "string" ? parseFloat(value) : value;
+  return parseFloat(numericValue.toFixed(8));
+};
 
 export const calculateAccountBalance = (
   currentBalance: number,
