@@ -5,6 +5,7 @@ import { TradeHistoryRepository } from '../trade-history/trade-history.repositor
 import { AccountRepository } from '@src/account/account.repository';
 import { DEFAULT_BTC, DEFAULT_KRW, DEFAULT_USDT } from './constants';
 import { DataSource } from 'typeorm';
+import { AccountService } from '@src/account/account.service';
 
 @Injectable()
 export class UserService {
@@ -15,6 +16,8 @@ export class UserService {
 		private readonly tradeRepository: TradeRepository,
 		private readonly accountRepository: AccountRepository,
 		private readonly tradeHistoryRepository: TradeHistoryRepository,
+		private readonly accountService: AccountService,
+
 		private readonly dataSource: DataSource,
 	) { }
 
@@ -60,4 +63,50 @@ export class UserService {
 			this.logger.log(`새 어카운트 생성 완료: User ID ${userId}`);
 		});
 	}
+
+	 async getAllUsersInfo(): Promise<{ id: number; username: string }[]> {
+    try {
+      const users = await this.userRepository.find({
+        select: ['id', 'username'],
+      });
+
+      return users.map(user => ({
+        id: user.id,
+        username: user.username,
+      }));
+    } catch (error) {
+      this.logger.error('Failed to fetch all users', error.stack);
+      throw error;
+    }
+  }
+
+	async getAllUsersInfoWithTotalAsset(): Promise<any[]> {
+    try {
+      const users = await this.userRepository.find({
+        select: ['id', 'username'], // id와 username만 선택
+      });
+
+      // 각 유저에 대해 총 자산 정보를 가져옴
+      const usersInfoWithTotalAsset = [];
+      for (const user of users) {
+        const accountId = user.id;
+
+        // 총 자산 계산 (accountService의 메서드를 사용)
+        const totalAssetData = await this.accountService.getEvaluatedAssets(accountId);
+
+        usersInfoWithTotalAsset.push({
+          id: user.id,
+          username: user.username,
+          totalAsset: totalAssetData.totalAsset, // 총 자산 정보
+          KRW: totalAssetData.KRW, // KRW 정보
+          coinEvaluations: totalAssetData.coinEvaluations, // 코인 평가 정보
+        });
+      }
+
+      return usersInfoWithTotalAsset;
+    } catch (error) {
+      this.logger.error('Failed to fetch all users with total asset', error.stack);
+      throw error;
+    }
+  }
 }

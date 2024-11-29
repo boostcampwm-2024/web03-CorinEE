@@ -6,6 +6,7 @@ import {
     UseGuards,
     Logger,
     Request,
+    Get,
   } from '@nestjs/common';
   import { AuthGuard } from './auth.guard';
   import { UserService } from './user.service';
@@ -45,6 +46,52 @@ import {
         return { message: '유저 데이터 초기화 및 새 계정 생성이 완료되었습니다.' };
       } catch (error) {
         this.logger.error(`유저 데이터 초기화 실패: ${error.message}`, error.stack);
+        throw error;
+      }
+    }
+
+    @ApiOperation({
+      summary: '모든 유저의 id와 username 조회',
+      description: '모든 유저의 id와 username을 배열 형태로 반환합니다.',
+    })
+    @ApiResponse({
+      status: HttpStatus.OK,
+      description: '유저 정보 조회 성공',
+      type: [Object], // 반환 형태가 배열이므로 Object로 정의
+    })
+    @HttpCode(HttpStatus.OK)
+    @Get('all-users')
+    async getAllUsers(): Promise<{ id: number; username: string }[]> {
+      this.logger.log(`모든 유저 정보 조회 시작`);
+      try {
+        const usersInfo = await this.userService.getAllUsersInfo();
+        this.logger.log(`모든 유저 정보 조회 완료`);
+        return usersInfo;
+      } catch (error) {
+        this.logger.error(`모든 유저 정보 조회 실패: ${error.message}`, error.stack);
+        throw error;
+      }
+    }
+
+    @ApiOperation({
+      summary: '모든 유저의 id, username 및 총 자산 정보 조회',
+      description: '모든 유저의 id, username, 총 자산 정보를 배열 형태로 반환합니다.',
+    })
+    @ApiResponse({
+      status: HttpStatus.OK,
+      description: '유저 정보 조회 성공',
+      type: [Object], // 반환 형태가 배열이므로 Object로 정의
+    })
+    @HttpCode(HttpStatus.OK)
+    @Get('all-users-account')
+    async getAllUsersWithTotalAsset(): Promise<any[]> {
+      this.logger.log(`모든 유저 정보 조회 시작`);
+      try {
+        const usersInfo = await this.userService.getAllUsersInfoWithTotalAsset();
+        this.logger.log(`모든 유저 정보 조회 완료`);
+        return usersInfo;
+      } catch (error) {
+        this.logger.error(`모든 유저 정보 조회 실패: ${error.message}`, error.stack);
         throw error;
       }
     }
