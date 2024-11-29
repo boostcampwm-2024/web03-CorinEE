@@ -1,6 +1,6 @@
 export interface Coin {
   code: string;
-  avg_purchase_price: number; // 평균 매입가
+  price: number; 
   quantity: number; // 보유 수량
 }
 
