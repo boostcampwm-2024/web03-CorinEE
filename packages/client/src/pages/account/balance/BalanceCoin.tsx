@@ -30,6 +30,8 @@ function BalanceCoin({ coin, sseData }: BalanceCoinProps) {
 
 	const profitRate = calculateProfitRate(evaluationPerPrice, coin.price);
 
+	const roundedProfitRate = Math.round(profitRate * 1000) / 1000;
+
 	const change: Change = getChangeStatus(profitRate);
 
 	return (
@@ -63,7 +65,7 @@ function BalanceCoin({ coin, sseData }: BalanceCoinProps) {
 			</div>
 			<div className="flex-[1] p-3 text-end">
 				<span className="text-base font-bold">
-					{Math.floor(evaluationPerPrice).toLocaleString()}
+					{Math.floor(evaluationPerPrice).toLocaleString() || 0}
 				</span>
 				<span className="text-xs ml-1 text-gray-500">KRW</span>
 			</div>
@@ -71,13 +73,17 @@ function BalanceCoin({ coin, sseData }: BalanceCoinProps) {
 				<div className="flex flex-col text-end mr-12">
 					<div className="">
 						<span className={`text-base ${colorClasses[change]}`}>
-							{(Math.round(profitRate * 1000) / 1000).toLocaleString()}
+							{roundedProfitRate === 0
+								? 0
+								: (Math.round(profitRate * 1000) / 1000).toLocaleString()}
 						</span>
 						<span className="text-xs ml-1 text-gray-500">%</span>
 					</div>
 					<div className="">
 						<span className={`text-base ${colorClasses[change]}`}>
-							{Math.floor(profitPrice).toLocaleString()}
+							{roundedProfitRate === 0
+								? 0
+								: Math.floor(profitPrice).toLocaleString()}
 						</span>
 						<span className="text-xs ml-1 text-gray-500">KRW</span>
 					</div>
