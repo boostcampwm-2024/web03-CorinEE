@@ -28,8 +28,13 @@ const PORTFOLIO_EVALUATOR = {
 	},
 
 	getChangeStatus(profitRate: number): Change {
-		return profitRate === 0 ? 'EVEN' : profitRate > 0 ? 'RISE' : 'FALL';
-	},
+    const threshold = 0.0005; 
+    
+    if (Math.abs(profitRate) < threshold) {
+        return 'EVEN';
+    }
+    return profitRate > 0 ? 'RISE' : 'FALL';
+}
 };
 
 export default PORTFOLIO_EVALUATOR;
