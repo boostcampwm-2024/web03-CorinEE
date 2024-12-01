@@ -2,7 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
 import { useMobileBlocker } from '@/hooks/ui/useMobileBlocker';
 
-const Layout = lazy(() => import('@/pages/layout/Layout'));
+const Layout = lazy(() => import('@/components/layout/Layout'));
 const Home = lazy(() => import('@/pages/home/Home'));
 const Account = lazy(() => import('@/pages/account/Account'));
 const Balance = lazy(() => import('@/pages/account/balance/Balance'));
@@ -11,7 +11,7 @@ const WaitOrders = lazy(() => import('@/pages/account/waitOrders/WaitOrders'));
 const Trade = lazy(() => import('@/pages/trade/Trade'));
 const Ranked = lazy(() => import('@/pages/ranked/RankedList'));
 const Redricet = lazy(() => import('@/pages/auth/Redirect'));
-const NotFound = lazy(() => import('@/pages/not-found/NotFound'));
+const NotFound = lazy(() => import('@/components/not-found/NotFound'));
 const MobileNotice = lazy(() => import('@/pages/moblie/MobileNotice'));
 
 function Router() {
