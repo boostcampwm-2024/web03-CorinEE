@@ -18,6 +18,14 @@ function Navigation() {
 			>
 				내 계좌
 			</NavLink>
+			<NavLink
+				to="/ranked"
+				className={({ isActive }) =>
+					`${isActive ? 'text-black font-semibold' : 'text-gray-600'} hover:text-black`
+				}
+			>
+				랭킹
+			</NavLink>
 		</div>
 	);
 }
