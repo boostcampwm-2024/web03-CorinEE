@@ -36,12 +36,12 @@ export class ChartService implements OnModuleInit {
 
     to = to || this.formatCurrentTime();
 
-    const key = await this.getAllKeys(coin, to, type, minute);
-    const dbData = await this.redisRepository.getChartDate(key);
+    // const key = await this.getAllKeys(coin, to, type, minute);
+    // const dbData = await this.redisRepository.getChartDate(key);
 
-    if (dbData.length === 200) {
-      return this.buildResponse(200, dbData);
-    }
+    // if (dbData.length === 200) {
+    //   return this.buildResponse(200, dbData);
+    // }
 
     const result = await this.waitForTransactionOrder(key);
 
@@ -100,7 +100,12 @@ export class ChartService implements OnModuleInit {
   
     const checkTransaction = async () => {
       try {
+        const startTime = performance.now();
         const dbData = await this.redisRepository.getChartDate(key);
+        const endTime = performance.now();
+        const duration = endTime - startTime;
+        if(duration>1000) this.logger.error(`redis search time : ${duration}`)
+
         if (dbData.length === 200) {
           return dbData;
         }
