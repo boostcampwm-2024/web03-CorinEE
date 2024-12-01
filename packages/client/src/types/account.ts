@@ -23,3 +23,21 @@ export type CategoryInfo = {
 		path: string;
 	};
 };
+
+export type CoinEvaluation = {
+	code: string;
+	avg_purchase_price: number;
+	trade_price: number;
+	quantity: number;
+	evaluation_amount: number;
+	profit_loss: number;
+	profit_loss_rate: number;
+};
+
+export type UserInvestment = {
+	id: number;
+	username: string;
+	totalAsset: number;
+	KRW: number;
+	coinEvaluations: CoinEvaluation[];
+};
