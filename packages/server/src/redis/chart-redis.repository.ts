@@ -11,25 +11,14 @@ export class ChartRedisRepository {
     this.chartRedis.set(key, value);
   }
 
-  async getChartDate(keys) {
+  async getChartDate(keys: string[]): Promise<any[]> {
     try {
-      const results = await Promise.all(
-        keys.map(async (key) => {
-          try {
-            const data = await this.chartRedis.get(key);
-            if (!data) {
-              return null;
-            }
-            return JSON.parse(data);
-          } catch (error) {
-            console.error(`Error fetching data for key ${key}:`, error);
-            return null;
-          }
-        }),
-      );
-      return results.filter((data) => data !== null);
+      const promises = keys.map((key) => this.chartRedis.get(key));
+      const results = await Promise.all(promises);
+      return results.map((data) => (data ? JSON.parse(data) : null)).filter((data) => data !== null);
     } catch (error) {
-      console.error('DB Searching Error : ' + error);
+      console.error('DB Searching Error:', error);
+      throw error;
     }
   }
 
