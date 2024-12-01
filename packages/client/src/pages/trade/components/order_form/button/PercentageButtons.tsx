@@ -31,7 +31,9 @@ function PercentageButtons({
 
 	useEffect(() => {
 		if (data && price) {
-			const calculatedQuantity = (data / Math.floor(Number(price))).toFixed(8);
+			const calculatedQuantity = String(
+				Math.floor((data / Number(price)) * 100000000) / 100000000,
+			);
 			if (askType === 'bid') setQuantity(calculatedQuantity);
 			else setQuantity(data.toFixed(8));
 		}
