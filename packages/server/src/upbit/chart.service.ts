@@ -37,11 +37,6 @@ export class ChartService implements OnModuleInit {
     to = to || this.formatCurrentTime();
   
     const key = await this.getAllKeys(coin, to, type, minute);
-    // const dbData = await this.redisRepository.getChartDate(key);
-
-    // if (dbData.length === 200) {
-    //   return this.buildResponse(200, dbData);
-    // }
 
     const result = await this.waitForTransactionOrder(key);
 
@@ -69,17 +64,13 @@ export class ChartService implements OnModuleInit {
     minute?: string,
   ) {
     try {
-      this.logger.error(`${type}, ${coin}`)
       this.upbitApiQueue.push(Date.now());
       const url = this.buildUpbitUrl(type, coin, to, minute);
       const response = await firstValueFrom(this.httpService.get(url));
 
-      this.logger.error(response.data)
       const candles: CandleDto[] = response.data;
 
-      this.logger.error(candles.length)
-
-      this.saveChartData(candles, type, minute);
+      await this.saveChartData(candles, type, minute);
       return this.buildResponse(200, candles);
     } catch (error) {
       this.logger.error('Error in fetchAndSaveUpbitData:', error);
@@ -100,16 +91,13 @@ export class ChartService implements OnModuleInit {
       : `${baseUrl}?${query}`;
   }
 
-  async waitForTransactionOrder(key, maxRetries = 1000, retryDelay = 10): Promise<any> {
+  async waitForTransactionOrder(key, maxRetries = 10000, retryDelay = 10): Promise<any> {
     let retryCount = 0;
   
     const checkTransaction = async () => {
       try {
-        const startTime = performance.now();
         const dbData = await this.redisRepository.getChartDate(key);
-        const endTime = performance.now();
-        const duration = endTime - startTime;
-        if(duration>1000) this.logger.error(`redis search time : ${duration}`)
+
         if (dbData.length === 200) {
           return dbData;
         }
@@ -134,7 +122,6 @@ export class ChartService implements OnModuleInit {
   }
   async saveChartData(candles, type, minute) {
     try {
-      this.logger.error(candles.length)
       const savePromises = candles.map((candle) => {
         const key = this.getRedisKey(
           candle.market,
