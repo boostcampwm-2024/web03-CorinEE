@@ -36,7 +36,7 @@ export class ChartService implements OnModuleInit {
 
     to = to || this.formatCurrentTime();
 
-    // const key = await this.getAllKeys(coin, to, type, minute);
+    const key = await this.getAllKeys(coin, to, type, minute);
     // const dbData = await this.redisRepository.getChartDate(key);
 
     // if (dbData.length === 200) {
