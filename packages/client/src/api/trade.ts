@@ -5,7 +5,7 @@ import '@/api/interceptors';
 
 type CalculateAPI = {
 	askType: 'ask' | 'bid';
-	moneyType: Market | string;
+	moneyType: string;
 	percent: number;
 };
 
