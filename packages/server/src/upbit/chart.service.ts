@@ -95,33 +95,32 @@ export class ChartService implements OnModuleInit {
       : `${baseUrl}?${query}`;
   }
 
-  async waitForTransactionOrder(key, maxRetries = 1000): Promise<any> {
+  async waitForTransactionOrder(key, maxRetries = 1000, retryDelay = 10): Promise<any> {
     let retryCount = 0;
-
-    return new Promise(async (resolve, reject) => {
-      const check = async () => {
-        try {
-          const dbData = await this.redisRepository.getChartDate(key);
-          if (dbData.length === 200) {
-            return resolve(dbData);
-          }
-          const queueSize = this.upbitApiQueue.length;
-          if (
-            queueSize < UPBIT_REQUEST_SIZE ||
-            this.upbitApiQueue[queueSize - 1] - Date.now() < -ONE_SECOND
-          ) {
-            return resolve(false);
-          }
-          if (retryCount++ >= maxRetries) {
-            return reject(new Error('Timeout waiting for transaction order'));
-          }
-          setTimeout(check, 10);
-        } catch (error) {
-          reject(error);
+  
+    const checkTransaction = async () => {
+      try {
+        const dbData = await this.redisRepository.getChartDate(key);
+        if (dbData.length === 200) {
+          return dbData;
         }
-      };
-      check();
-    });
+        const queueSize = this.upbitApiQueue.length;
+        if (
+          queueSize < UPBIT_REQUEST_SIZE ||
+          this.upbitApiQueue[queueSize - 1] - Date.now() < -ONE_SECOND
+        ) {
+          return false;
+        }
+        if (retryCount++ >= maxRetries) {
+          throw new Error('Timeout waiting for transaction order');
+        }
+        return new Promise((resolve) => setTimeout(() => resolve(checkTransaction()), retryDelay));
+      } catch (error) {
+        throw error;
+      }
+    };
+  
+    return checkTransaction();
   }
   async saveChartData(candles, type, minute) {
     try {
