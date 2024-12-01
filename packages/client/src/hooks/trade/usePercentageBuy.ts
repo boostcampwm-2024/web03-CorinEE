@@ -1,9 +1,9 @@
 import { calculatePercentageBuy } from '@/api/trade';
 import { useQuery } from '@tanstack/react-query';
-import { Market } from '@/types/market';
+
 type CalculateAPI = {
 	askType: 'bid' | 'ask';
-	moneyType: Market | string;
+	moneyType: string;
 	percent: number | undefined;
 };
 
