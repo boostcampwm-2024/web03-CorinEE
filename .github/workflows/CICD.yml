@@ -25,9 +25,7 @@ jobs:
           # - server: loadbalancer3
           #   host: ${{ vars.LOAD_SSH_HOST_3 }}
           #   type: api3
-          # - server: loadbalancer4
-          #   host: ${{ vars.LOAD_SSH_HOST_4 }}
-          #   type: api4
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -105,18 +103,6 @@ jobs:
       #     target: /corinee
       #     overwrite: true
 
-      # - name: Send files to loadbalancer
-      #   if: matrix.type == 'api4'
-      #   uses: appleboy/scp-action@master
-      #   with:
-      #     host: ${{ secrets.LOAD_SSH_HOST_4 }}
-      #     username: ${{ secrets.SSH_USERNAME }}
-      #     password: ${{ secrets.LOAD_SSH_PASSWORD_4 }}
-      #     port: ${{ secrets.SSH_PORT }}
-      #     source: "docker-compose.server.yml,.env"
-      #     target: /corinee
-      #     overwrite: true
-
       - name: Deploy to main server
         if: matrix.type == 'full'
         uses: appleboy/ssh-action@master
@@ -175,20 +161,7 @@ jobs:
       #       docker-compose -f docker-compose.server.yml down
       #       docker-compose -f docker-compose.server.yml up -d
       #       docker image prune -f
-      # - name: Deploy to loadbalancer4
-      #   if: matrix.type == 'api4'
-      #   uses: appleboy/ssh-action@master
-      #   with:
-      #     host: ${{ secrets.LOAD_SSH_HOST_4 }}
-      #     username: ${{ secrets.SSH_USERNAME }}
-      #     password: ${{ secrets.LOAD_SSH_PASSWORD_4 }}
-      #     port: ${{ secrets.SSH_PORT }}
-      #     script: |
-      #       cd /corinee
-      #       docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server
-      #       docker-compose -f docker-compose.server.yml down
-      #       docker-compose -f docker-compose.server.yml up -d
-      #       docker image prune -f
+
       - name: Generate Error Report
         if: failure()
         run: |
