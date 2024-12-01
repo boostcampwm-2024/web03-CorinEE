@@ -49,7 +49,7 @@ function RankingTableRow({
 			<td
 				className={`p-2 text-right ${profitRate >= 0 ? 'text-red-600' : 'text-blue-600'}`}
 			>
-				{profitRate.toFixed(3)}%
+				{profitRate.toFixed(2)}%
 			</td>
 		</tr>
 	);
