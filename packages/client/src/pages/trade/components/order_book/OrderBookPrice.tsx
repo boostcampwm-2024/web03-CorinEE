@@ -23,7 +23,7 @@ function OrderBookPrice({
 				className="text-center flex-1 p-3"
 				onClick={() => handleSelectPrice(price)}
 			>
-				{price.toLocaleString()}
+				{price}
 			</span>
 			<span className="text-xs">{rate}</span>
 		</div>
