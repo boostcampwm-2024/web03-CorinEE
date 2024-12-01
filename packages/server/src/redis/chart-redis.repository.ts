@@ -13,19 +13,20 @@ export class ChartRedisRepository {
 
   async getChartDate(keys: string[]): Promise<any[]> {
     try {
-      const promises = keys.map((key) => this.chartRedis.get(key));
-      const results = await Promise.all(promises);
-      return results.map((data) => (data ? JSON.parse(data) : null)).filter((data) => data !== null);
+      const results = await Promise.all(keys.map((key) => this.getSimpleChartData(key)));
+      return results.filter((data) => data !== false);
     } catch (error) {
       console.error('DB Searching Error:', error);
       throw error;
     }
   }
-
+  
   async getSimpleChartData(key) {
     const data = await this.chartRedis.get(key);
     if (!data) {
       return false;
-    } else return JSON.parse(data);
+    } else {
+      return JSON.parse(data);
+    }
   }
 }
