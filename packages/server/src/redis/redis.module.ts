@@ -38,11 +38,22 @@ import { ChartRedisRepository } from './chart-redis.repository';
       provide: 'CHART_REDIS_CLIENT',
       useFactory: () => {
         const config = getRedisConfig();
-        const client = new Redis({ ...config, db: 3 });
+        const client = new Redis.Cluster([
+          { host: 'node1-host', port: 6379 },
+          { host: 'node2-host', port: 6379 },
+          { host: 'node3-host', port: 6379 },
+          // Add more nodes as needed
+        ], {
+          scaleReads: 'all',
+          redisOptions: {
+            password: config.password,
+            db: 3
+          }
+        });
         const logger = new Logger('CHART_REDIS_CLIENT');
-        client.on('connect', () => logger.log('Chart용 Redis 연결 성공'));
+        client.on('connect', () => logger.log('Chart용 Redis 클러스터 연결 성공'));
         client.on('error', (error) =>
-          logger.error('Chart용 Redis 연결 실패:', error),
+          logger.error('Chart용 Redis 클러스터 연결 실패:', error),
         );
         return client;
       },
