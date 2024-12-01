@@ -336,7 +336,7 @@ export class UpbitController {
   }
 
   private handleCandleError(res: Response, error: any) {
-    this.logger.error('Candle fetch error:', error);
+    this.logger.error(`Candle fetch error: ${error}`);
 
     return res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({
       message: error.message || '서버오류입니다.',
