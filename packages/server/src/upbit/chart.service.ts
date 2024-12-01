@@ -69,12 +69,13 @@ export class ChartService implements OnModuleInit {
     minute?: string,
   ) {
     try {
+      this.logger.error(`${type}, ${coin}`)
       this.upbitApiQueue.push(Date.now());
       const url = this.buildUpbitUrl(type, coin, to, minute);
       const response = await firstValueFrom(this.httpService.get(url));
       const candles: CandleDto[] = response.data;
 
-      await this.saveChartData(candles, type, minute);
+      this.saveChartData(candles, type, minute);
       return this.buildResponse(200, candles);
     } catch (error) {
       this.logger.error('Error in fetchAndSaveUpbitData:', error);
