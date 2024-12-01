@@ -30,7 +30,7 @@ function AuthSection() {
 					<div className="relative">
 						<UserIcon
 							onClick={() => setOpenProfile(!openProfile)}
-							className="w-11 h-11 fill-blue-500"
+							className="w-11 h-11 fill-blue-300"
 						/>
 						<ApiErrorBoundary
 							fallback={({ error }) => <DefaultErrorFallback error={error} />}

@@ -45,7 +45,7 @@ function Profile({ openProfile, setOpenProfile }: ProfileProps) {
 			className="absolute w-60 h-52 bg-white text-black top-10 right-3 z-50 shadow-2xl rounded-lg"
 		>
 			<div className="flex flex-col items-center justify-center">
-				<UserIcon className="w-16 fill-blue-500 text-white" />
+				<UserIcon className="w-16 fill-blue-300 text-white" />
 				<div className="font-semibold w-48 text-center">
 					{formatUserName(data.userName)} 님 안녕하세요
 				</div>
@@ -67,7 +67,7 @@ function Profile({ openProfile, setOpenProfile }: ProfileProps) {
 								onClick={handleNavigate}
 								className="cursor-pointer text-sm text-blue-500 hover:underline"
 							>
-								내 계좌 가기
+								내 계좌로 가기
 							</span>
 						</div>
 					</div>
