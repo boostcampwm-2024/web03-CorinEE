@@ -35,7 +35,7 @@ export class ChartService implements OnModuleInit {
     }
 
     to = to || this.formatCurrentTime();
-
+  
     const key = await this.getAllKeys(coin, to, type, minute);
     // const dbData = await this.redisRepository.getChartDate(key);
 
@@ -73,7 +73,11 @@ export class ChartService implements OnModuleInit {
       this.upbitApiQueue.push(Date.now());
       const url = this.buildUpbitUrl(type, coin, to, minute);
       const response = await firstValueFrom(this.httpService.get(url));
+
+      this.logger.error(response.data)
       const candles: CandleDto[] = response.data;
+
+      this.logger.error(candles.length)
 
       this.saveChartData(candles, type, minute);
       return this.buildResponse(200, candles);
@@ -106,7 +110,6 @@ export class ChartService implements OnModuleInit {
         const endTime = performance.now();
         const duration = endTime - startTime;
         if(duration>1000) this.logger.error(`redis search time : ${duration}`)
-
         if (dbData.length === 200) {
           return dbData;
         }
@@ -118,6 +121,7 @@ export class ChartService implements OnModuleInit {
           return false;
         }
         if (retryCount++ >= maxRetries) {
+          this.logger.error('Timeout waiting for transaction order')
           throw new Error('Timeout waiting for transaction order');
         }
         return new Promise((resolve) => setTimeout(() => resolve(checkTransaction()), retryDelay));
@@ -130,6 +134,7 @@ export class ChartService implements OnModuleInit {
   }
   async saveChartData(candles, type, minute) {
     try {
+      this.logger.error(candles.length)
       const savePromises = candles.map((candle) => {
         const key = this.getRedisKey(
           candle.market,
@@ -175,33 +180,8 @@ export class ChartService implements OnModuleInit {
     return String(num).padStart(2, '0');
   }
 
-  formatDate(date, type, market, minute = null) {
-    const year = date.getFullYear();
-    const month = this.formatNumber(date.getMonth() + 1);
-    const day = this.formatNumber(date.getDate());
-    const hours = this.formatNumber(date.getHours());
-    const minutes = this.formatNumber(date.getMinutes());
-    const seconds = this.formatNumber(date.getSeconds());
-
-    const formats = {
-      years: () => `${year}`,
-      months: () => `${year}:${month}`,
-      days: () => `${year}:${month}:${day}`,
-      weeks: () => `${year}:${month}:${day}:W`,
-      minutes: () => {
-        return `${year}:${month}:${day}:${hours}:${minutes}:${minute}M`;
-      },
-      seconds: () => `${year}:${month}:${day}:${hours}:${minutes}:${seconds}`,
-    };
-
-    if (!formats[type]) {
-      throw new Error(`Invalid type: ${type}`);
-    }
-
-    return `${market}:${formats[type]()}`;
-  }
-
   decrementDate(date, type) {
+    date = new Date(date)
     const decrementFunctions = {
       years: () => date.setFullYear(date.getFullYear() - 1),
       months: () => date.setMonth(date.getMonth() - 1),
@@ -221,12 +201,10 @@ export class ChartService implements OnModuleInit {
 
   getAllKeys(coin, to, type, minute = null, count = 200) {
     const result = [];
-    const currentDate = new Date(to);
-    currentDate.setHours(currentDate.getHours() + 9);
-
+    
     for (let i = 0; i < count; i++) {
-      result.push(this.formatDate(currentDate, type, coin, minute));
-      this.decrementDate(currentDate, type);
+      result.push(this.getRedisKey(coin, to, type, minute));
+      this.decrementDate(to, type);
     }
     return result;
   }
