@@ -5,7 +5,7 @@ type CoinInfoProps = {
 	korean_name: string;
 	code: string;
 	change: Change;
-	trade_price: string;
+	trade_price: number;
 	change_price: string;
 	change_rate: string;
 	image_url: string;
