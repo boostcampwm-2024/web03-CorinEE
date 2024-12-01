@@ -1,6 +1,6 @@
+import { useMarketParams } from '@/hooks/market/useMarketParams';
 import { usePercentageBuy } from '@/hooks/trade/usePercentageBuy';
 import { Dispatch, SetStateAction, useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 
 interface PercentageButtonsProps {
 	price: string;
@@ -20,13 +20,12 @@ function PercentageButtons({
 	setQuantity,
 	askType,
 }: PercentageButtonsProps) {
-	const { market } = useParams();
-	const [marketType, code] = market?.split('-') ?? [];
+	const { code } = useMarketParams();
 	const [percent, setPercent] = useState<number>();
 
 	const { data, refetch } = usePercentageBuy({
 		askType,
-		moneyType: askType === 'bid' ? marketType : code,
+		moneyType: askType === 'bid' ? 'availableKRW' : code,
 		percent,
 	});
 
