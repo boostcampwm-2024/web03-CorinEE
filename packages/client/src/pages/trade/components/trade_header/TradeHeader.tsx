@@ -13,7 +13,7 @@ function TradeHeader({ market, sseData }: TradeHeaderProps) {
 	const formatter = formatData('KRW');
 
 	const code = sseData[market].code;
-	const trade_price = sseData[market].trade_price.toLocaleString();
+	const trade_price = sseData[market].trade_price;
 	const change = sseData[market].change;
 	const change_rate = formatter.formatChangeRate(
 		sseData[market].signed_change_rate,
