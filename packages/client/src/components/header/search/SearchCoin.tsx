@@ -1,6 +1,7 @@
 import { MarketData } from '@/types/market';
 import { useNavigate } from 'react-router-dom';
-
+import useRecentlyMarketStore from '@/store/recentlyViewed';
+import { useQueryClient } from '@tanstack/react-query';
 type SearchCoinProps = {
 	handleOpen: () => void;
 	market: MarketData;
@@ -8,9 +9,14 @@ type SearchCoinProps = {
 
 function SearchCoin({ handleOpen, market }: SearchCoinProps) {
 	const navigate = useNavigate();
+	const { addRecentlyViewedMarket } = useRecentlyMarketStore();
+	const queryClient = useQueryClient();
+
 	const handleClick = (market: string) => {
+		addRecentlyViewedMarket(market);
 		handleOpen();
 		navigate(`/trade/${market}`);
+		queryClient.invalidateQueries({ queryKey: ['recentlyMarketList'] });
 	};
 
 	return (
