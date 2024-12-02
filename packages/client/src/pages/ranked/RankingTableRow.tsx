@@ -18,7 +18,7 @@ function RankingTableRow({
 	return (
 		<tr key={username} className="border-b">
 			<td
-				className={`p-2 ${
+				className={`p-2 w-1/12 ${
 					index === 0
 						? 'text-red-600 font-bold'
 						: index === 1
@@ -30,16 +30,16 @@ function RankingTableRow({
 			>
 				{index + 1}위
 			</td>
-			<td className="p-2">{username}</td>
-			<td className="p-2 text-right">
+			<td className="p-2 w-1/12">{username}</td>
+			<td className="p-2 w-3/12 text-right">
 				{totalAsset.toLocaleString(undefined, {
 					maximumFractionDigits: 0,
 				})}
 				원
 			</td>
-			<td className="p-2 text-right">{investmentRatio.toFixed(1)}%</td>
+			<td className="p-2 w-2/12 text-right">{investmentRatio.toFixed(1)}%</td>
 			<td
-				className={`p-2 text-right ${totalProfitLoss > 0 ? 'text-red-600' : totalProfitLoss < 0 ? 'text-blue-600' : ''}`}
+				className={`p-2  w-3/12 text-right ${totalProfitLoss > 0 ? 'text-red-600' : totalProfitLoss < 0 ? 'text-blue-600' : ''}`}
 			>
 				{totalProfitLoss.toLocaleString(undefined, {
 					maximumFractionDigits: 0,
@@ -47,7 +47,7 @@ function RankingTableRow({
 				원
 			</td>
 			<td
-				className={`p-2 text-right ${profitRate > 0 ? 'text-red-600' : profitRate < 0 ? 'text-blue-600' : ''}`}
+				className={`p-2 text-right w-2/12 ${profitRate > 0 ? 'text-red-600' : profitRate < 0 ? 'text-blue-600' : ''}`}
 			>
 				{profitRate.toFixed(3)}%
 			</td>
