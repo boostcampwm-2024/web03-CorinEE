@@ -5,7 +5,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 
 function Layout() {
 	const location = useLocation();
-	const showFooter = location.pathname === '/';
+	const showFooter = location.pathname === '/' || location.pathname === '/ranked' ;
 	return (
 		<div className="flex flex-col justify-between">
 			<div className="flex min-h-screen h-screen overflow-x-hidden overflow-y-auto">
