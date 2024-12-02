@@ -6,7 +6,6 @@ type Props = {
 	seriesRef: React.RefObject<ISeriesApi<'Candlestick'>>;
 	currentPrice: number;
 	activePeriod: CandlePeriod;
-	refetch: () => Promise<unknown>;
 	minute?: number;
 };
 export function useRealTimeCandle({
