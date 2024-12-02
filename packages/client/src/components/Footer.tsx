@@ -5,16 +5,16 @@ export function Footer() {
 			url: 'https://github.com/boostcampwm-2024/web03-CorinEE',
 		},
 		{
-			text: 'Support',
+			text: 'Contact',
+			url: 'https://github.com/boostcampwm-2024/web03-CorinEE?tab=readme-ov-file#-%ED%8C%80%EC%9B%90-%EC%86%8C%EA%B0%9C',
+		},
+		{
+			text: 'Supported by',
 			url: 'https://boostcamp.connect.or.kr/',
 		},
 		{
-			text: 'Contribute API',
+			text: 'With API',
 			url: 'https://docs.upbit.com/',
-		},
-		{
-			text: 'Contact',
-			url: 'https://github.com/boostcampwm-2024/web03-CorinEE?tab=readme-ov-file#-%ED%8C%80%EC%9B%90-%EC%86%8C%EA%B0%9C',
 		},
 	];
 
