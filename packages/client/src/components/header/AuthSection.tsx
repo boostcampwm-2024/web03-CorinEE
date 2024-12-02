@@ -23,7 +23,6 @@ function AuthSection() {
 		useModal();
 
 	const [openProfile, setOpenProfile] = useState<boolean>(false);
-	console.log(openProfile);
 
 	const handleProfileToggle = () => {
 		setOpenProfile(!openProfile);
