@@ -37,7 +37,7 @@ export class ChartService implements OnModuleInit {
     to = to || this.formatCurrentTime();
   
     const key = await this.getAllKeys(coin, to, type, minute);
-
+    console.log(key)
     const result = await this.waitForTransactionOrder(key);
 
     if (result) {
@@ -183,7 +183,7 @@ export class ChartService implements OnModuleInit {
     }
 
     decrementFunctions[type]();
-    return date;
+    return date.toISOString();
   }
 
   getAllKeys(coin, to, type, minute = null, count = 200) {
@@ -191,7 +191,7 @@ export class ChartService implements OnModuleInit {
     
     for (let i = 0; i < count; i++) {
       result.push(this.getRedisKey(coin, to, type, minute));
-      this.decrementDate(to, type);
+      to = this.decrementDate(to, type);
     }
     return result;
   }
