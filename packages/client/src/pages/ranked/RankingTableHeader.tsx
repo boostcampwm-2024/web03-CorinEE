@@ -1,7 +1,7 @@
 function RankingTableHeader() {
 	return (
 		<thead>
-			<tr className="border-b border-solid border-gray-400 text-gray-700">
+			<tr className="border-b border-solid font-semibold border-gray-400 ">
 				<th className="p-2 text-left w-16">순위</th>
 				<th className="p-2 text-left w-16">사용자</th>
 				<th className="p-2 text-right w-fit">총 자산</th>
