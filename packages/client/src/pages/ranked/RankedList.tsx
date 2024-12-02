@@ -27,7 +27,7 @@ function RankedList() {
 	};
 
 	return (
-		<div className="flex flex-col items-center just">
+		<div className="h-full flex flex-col items-center">
 			<RankingHeader title="랭킹" subtitle="실시간 사용자 Top50 랭킹" />
 			<table className="w-full">
 				<RankingTableHeader />
@@ -40,7 +40,7 @@ function RankedList() {
 							investmentRatio={user.investmentRatio}
 							totalProfitLoss={user.totalProfitLoss}
 							profitRate={user.profitRate}
-							index={index + (currentScrollPage-1) * PER_PAGE}
+							index={index + (currentScrollPage - 1) * PER_PAGE}
 						/>
 					))}
 				</tbody>
