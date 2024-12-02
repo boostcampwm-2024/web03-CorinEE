@@ -12,11 +12,7 @@ type ChartProps = {
 function Chart({ market, currentPrice }: ChartProps) {
 	const [activePeriod, setActivePeriod] = useState<CandlePeriod>('days');
 	const [minute, setMinute] = useState<number>();
-	const { data, refetch, fetchNextPage } = usePeriodChart(
-		market,
-		activePeriod,
-		minute,
-	);
+	const { data, fetchNextPage } = usePeriodChart(market, activePeriod, minute);
 
 	const handleActivePeriod = (period: CandlePeriod, minute?: number) => {
 		setActivePeriod(period);
@@ -33,7 +29,6 @@ function Chart({ market, currentPrice }: ChartProps) {
 				activePeriod={activePeriod}
 				minute={minute}
 				data={data.candles.flat()}
-				refetch={refetch}
 				fetchNextPage={fetchNextPage}
 				currentPrice={currentPrice}
 			/>
