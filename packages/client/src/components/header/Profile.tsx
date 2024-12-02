@@ -9,9 +9,14 @@ import { useNavigate } from 'react-router-dom';
 type ProfileProps = {
 	openProfile: boolean;
 	setOpenProfile: React.Dispatch<React.SetStateAction<boolean>>;
+	profileLogoRef: React.RefObject<HTMLDivElement>;
 };
 
-function Profile({ openProfile, setOpenProfile }: ProfileProps) {
+function Profile({
+	openProfile,
+	setOpenProfile,
+	profileLogoRef,
+}: ProfileProps) {
 	const { data } = useMyProfile();
 	const { data: myAccount } = useMyAccount();
 	const navigate = useNavigate();
@@ -26,7 +31,8 @@ function Profile({ openProfile, setOpenProfile }: ProfileProps) {
 		const handleClickOutside = (event: MouseEvent) => {
 			if (
 				profileRef.current &&
-				!profileRef.current.contains(event.target as Node)
+				!profileRef.current.contains(event.target as Node) &&
+				!profileLogoRef.current?.contains(event.target as Node)
 			) {
 				setOpenProfile(false);
 			}
@@ -36,7 +42,7 @@ function Profile({ openProfile, setOpenProfile }: ProfileProps) {
 		return () => {
 			document.removeEventListener('mousedown', handleClickOutside);
 		};
-	}, [setOpenProfile]);
+	}, [openProfile]);
 
 	if (!openProfile) return;
 	return (
