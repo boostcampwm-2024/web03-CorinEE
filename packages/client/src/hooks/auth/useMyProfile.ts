@@ -6,6 +6,7 @@ export function useMyProfile() {
 	const { data } = useSuspenseQuery({
 		queryFn: getProfile,
 		queryKey: [QUERY_KEY],
+		refetchOnMount: "always"
 	});
 	return { data };
 }
