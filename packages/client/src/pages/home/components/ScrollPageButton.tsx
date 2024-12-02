@@ -12,7 +12,7 @@ function ScrollPageButton({
 	const isActive = pageNumber === currentScrollPage;
 
 	return (
-		<ol
+		<li
 			onClick={() => {
 				handleScrollPage(pageNumber);
 			}}
@@ -21,7 +21,7 @@ function ScrollPageButton({
       ${isActive ? 'text-black bg-blue-gray-100' :'text-gray-600'}`}>
 				{pageNumber}
 			</button>
-		</ol>
+		</li>
 	);
 }
 
