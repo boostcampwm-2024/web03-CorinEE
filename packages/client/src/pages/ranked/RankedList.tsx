@@ -10,7 +10,7 @@ function RankedList() {
 
 	return (
 		<div className="flex flex-col items-center just">
-			<RankingHeader title="랭킹" subtitle="실시간 사용자 랭킹" />
+			<RankingHeader title="랭킹" subtitle="실시간 사용자 Top50 랭킹" />
 			<table className="w-full">
 				<RankingTableHeader />
 				<tbody>
