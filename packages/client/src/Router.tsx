@@ -9,10 +9,10 @@ const Balance = lazy(() => import('@/pages/account/balance/Balance'));
 const History = lazy(() => import('@/pages/account/history/History'));
 const WaitOrders = lazy(() => import('@/pages/account/waitOrders/WaitOrders'));
 const Trade = lazy(() => import('@/pages/trade/Trade'));
-const Ranked = lazy(() => import('@/pages/ranked/RankedList'));
-const Redricet = lazy(() => import('@/pages/auth/Redirect'));
+const Redirect = lazy(() => import('@/pages/auth/Redirect'));
 const NotFound = lazy(() => import('@/components/not-found/NotFound'));
-const MobileNotice = lazy(() => import('@/pages/moblie/MobileNotice'));
+const MobileNotice = lazy(() => import('@/pages/mobile/MobileNotice'));
+const Ranked = lazy(() => import('@/pages/ranked/RankedList'));
 
 function Router() {
 	const isMobile = useMobileBlocker();
@@ -37,7 +37,7 @@ function Router() {
 					<Route path="/trade/:market" element={<Trade />} />
 					<Route path="/ranked" element={<Ranked />} />
 				</Route>
-				<Route path="/auth/callback" element={<Redricet />} />
+				<Route path="/auth/callback" element={<Redirect />} />
 				<Route path="*" element={<NotFound />} />
 			</Routes>
 		</Suspense>
