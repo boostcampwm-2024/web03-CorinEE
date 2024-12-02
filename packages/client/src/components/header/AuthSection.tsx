@@ -7,7 +7,7 @@ import InitializeModal from '@/components/modal/InitializeModal';
 import LoginButtons from '@/components/header/LoginButtons';
 import UserIcon from '@/asset/user.svg?react';
 import Profile from '@/components/header/Profile';
-import { Suspense, useState } from 'react';
+import { Suspense, useRef, useState } from 'react';
 import {
 	ApiErrorBoundary,
 	DefaultErrorFallback,
@@ -17,19 +17,25 @@ function AuthSection() {
 	const location = useLocation();
 	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 	const isAccountPage = location.pathname.startsWith('/account');
+	const profileLogoRef = useRef<HTMLDivElement>(null);
 
 	const { open: initializeModalOpen, handleOpen: handleInitializeModal } =
 		useModal();
 
 	const [openProfile, setOpenProfile] = useState<boolean>(false);
+	console.log(openProfile);
+
+	const handleProfileToggle = () => {
+		setOpenProfile(!openProfile);
+	};
 
 	return (
 		<div className="w-[230px] flex justify-end gap-2">
 			{isAuthenticated ? (
 				<div className="flex items-center gap-2">
-					<div className="relative">
+					<div className="relative cursor-pointer" ref={profileLogoRef}>
 						<UserIcon
-							onClick={() => setOpenProfile(!openProfile)}
+							onClick={handleProfileToggle}
 							className="w-11 h-11 fill-blue-300"
 						/>
 						<ApiErrorBoundary
@@ -39,6 +45,7 @@ function AuthSection() {
 								<Profile
 									openProfile={openProfile}
 									setOpenProfile={setOpenProfile}
+									profileLogoRef={profileLogoRef}
 								/>
 							</Suspense>
 						</ApiErrorBoundary>
