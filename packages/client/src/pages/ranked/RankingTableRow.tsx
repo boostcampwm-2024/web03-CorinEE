@@ -39,7 +39,7 @@ function RankingTableRow({
 			</td>
 			<td className="p-2 text-right">{investmentRatio.toFixed(1)}%</td>
 			<td
-				className={`p-2 text-right ${totalProfitLoss >= 0 ? 'text-red-600' : 'text-blue-600'}`}
+				className={`p-2 text-right ${totalProfitLoss > 0 ? 'text-red-600' : totalProfitLoss < 0 ? 'text-blue-600' : ''}`}
 			>
 				{totalProfitLoss.toLocaleString(undefined, {
 					maximumFractionDigits: 0,
@@ -47,9 +47,9 @@ function RankingTableRow({
 				원
 			</td>
 			<td
-				className={`p-2 text-right ${profitRate >= 0 ? 'text-red-600' : 'text-blue-600'}`}
+				className={`p-2 text-right ${profitRate > 0 ? 'text-red-600' : profitRate < 0 ? 'text-blue-600' : ''}`}
 			>
-				{profitRate.toFixed(2)}%
+				{profitRate.toFixed(3)}%
 			</td>
 		</tr>
 	);
