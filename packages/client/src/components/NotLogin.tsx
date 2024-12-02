@@ -56,7 +56,7 @@ function NotLogin({ size }: NotLoginProps) {
 			/>
 			<div className="text-center space-y-2">
 				<div className={sizeTable[size].mainText}>
-					로그인 후 사용 가능한 서비스에요 !
+					로그인 후 이용 가능한 서비스에요 !
 				</div>
 				<p className={sizeTable[size].subText}>
 					서비스 이용을 위해 로그인해 주세요
