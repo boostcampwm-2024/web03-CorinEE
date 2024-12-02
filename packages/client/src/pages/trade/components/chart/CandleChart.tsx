@@ -9,7 +9,6 @@ type CandleChartProps = {
 	activePeriod: CandlePeriod;
 	minute: number | undefined;
 	data: Candle[];
-	refetch: () => Promise<unknown>;
 	fetchNextPage: () => Promise<unknown>;
 	currentPrice: number;
 };
@@ -18,7 +17,6 @@ function CandleChart({
 	activePeriod,
 	minute,
 	data,
-	refetch,
 	fetchNextPage,
 	currentPrice,
 }: CandleChartProps) {
@@ -27,7 +25,6 @@ function CandleChart({
 		seriesRef,
 		currentPrice,
 		activePeriod,
-		refetch,
 		minute,
 	});
 
