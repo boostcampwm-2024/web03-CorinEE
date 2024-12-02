@@ -53,7 +53,9 @@ function BalanceCoin({ coin, sseData }: BalanceCoinProps) {
 			</div>
 			<div className="flex-[1] p-3 text-end">
 				<span className="text-base">
-					{Math.floor(averagePrice).toLocaleString()}
+					{averagePrice < 1
+						? averagePrice.toFixed(3)
+						: Math.floor(averagePrice).toLocaleString()}
 				</span>
 				<span className="text-xs ml-1 text-gray-500">KRW</span>
 			</div>
