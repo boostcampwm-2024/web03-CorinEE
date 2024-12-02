@@ -1,4 +1,3 @@
-// src/components/Chart/utils/chartSetup.ts
 import { IChartApi, createChart, ISeriesApi } from 'lightweight-charts';
 import { CandleFormat } from '@/types/chart';
 import { ChartConfig } from '@/utility/chart/config';
