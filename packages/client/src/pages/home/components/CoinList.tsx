@@ -6,24 +6,23 @@ import { MarketCategory } from '@/types/category';
 import { formatData } from '@/utility/format/formatSSEData';
 import { useEffect, useMemo, useState } from 'react';
 import { useMyInterest } from '@/hooks/interest/useMyInterest';
+import { PER_PAGE } from '@/constants/pagination';
 
 type CoinListProps = {
 	markets: MarketData[];
 	activeCategory: MarketCategory;
 };
 
-const COINS_PER_PAGE = 10;
-
 function CoinList({ markets, activeCategory }: CoinListProps) {
 	const [currentScrollPage, setCurrentScrollPage] = useState(1);
-	const maxScrollPage = Math.ceil(markets.length / COINS_PER_PAGE);
+	const maxScrollPage = Math.ceil(markets.length / PER_PAGE);
 	const { isLoading, data: interestMarkets } = useMyInterest();
 
 	const currentPageMarkets = useMemo(
 		() =>
 			markets.slice(
-				COINS_PER_PAGE * (currentScrollPage - 1),
-				COINS_PER_PAGE * currentScrollPage,
+				PER_PAGE * (currentScrollPage - 1),
+				PER_PAGE * currentScrollPage,
 			),
 		[currentScrollPage, activeCategory],
 	);
