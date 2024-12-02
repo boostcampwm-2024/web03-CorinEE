@@ -12,6 +12,11 @@ export function useHandleToggle() {
 			toast.info('로그인 후 이용해주세요');
 			return;
 		}
+
+		if (market.split('-')[0] !== 'KRW') {
+			toast.warning('관심 기능은 원화 종목만 가능합니다.');
+			return;
+		}
 		toggleInterest.mutateAsync(market);
 	};
 
