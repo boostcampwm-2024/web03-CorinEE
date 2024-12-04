@@ -18,15 +18,6 @@ export function calculateRanking(data: UserInvestment[]) {
 					: 0;
 			const profitRate = (totalProfitLoss / INITIAL_INVESTMENT) * 100;
 
-			console.table({
-				id: user.id,
-				username: formatUserName(user.username),
-				totalAsset: user.totalAsset,
-				totalProfitLoss,
-				profitRate,
-				investmentRatio,
-			});
-
 			return {
 				id: user.id,
 				username: formatUserName(user.username),
