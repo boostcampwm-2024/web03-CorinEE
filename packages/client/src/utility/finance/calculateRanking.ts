@@ -28,7 +28,7 @@ export function calculateRanking(data: UserInvestment[]) {
 				investmentRatio,
 			};
 		})
-		.sort((a, b) => b.profitRate - a.profitRate);
+		.sort((a, b) => b.totalAsset - a.totalAsset);
 
 	return rankedList;
 }
