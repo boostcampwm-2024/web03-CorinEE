@@ -19,7 +19,9 @@ export const formatData = (category: MarketCategory) => {
 	switch (category) {
 		case 'KRW':
 			formatters.formatTradePrice = (price: number) =>
-				`${Number(price).toLocaleString()}원`;
+				price < 1
+					? `${parseFloat(price.toFixed(5)).toString()}원`
+					: `${Number(price).toLocaleString()}원`;
 
 			formatters.formatSignedChangePrice = (price: number, change: Change) => {
 				return `${decideSign(change) + Number(price).toLocaleString()}원`;

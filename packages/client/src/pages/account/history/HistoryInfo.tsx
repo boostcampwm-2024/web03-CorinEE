@@ -13,9 +13,8 @@ function HistoryInfo({
 	tradeDate,
 	tradeType,
 }: HistoryInfoProps) {
-
-	const formattedCreatedTime = formatDateTime(createdAt)
-	const formattedTradeTime = formatDateTime(tradeDate)
+	const formattedCreatedTime = formatDateTime(createdAt);
+	const formattedTradeTime = formatDateTime(tradeDate);
 
 	return (
 		<div className="flex py-2 items-center text-center  border-b border-solid border-gray-300">
@@ -24,10 +23,8 @@ function HistoryInfo({
 				<p>{formattedTradeTime.time}</p>
 			</div>
 			<div className="flex-[1] font-semibold">
-				<Link to={`/trade/KRW-${assetName}`}>
-				{assetName}
-				</Link>
-				</div>
+				<Link to={`/trade/KRW-${assetName}`}>{assetName}</Link>
+			</div>
 			<div
 				className={`flex-[1] ${tradeType === 'buy' ? 'text-red-500' : 'text-blue-500'}`}
 			>
@@ -38,7 +35,11 @@ function HistoryInfo({
 				<span className="ml-1 text-xs text-gray-600">{assetName}</span>
 			</div>
 			<div className="flex-[3]">
-				<span>{price.toLocaleString()}</span>
+				<span>
+					{price < 1
+						? parseFloat(price.toFixed(5)).toString()
+						: price.toLocaleString()}
+				</span>
 				<span className="ml-1 text-xs text-gray-600">{tradeCurrency}</span>
 			</div>
 			<div className="flex-[3]">
