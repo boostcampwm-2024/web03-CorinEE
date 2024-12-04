@@ -56,11 +56,11 @@ function Coin({ formatters, market, sseData, isInterest }: CoinProps) {
 						handleToggle(market.market);
 					}}
 				>
-					<Heart className="w-6 h-6" />
+					<Heart className="w-6 h-6"/>
 				</button>
 			</td>
 
-			<td className="w-2/12 align-middle" onClick={handleClick}>
+			<td className="w-3/12 align-middle" onClick={handleClick}>
 				<div className="flex items-center gap-2">
 					<img
 						className="w-7 h-7"
