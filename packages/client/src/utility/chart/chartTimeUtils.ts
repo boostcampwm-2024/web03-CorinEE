@@ -5,12 +5,12 @@ export const getPeriodMs = (activePeriod: CandlePeriod, minute?: number) => {
 		case 'minutes':
 			return (minute || 1) * 60 * 1000;
 		case 'days':
-			return 24 * 60 * 60 * 1000;
+			return false;
 		case 'weeks':
-			return 7 * 24 * 60 * 60 * 1000;
+			return false;
 		case 'months':
-			return 30 * 24 * 60 * 60 * 1000;
+			return false;
 		default:
-			return 60 * 1000;
+			return false;
 	}
 };
