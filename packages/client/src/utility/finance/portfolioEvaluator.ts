@@ -24,6 +24,7 @@ const PORTFOLIO_EVALUATOR = {
 	},
 
 	calculateProfitRate(evaluationPrice: number, bid: number) {
+		
 		return ((evaluationPrice - bid) / bid) * 100;
 	},
 
