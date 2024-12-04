@@ -39,7 +39,11 @@ function WaitOrderInfo({
 					{tradeType === 'buy' ? '매수' : '매도'}
 				</div>
 				<div className="w-[10%]">
-					<span>{price.toLocaleString()}</span>
+					<span>
+						{price < 1
+							? parseFloat(price.toFixed(5)).toString()
+							: price.toLocaleString()}
+					</span>
 					<span className="ml-1 text-xs text-gray-600">KRW</span>
 				</div>
 				<div className="w-[20%]">
