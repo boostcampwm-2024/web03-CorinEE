@@ -30,8 +30,8 @@ function RankingTableRow({
 			>
 				{index + 1}위
 			</td>
-			<td className="p-2 w-1/12">{username}</td>
-			<td className="p-2 w-3/12 text-right">
+			<td className="p-2 w-2/12">{username}</td>
+			<td className="p-2 w-2/12 text-right">
 				{totalAsset.toLocaleString(undefined, {
 					maximumFractionDigits: 0,
 				})}

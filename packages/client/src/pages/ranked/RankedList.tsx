@@ -9,9 +9,9 @@ import { useMemo, useState } from 'react';
 
 function RankedList() {
 	const { data } = useAllUserInvestment();
-	const rankedList = calculateRanking(data);
+	const rankedList = calculateRanking(data).slice(0,50);
 	const [currentScrollPage, setCurrentScrollPage] = useState(1);
-	const maxScrollPage = Math.ceil(rankedList.length / PER_PAGE);
+	const maxScrollPage = Math.ceil(Math.min(rankedList.length, 50) / PER_PAGE);;
 
 	const currentPageRankedList = useMemo(
 		() =>
@@ -28,7 +28,7 @@ function RankedList() {
 
 	return (
 		<div className="h-full flex flex-col items-center">
-			<RankingHeader title="랭킹" subtitle="실시간 사용자 Top50 랭킹" />
+			<RankingHeader title="랭킹" subtitle="실시간 사용자 Top50 랭킹 (총 자산 기준)" />
 			<table className="w-full">
 				<RankingTableHeader />
 				<tbody>
