@@ -45,23 +45,27 @@ function CoinList({ markets, activeCategory }: CoinListProps) {
 
 	if (!sseData || isLoading) return;
 	return (
-		<div>
-			<ul className="flex py-4 border-b border-solid border-gray-300 text-gray-700  bg-white">
-				<li className="flex-[1]">관심</li>
-				<li className="flex-[6]">한글명</li>
-				<li className="flex-[6]">현재가</li>
-				<li className="flex-[6]">전일대비</li>
-				<li className="flex-[6]">거래대금</li>
-			</ul>
-			{currentPageMarkets.map((market) => (
-				<Coin
-					key={market.market}
-					formatters={formatters}
-					market={market}
-					sseData={sseData}
-					isInterest={checkInterest(market)}
-				/>
-			))}
+		<div className="mt-3">
+			<table className="w-full">
+				<thead className="border-b border-solid border-gray-300 text-gray-700  bg-white">
+					<th className="text-left">관심</th>
+					<th className="text-left"></th>
+					<th className="text-right">현재가</th>
+					<th className="text-right">전일대비</th>
+					<th className="text-right">거래대금</th>
+				</thead>
+				<tbody>
+					{currentPageMarkets.map((market) => (
+						<Coin
+							key={market.market}
+							formatters={formatters}
+							market={market}
+							sseData={sseData}
+							isInterest={checkInterest(market)}
+						/>
+					))}
+				</tbody>
+			</table>
 			<ol className="flex py-4 gap-4 justify-center">
 				{Array.from({ length: maxScrollPage }).map((_, index) => (
 					<ScrollPageButton
