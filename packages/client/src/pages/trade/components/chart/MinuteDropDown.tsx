@@ -10,7 +10,7 @@ type MinuteDropDown = {
 
 function MinuteDropDown({ active, handleActivePeriod }: MinuteDropDown) {
 	const [open, setOpen] = useState(false);
-	const [minute, setMinute] = useState(DropDown[2].id);
+	const [minute, setMinute] = useState(DropDown[1].id);
 	return (
 		<div className="relative">
 			<div
