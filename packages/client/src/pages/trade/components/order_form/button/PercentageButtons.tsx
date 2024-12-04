@@ -34,8 +34,9 @@ function PercentageButtons({
 			const calculatedQuantity = String(
 				Math.floor((data / Number(price)) * 100000000) / 100000000,
 			);
-			if (askType === 'bid') setQuantity(calculatedQuantity);
-			else setQuantity(data.toFixed(8));
+			if (askType === 'bid') {
+				data > 1 ? setQuantity(calculatedQuantity) : setQuantity('0');
+			} else setQuantity(data.toFixed(8));
 		}
 	}, [data, price, setQuantity]);
 
