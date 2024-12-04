@@ -36,6 +36,7 @@ export function CoinCategories({
 						{tempInfo.LAST_UPDATE.split(' ')[0]} 기준 한강물 온도
 					</span>
 					<span className="font-semibold text-xl text-blue-900">
+						{' '}
 						{tempInfo.TEMP}°C
 					</span>
 				</div>
