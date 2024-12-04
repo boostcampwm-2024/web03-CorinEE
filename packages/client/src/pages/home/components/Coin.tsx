@@ -47,7 +47,7 @@ function Coin({ formatters, market, sseData, isInterest }: CoinProps) {
 	);
 
 	return (
-		<tr className="border-b h-14 border-solid border-gray-300 hover:bg-gray-100">
+		<tr className="border-b h-14 border-solid cursor-pointer border-gray-300 hover:bg-gray-100">
 			<td className="w-12 align-middle">
 				<button
 					className={`inline-flex justify-center ${!isInterest || !isAuthenticated ? 'fill-blue-gray-100' : 'fill-red-500'}`}
