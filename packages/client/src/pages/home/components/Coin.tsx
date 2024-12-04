@@ -47,37 +47,50 @@ function Coin({ formatters, market, sseData, isInterest }: CoinProps) {
 	);
 
 	return (
-		<div className="flex items-center py-1 border-b border-solid border-gray-300 cursor-pointer hover:bg-gray-100">
-			<button
-				className={`flex w-6 h-6 mr-2 ${!isInterest || !isAuthenticated ? 'fill-blue-gray-100' : 'fill-red-500'}`}
-				onClick={() => handleToggle(market.market)}
-			>
-				<Heart />
-			</button>
+		<tr className="border-b h-14 border-solid border-gray-300 hover:bg-gray-100">
+			<td className="w-12 align-middle">
+				<button
+					className={`inline-flex justify-center ${!isInterest || !isAuthenticated ? 'fill-blue-gray-100' : 'fill-red-500'}`}
+					onClick={(e) => {
+						e.stopPropagation();
+						handleToggle(market.market);
+					}}
+				>
+					<Heart className="w-6 h-6" />
+				</button>
+			</td>
 
-			<div className="flex flex-[24] items-center" onClick={handleClick}>
-				<div className="flex items-center gap-2 flex-[6]">
+			<td className="w-2/12 align-middle" onClick={handleClick}>
+				<div className="flex items-center gap-2">
 					<img
 						className="w-7 h-7"
 						src={`https://static.upbit.com/logos/${market.market.split('-')[1]}.png`}
+						alt={market.korean_name}
 					/>
-					<div className="flex flex-col">
+					<div>
 						<p>{market.korean_name}</p>
 						<p className="text-gray-700 text-xs">{market.market}</p>
 					</div>
 				</div>
+			</td>
 
-				<div className={`flex-[6] ${colorClasses[change]}`}>{trade_price}</div>
-				<div className="flex-[6]">
-					<div className={colorClasses[change]}>
-						<span className="block">
-							{change_price} {change_rate}
-						</span>
-					</div>
-				</div>
-				<div className="flex-[6]">{acc_trade_price_24h}</div>
-			</div>
-		</div>
+			<td
+				className={`w-2/12 text-right align-middle ${colorClasses[change]}`}
+				onClick={handleClick}
+			>
+				{trade_price}
+			</td>
+
+			<td className="w-4/12 text-right align-middle" onClick={handleClick}>
+				<span className={`block ${colorClasses[change]}`}>
+					{change_price} {change_rate}
+				</span>
+			</td>
+
+			<td className="text-right align-middle" onClick={handleClick}>
+				{acc_trade_price_24h}
+			</td>
+		</tr>
 	);
 }
 
