@@ -3,7 +3,7 @@ function Navigation() {
 	const location = useLocation();
 	const isAccountPage = location.pathname.startsWith('/account');
 	return (
-		<div className="flex gap-4">
+		<div className="flex gap-8">
 			<NavLink
 				to="/"
 				className={({ isActive }) =>

@@ -22,7 +22,7 @@ const Header = () => {
 				shadow={false}
 			>
 				<Logo />
-				<div className="flex gap-4 items-center">
+				<div className="flex gap-8 items-center">
 					<Navigation />
 					<Suspense>
 						<SearchBar />
