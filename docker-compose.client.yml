@@ -1,0 +1,21 @@
+services:
+  client:
+    build:
+      context: .
+      dockerfile: dockerfile-client
+    image: seunggwan/corinee-client
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/letsencrypt/live/corinee.site:/etc/letsencrypt/live/corinee.site
+      - /etc/letsencrypt/live/corinee.site/fullchain.pem:/etc/letsencrypt/live/corinee.site/fullchain.pem
+      - /etc/letsencrypt/live/corinee.site/privkey.pem:/etc/letsencrypt/live/corinee.site/privkey.pem
+      - /etc/letsencrypt/archive:/etc/letsencrypt/archive
+      - /etc/letsencrypt/live:/etc/letsencrypt/live
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

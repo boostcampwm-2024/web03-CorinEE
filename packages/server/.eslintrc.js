@@ -25,6 +25,7 @@ module.exports = {
 			'error',
 			{
 				endOfLine: 'auto',
+				useTabs: 'false',
 			},
 		],
 		'no-console': ['warn', { allow: ['warn', 'error'] }],

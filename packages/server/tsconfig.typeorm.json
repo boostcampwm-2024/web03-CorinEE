@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json", // 기존 tsconfig.json 파일을 확장
+  "compilerOptions": {
+    "module": "CommonJS",       // TypeORM CLI는 CommonJS를 필요로 함
+    "target": "ES2020",         // 실행 환경에 맞게 설정
+    "outDir": "./dist",         // 출력 디렉토리
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["./src/**/*.ts"],   // 필요한 파일 경로 포함
+  "exclude": ["node_modules"]  // 불필요한 경로 제외
+}

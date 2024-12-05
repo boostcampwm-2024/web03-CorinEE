@@ -1,0 +1,38 @@
+services:
+  server:
+    build:
+      context: .
+      dockerfile: dockerfile-server
+    image: seunggwan/corinee-server
+    restart: always
+    container_name: corinee_server_1  # 컨테이너 이름 명시
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+
+  client:
+    build:
+      context: .
+      dockerfile: dockerfile-client
+      args:
+        - VITE_API_BASE_URL=${VITE_API_BASE_URL}
+    image: seunggwan/corinee-client
+    container_name: corinee_client_1  # 컨테이너 이름 명시
+    env_file:
+      - .env
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt  # 간단하게 수정
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    name: corinee_app-network  # 네트워크 이름 명시
+    driver: bridge

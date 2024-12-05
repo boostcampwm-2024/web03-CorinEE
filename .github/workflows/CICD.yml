@@ -1,0 +1,180 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - dev
+      - dev-be
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - server: main
+            host: ${{ vars.SSH_HOST }}
+            type: full
+          # - server: loadbalancer
+          #   host: ${{ vars.LOAD_SSH_HOST }}
+          #   type: api
+          # - server: loadbalancer2
+          #   host: ${{ vars.LOAD_SSH_HOST_2 }}
+          #   type: api2
+          # - server: loadbalancer3
+          #   host: ${{ vars.LOAD_SSH_HOST_3 }}
+          #   type: api3
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Docker Hub login
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and Push Docker images
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server -f ./dockerfile-server .
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server
+          if [ "${{ matrix.type }}" = "full" ]; then
+            docker build --build-arg VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }} -t ${{ secrets.DOCKERHUB_USERNAME }}/corinee-client -f ./dockerfile-client .
+            docker push ${{ secrets.DOCKERHUB_USERNAME }}/corinee-client
+          fi
+
+      - name: Make main server environment
+        if: matrix.type == 'full'
+        run: |
+          echo "${{ secrets.DEPLOY_ENV }}" > .env
+  
+      - name: Make loadbalancer environment
+        if: matrix.type != 'full'
+        run: |
+          echo "${{ secrets.LOAD_DEPLOY_ENV }}" > .env
+
+      - name: Send files & deploy script
+        if: matrix.type == 'full'
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          source: "docker-compose.yml,nginx.conf,.env"
+          target: /corinee
+          overwrite: true
+
+      # - name: Send files to loadbalancer
+      #   if: matrix.type == 'api'
+      #   uses: appleboy/scp-action@master
+      #   with:
+      #     host: ${{ secrets.LOAD_SSH_HOST }}
+      #     username: ${{ secrets.SSH_USERNAME }}
+      #     password: ${{ secrets.LOAD_SSH_PASSWORD }}
+      #     port: ${{ secrets.SSH_PORT }}
+      #     source: "docker-compose.server.yml,.env"
+      #     target: /corinee
+      #     overwrite: true
+
+      # - name: Send files to loadbalancer
+      #   if: matrix.type == 'api2'
+      #   uses: appleboy/scp-action@master
+      #   with:
+      #     host: ${{ secrets.LOAD_SSH_HOST_2 }}
+      #     username: ${{ secrets.SSH_USERNAME }}
+      #     password: ${{ secrets.LOAD_SSH_PASSWORD_2 }}
+      #     port: ${{ secrets.SSH_PORT }}
+      #     source: "docker-compose.server.yml,.env"
+      #     target: /corinee
+      #     overwrite: true    
+
+      # - name: Send files to loadbalancer
+      #   if: matrix.type == 'api3'
+      #   uses: appleboy/scp-action@master
+      #   with:
+      #     host: ${{ secrets.LOAD_SSH_HOST_3 }}
+      #     username: ${{ secrets.SSH_USERNAME }}
+      #     password: ${{ secrets.LOAD_SSH_PASSWORD_3 }}
+      #     port: ${{ secrets.SSH_PORT }}
+      #     source: "docker-compose.server.yml,.env"
+      #     target: /corinee
+      #     overwrite: true
+
+      - name: Deploy to main server
+        if: matrix.type == 'full'
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd /corinee
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-client
+            docker-compose down
+            docker-compose up -d
+            docker image prune -f
+
+      # - name: Deploy to loadbalancer1
+      #   if: matrix.type == 'api'
+      #   uses: appleboy/ssh-action@master
+      #   with:
+      #     host: ${{ secrets.LOAD_SSH_HOST }}
+      #     username: ${{ secrets.SSH_USERNAME }}
+      #     password: ${{ secrets.LOAD_SSH_PASSWORD }}
+      #     port: ${{ secrets.SSH_PORT }}
+      #     script: |
+      #       cd /corinee
+      #       docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server
+      #       docker-compose -f docker-compose.server.yml down
+      #       docker-compose -f docker-compose.server.yml up -d
+      #       docker image prune -f
+      # - name: Deploy to loadbalancer2
+      #   if: matrix.type == 'api2'
+      #   uses: appleboy/ssh-action@master
+      #   with:
+      #     host: ${{ secrets.LOAD_SSH_HOST_2 }}
+      #     username: ${{ secrets.SSH_USERNAME }}
+      #     password: ${{ secrets.LOAD_SSH_PASSWORD_2 }}
+      #     port: ${{ secrets.SSH_PORT }}
+      #     script: |
+      #       cd /corinee
+      #       docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server
+      #       docker-compose -f docker-compose.server.yml down
+      #       docker-compose -f docker-compose.server.yml up -d
+      #       docker image prune -f
+      # - name: Deploy to loadbalancer3
+      #   if: matrix.type == 'api3'
+      #   uses: appleboy/ssh-action@master
+      #   with:
+      #     host: ${{ secrets.LOAD_SSH_HOST_3 }}
+      #     username: ${{ secrets.SSH_USERNAME }}
+      #     password: ${{ secrets.LOAD_SSH_PASSWORD_3 }}
+      #     port: ${{ secrets.SSH_PORT }}
+      #     script: |
+      #       cd /corinee
+      #       docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server
+      #       docker-compose -f docker-compose.server.yml down
+      #       docker-compose -f docker-compose.server.yml up -d
+      #       docker image prune -f
+
+      - name: Generate Error Report
+        if: failure()
+        run: |
+          echo "Deployment Report" > report.txt
+          echo "===================" >> report.txt
+          echo "Commit SHA: ${{ github.sha }}" >> report.txt
+          echo "Branch: ${{ github.ref }}" >> report.txt
+          echo "Deployment Status: Failed" >> report.txt
+          echo "Error Details: ${{ job.status }}" >> report.txt
+          echo "===================" >> report.txt
+          cat report.txt
+
+      - name: Upload Error Report
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: deployment-error-report
+          path: report.txt

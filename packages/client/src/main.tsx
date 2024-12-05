@@ -1,10 +1,19 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.tsx'
+import { createRoot } from 'react-dom/client';
+import { ThemeProvider } from '@material-tailwind/react';
+import { BrowserRouter } from 'react-router-dom';
+import { CookiesProvider } from 'react-cookie';
+import './index.css';
+import App from '@/App';
+import { ToastContainer } from 'react-toastify';
+
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+	<ThemeProvider>
+		<CookiesProvider>
+			<BrowserRouter>
+				<App />
+				<ToastContainer />
+			</BrowserRouter>
+		</CookiesProvider>
+	</ThemeProvider>,
+);
