@@ -222,6 +222,8 @@ export class AskService extends TradeAskBidService implements OnModuleInit {
     if (userAsset) {
       askDto.assetBalance = userAsset.quantity;
       askDto.asset = userAsset;
+    }else{
+      return 0;
     }
     const { bid_price, bid_size } = order;
     const { userId, asset, krw } = askDto;
