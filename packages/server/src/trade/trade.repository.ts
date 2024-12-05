@@ -109,7 +109,6 @@ export class TradeRepository extends Repository<Trade> {
 				where: { tradeId },
 				lock: {
 					mode: 'pessimistic_write',
-					onLocked: 'nowait',
 				},
 			});
 
