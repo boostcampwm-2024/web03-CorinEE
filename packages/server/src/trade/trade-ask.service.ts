@@ -174,7 +174,7 @@ export class AskService extends TradeAskBidService implements OnModuleInit {
 
       for (const order of orderbook) {
         if (order.bid_price < askDto.receivedPrice) break;
-        await this.executeTransaction(async (queryRunner) => {
+        const tradeResult = await this.executeTransaction(async (queryRunner) => {
           const remainingQuantity = await this.executeAskTrade(
             askDto,
             order,
@@ -183,6 +183,7 @@ export class AskService extends TradeAskBidService implements OnModuleInit {
 
           return !isMinimumQuantity(remainingQuantity);
         });
+        if (!tradeResult) break;
       }
     } catch (error) {
       if (error instanceof TradeNotFoundException) {
@@ -244,15 +245,13 @@ export class AskService extends TradeAskBidService implements OnModuleInit {
     buyData.assetName = buyData.tradeCurrency;
     buyData.tradeCurrency = assetName;
 
-    await Promise.all([
-      this.tradeHistoryRepository.createTradeHistory(
-        user,
-        buyData,
-        queryRunner,
-      ),
-      this.processAssetUpdate(asset, buyData, queryRunner),
-      this.updateAccountBalances(askDto, buyData, queryRunner),
-    ]);
+    await this.tradeHistoryRepository.createTradeHistory(
+      user,
+      buyData,
+      queryRunner,
+    )
+    await this.processAssetUpdate(asset, buyData, queryRunner)
+    await this.updateAccountBalances(askDto, buyData, queryRunner)
 
     return await this.updateTradeData(tradeData, buyData, queryRunner);
   }
