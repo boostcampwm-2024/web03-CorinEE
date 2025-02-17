@@ -113,7 +113,7 @@ jobs:
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-server
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/corinee-client
             docker-compose down
-            docker-compose up -d
+            COMPOSE_HTTP_TIMEOUT=1000 docker-compose up -d
             docker image prune -f
 
       # - name: Deploy to loadbalancer1
