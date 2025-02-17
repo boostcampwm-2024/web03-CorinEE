@@ -158,22 +158,3 @@ jobs:
       #       docker-compose -f docker-compose.server.yml down
       #       docker-compose -f docker-compose.server.yml up -d
       #       docker image prune -f
-
-      - name: Generate Error Report
-        if: failure()
-        run: |
-          echo "Deployment Report" > report.txt
-          echo "===================" >> report.txt
-          echo "Commit SHA: ${{ github.sha }}" >> report.txt
-          echo "Branch: ${{ github.ref }}" >> report.txt
-          echo "Deployment Status: Failed" >> report.txt
-          echo "Error Details: ${{ job.status }}" >> report.txt
-          echo "===================" >> report.txt
-          cat report.txt
-
-      - name: Upload Error Report
-        if: failure()
-        uses: actions/upload-artifact@v3.1.0
-        with:
-          name: deployment-error-report
-          path: report.txt
