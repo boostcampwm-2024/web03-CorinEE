@@ -64,7 +64,7 @@ function tunnel(
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     createTunnel(
-      { autoClose: true },
+      { autoClose: true, reconnectOnError: false  },
       { port: forwardOptions.srcPort },
       sshOptions,
       forwardOptions,
