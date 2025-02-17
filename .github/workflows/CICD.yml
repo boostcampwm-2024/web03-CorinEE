@@ -23,7 +23,6 @@ jobs:
           # - server: loadbalancer3
           #   host: ${{ vars.LOAD_SSH_HOST_3 }}
           #   type: api3
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
