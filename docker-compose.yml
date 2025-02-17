@@ -27,8 +27,6 @@ services:
       - "80:80"
     depends_on:
       - server
-    volumes:
-      - /etc/letsencrypt:/etc/letsencrypt  # 간단하게 수정
     networks:
       - app-network
 
